@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Chottvn_Address::address" title="Address" translate="title" module="Chottvn_Address" sortOrder="64" parent="Magento_Customer::customer" resource="Chottvn_Address::address"/>
+        <add id="Chottvn_Address::region" title="Manage Regions" module="Chottvn_Address" sortOrder="65" parent="Chottvn_Address::address" action="address/region" resource="Chottvn_Address::region"/>
+        <add id="Chottvn_Address::city" title="Manage Cities" module="Chottvn_Address" sortOrder="66" parent="Chottvn_Address::address" action="address/city" resource="Chottvn_Address::city"/>
+        <add id="Chottvn_Address::township" title="Manage Townships" module="Chottvn_Address" sortOrder="67" parent="Chottvn_Address::address" action="address/township" resource="Chottvn_Address::township"/>        
+    </menu>
+</config>

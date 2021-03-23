@@ -1,0 +1,18 @@
+<div class="block items-in-cart">
+    <div class="content minicart-items" data-role="content">
+        <div class="minicart-items-wrapper overflowed">
+            <ol class="minicart-items">
+                <!-- ko foreach: getItems() -->
+                <li class="product-item">
+                    <div class="row product">
+                        <!-- ko foreach: $parent.elems() -->
+                        <!-- ko template: getTemplate() -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                </li>
+                <!-- /ko -->
+            </ol>
+        </div>
+    </div>
+</div>

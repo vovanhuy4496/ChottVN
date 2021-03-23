@@ -1,0 +1,43 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+?>
+<?php
+/**
+ * @var \Amasty\Orderattr\Block\Adminhtml\Order\View\Attributes $block
+ */
+$orderAttributeData = $block->getOrderAttributesData();
+?>
+
+<section class="admin__page-section order-view-account-information">
+    <div class="admin__page-section-title">
+        <span class="title"><?= __('Additional Information') ?></span>
+        <div class="actions"><?= $this->getOrderAttributeEditLink(); ?></div>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-information">
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary order-information-table">
+                    <?php if (!empty($orderAttributeData)) : ?>
+                        <?php foreach ($orderAttributeData as $data) : ?>
+                            <tr>
+                                <th><?= $block->escapeHtml($data['label']); ?></th>
+                                <td>
+                                    <strong><?= $block->escapeHtml($data['value']); ?></strong>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <td><?= $block->escapeHtml(__('No attributes for this order')); ?></td>
+                        </tr>
+                    <?php endif; ?>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

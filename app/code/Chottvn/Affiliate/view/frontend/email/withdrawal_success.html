@@ -1,0 +1,21 @@
+<!--@subject {{trans "Xác nhận yêu cầu rút tiền tại %store_name" store_name=$store.getFrontendName()}}  @-->
+{{template config_path="design/email/header_template"}}
+<div class="noti-success">
+    <p>{{trans "Chào %full_name," full_name=$fullName}}</p>
+
+    <p>{{trans "Chợ Trực Tuyến đã nhận được yêu cầu rút tiền của bạn."}}</p>
+
+    <p>{{trans "Số tiền yêu cầu: %amountRequest" amountRequest=$amountRequest|raw}}</p>
+
+    <p>{{trans "Ngày yêu cầu: %dateRequest" dateRequest=$dateRequest|raw}}</p>
+
+    <p>{{trans "Chúng tôi sẽ xử lý và thanh toán cho bạn trong vòng 7 ngày làm việc."}}</p>
+
+    <p>{{trans "Mọi thắc mắc về tài khoản cộng tác viên, vui lòng liên hệ với Phòng Nhân sự, Cty CP Chợ Trực Tuyến qua email: <a href='mailto:lienhe@chotructuyen.co'>ctv@chotructuyen.co</a>" |raw}}</p>
+   
+    <br />
+    <p>{{trans "Trân trọng!"}}</p>
+    
+    <p>{{trans "Cty CP Chợ Trực Tuyến"}}</p>
+</div>
+{{template config_path="design/email/footer_template"}}

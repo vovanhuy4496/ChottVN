@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-pricequote",
+    "description": "Price Quote",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [        
+        {
+            "name": "Huu Dan Phan",
+            "email": "dan.phan@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\PriceQuote\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

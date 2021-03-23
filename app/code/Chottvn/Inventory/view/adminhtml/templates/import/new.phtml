@@ -1,0 +1,65 @@
+<?php if ($block->isProcessing()) : ?>
+    <div class="announcement">
+        <?= __("An import process is running. Please try later.") ?>
+    </div>
+<?php else : ?>
+    <form class="chottvn-admin" id="distributor_export_form" name="distributor-export-form" action="<?php echo $block->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
+    <div class="no-display">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+    </div>
+    <fieldset class="fieldset admin__fieldset " id="base_fieldset">
+        <legend class="admin__legend legend">
+            <span><?= $block->escapeHtml(__('Import Inventory/Price')) ?></span>
+        </legend><br>
+
+        <div class="messages">
+        </div>
+
+        <div class="admin-field field-export-type">
+            <label class="label" for="import_type"><span><?= $block->escapeHtml(__('Import Type')) ?></span></label>
+            <div class="control">
+                <select id="import_type" name="import_type" title="<?= __('Import Type') ?>" class=" select" required="true">
+                    <option value="" selected="selected"><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                    <option value="price"><?= __('Price') ?></option>
+                    <option value="quantity"><?= __('Quantity') ?></option>
+                    <option value="weight"><?= __('Weight') ?></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="admin-field field-distributor">
+            <label class="label" for="distributor"><span><?= $block->escapeHtml(__('Distributor')) ?></span></label>
+            <div class="control">
+                <select id="distributor_id" name="distributor_id" title="Distributor" class=" select" required="true">
+                    <option value="" selected="selected"><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                    <?php
+                    foreach ($block->getDistributorOptions() as $item) :
+                        if ($item['value'] != '') : ?>
+                            <option value="<?= $item['value']; ?>"><?= $item['label']; ?></option>
+                    <?php endif;
+                    endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="admin-field field-import-file">
+            <label class="label" for="import_file"><span><?= $block->escapeHtml(__('Input Data')) ?></span></label>
+            <div class="control">
+                <input type="file" name="import_file" id="import_file" class="custom-file-input" required />
+            </div>
+        </div>
+        <hr/>
+        <p><?= $block->escapeHtml(__('Max default stock: %1', $block->getMaxDefaultStock())) ?></p>
+        <p><b>CSV field separator:</b> ,</p>
+        <p><b>Columns - Price:</b> product_brand,product_model,product_code,product_price</p>
+        <p><b>Columns - Qty:</b> product_brand,product_model,product_code,qty_saleable</p>
+        <p><b>Columns - Weight:</b> product_brand,product_model,product_code,product_weight,product_weight_net,product_gross
+            <br/><i>>>> If weight_xxx is empty, NOT update</i></p>
+
+    </fieldset>
+
+    <div class="action-buttons">
+        <button id="distributors-export-btn" class="action-scalable" type="submit"><span><?= $block->escapeHtml(__('Import')) ?></span></button>
+    </div>
+</form>
+<?php endif; ?>

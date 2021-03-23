@@ -1,0 +1,385 @@
+<?php
+/**
+* Copyright © Magento, Inc. All rights reserved.
+* See COPYING.txt for license details.
+*/
+
+// @codingStandardsIgnoreFile
+$_config  = $this->helper('Sm\Market\Helper\Data');
+$tabStyle = $_config->getProductDetail('tab_style');
+
+$show_custom_tab   = $_config->getProductDetail('show_custom_tab');
+$custom_tab_name   = $_config->getProductDetail('custom_tab_name');
+$customtab_content = $_config->getProductDetail('customtab_content');
+$tab_style_disable = true;
+
+?>
+<?php if ($detailedInfoGroup = $block->getGroupChildNames('detailed_info', 'getChildHtml')): ?>
+<?php if ($tab_style_disable == false): ?>
+<div class="product info detailed">
+    <?php $layout = $block->getLayout(); ?>
+    <div class="product data items <?php echo $tabStyle . '-style' ?>" data-mage-init='{"tabs":{"openedState":"active"}}'>
+        <?php if ($tabStyle == "default" || $tabStyle == "vertical") { ?>
+        <ul class="resp-tabs-list">
+            <?php foreach ($detailedInfoGroup as $name): ?>
+            <?php
+                $html = $layout->renderElement($name);
+                if (!trim($html)) {
+                	continue;
+                }
+                $alias = $layout->getElementAlias($name);
+                $label = $block->getChildData($alias, 'title');
+            ?>
+            <li class="data item title"
+                aria-labeledby="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"
+                data-role="collapsible" id="tab-label-<?= /* @escapeNotVerified */ $alias ?>">
+                <a class="data switch"
+                   tabindex="-1"
+                   data-toggle="switch"
+                   href="#<?= /* @escapeNotVerified */ $alias ?>"
+                   id="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"><?= /* @escapeNotVerified */ $label ?></a>
+            </li>
+            <?php endforeach; ?>
+            <?php if ($show_custom_tab) { ?>
+            <li id="tab-label-customtab" class="data item title" aria-labeledby="tab-label-customtab-title" data-role="collapsible" role="tab" data-collapsible="true" aria-controls="product.info.customtab" aria-selected="false" aria-expanded="true" tabindex="0">
+                <a class="data switch"
+                   tabindex="-1"
+                   data-toggle="switch"
+                   href="#<?= /* @escapeNotVerified */ $alias ?>"
+                   id="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"><?php echo $custom_tab_name ?>
+                </a>
+            </li>
+            <?php } ?>
+        </ul>
+        <div class="resp-tabs-container">
+            <?php foreach ($detailedInfoGroup as $name): ?>
+            <?php
+                $html = $layout->renderElement($name);
+                if (!trim($html)) {
+                	continue;
+                }
+                $alias = $layout->getElementAlias($name);
+                $label = $block->getChildData($alias, 'title');
+            ?>
+            <div class="data item content resp-tab-content" id="<?= /* @escapeNotVerified */ $alias ?>" data-role="content">
+                <?= /* @escapeNotVerified */ $html ?>
+            </div>
+            <?php endforeach; ?>
+            <?php if ($show_custom_tab) { ?>
+            <div class="data item content resp-tab-content" id="customtab" data-role="content">
+                <?php echo $customtab_content; ?>
+            </div>
+            <?php } ?>
+        </div>
+    <?php } else { ?>
+        <?php foreach ($detailedInfoGroup as $name): ?>
+        <?php
+            $html = $layout->renderElement($name);
+            if (!trim($html)) {
+                continue;
+            }
+            $alias = $layout->getElementAlias($name);
+            $label = $block->getChildData($alias, 'title');
+        ?>
+        <h2 class="data item title resp-accordion"
+            aria-labeledby="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"
+            data-role="collapsible" id="tab-label-<?= /* @escapeNotVerified */ $alias ?>">
+            <a class="data switch"
+               tabindex="-1"
+               data-toggle="switch"
+               href="#<?= /* @escapeNotVerified */ $alias ?>"
+               id="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"><?= /* @escapeNotVerified */ $label ?>
+            </a>
+        </h2>
+        <div class="data item content resp-tab-content" id="<?= /* @escapeNotVerified */ $alias ?>" data-role="content">
+            <?= /* @escapeNotVerified */ $html ?>
+        </div>
+        <?php endforeach; ?>
+        <?php if ($show_custom_tab) { ?>
+        <h2 id="tab-label-customtab" class="data item title resp-accordion" aria-labeledby="tab-label-customtab-title" data-role="collapsible" role="tab" data-collapsible="true" aria-controls="product.info.customtab" aria-selected="false" aria-expanded="true" tabindex="0">
+            <a class="data switch"
+               tabindex="-1"
+               data-toggle="switch"
+               href="#<?= /* @escapeNotVerified */ $alias ?>"
+               id="tab-label-<?= /* @escapeNotVerified */ $alias ?>-title"><?php echo $custom_tab_name ?>
+            </a>
+        </h2>
+        <div class="data item content resp-tab-content" id="customtab" data-role="content">
+            <?php echo $customtab_content; ?>
+        </div>
+        <?php } ?>
+    <?php } ?>
+    </div>
+</div>
+<?php else: ?>
+<?php
+    $layout = $block->getLayout();
+    // HTML for alias description
+    $html_description = "";
+    $alias_description = "";
+    $label_description = "";
+
+    // HTML for alias additional
+    $html_additional = "";
+    $alias_additional = "";
+    $label_additional = "";
+
+    // HTML for alias reviews
+    $html_reviews = "";
+    $alias_reviews = "";
+    $label_reviews = "";
+?>
+<?php foreach ($detailedInfoGroup as $name): ?>
+<?php
+    $alias = $layout->getElementAlias($name);
+
+    switch ($alias) {
+        case 'description':
+            $html_description = $layout->renderElement($name);
+            if (!trim($html_description)) {
+                continue;
+            }
+
+            $label_description = $block->getChildData($alias, 'title');
+            $alias_description = $alias;
+            break;
+
+        case 'additional':
+            $html_additional = $layout->renderElement($name);
+            if (!trim($html_additional)) {
+                continue;
+            }
+
+            $label_additional = $block->getChildData($alias, 'title');
+            $alias_additional = $alias;
+            break;
+
+        case 'reviews':
+            $html_reviews = $layout->renderElement($name);
+            if (!trim($html_additional)) {
+                continue;
+            }
+
+            $label_reviews = $block->getChildData($alias, 'title');
+            $alias_reviews = $alias;
+            break;
+    }
+?>
+<?php endforeach; ?>
+<?php
+    $currentProduct = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Registry')->registry('current_product');
+    $block_product = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Catalog\Block\Product\View');
+    //$block_vesbrand = \Magento\Framework\App\ObjectManager::getInstance()->get('Ves\Brand\Block\Product\View');
+?>
+<div class="container details">
+    <div class="row">
+        <div class="col-sm-12">
+        <?php // THONG_SO_KY_THUAT ?>
+            <h2 class="detail-heading content-technical-specs"><?php echo __('Product Specs'); ?></h2>
+            <div class="content-config">
+                <div class="float-left image-spec">
+                <!-- hinh minh hoa -->
+                <?php
+                    //$currentProduct = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Registry')->registry('current_product');
+                    $spec_image = $currentProduct->getData('spec_image');
+                    $filterProvider = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Cms\Model\Template\FilterProvider')->getPageFilter()->filter($spec_image);
+                ?>
+                <?php if($spec_image) : ?>
+                    <?php echo $filterProvider; ?>
+                <?php endif; ?>
+                </div>
+                <div class="float-right technical-specs">
+                    <div class="detail-technical-specs">
+                    <?php
+                        echo $html_additional;
+                    ?>
+			              </div>
+                    <!-- TAI LIEU HUONG DAN -->
+                    <?php
+                        //$currentProduct = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Registry')->registry('current_product');
+                        $user_guide = $currentProduct->getData('user_guide');
+                        if ($user_guide) {
+                            echo '<div class="div-user-guide-01">';
+                            echo '<h2 class="detail-heading">'.__('Document').'</h2>';
+                            echo '<div class="detail-user-guide" itemprop="user_guide">';
+                            echo $user_guide;
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+        <?php // DESCRIPTION ?>
+            <h2 class="detail-heading"><?php echo __('Product Description'); ?></h2>
+            <div class="detail-description product-detail-description">
+            <?php echo $html_description; ?>
+            <div id="flag-review"></div>
+            <?php // REVIEWS ?>
+            <div class="container-reviews">
+                <div class="col-reviews">
+                    <div id="reviews">
+                        <?php echo $html_reviews; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<?php endif; ?>
+<!-- top -->
+<div class="detail-scroll-product">
+    <div class="container">
+        <div class="row">
+            <div class ="col-md-7 col-7">
+                <div class="row">
+                    <div class ="float-left left-custom">
+                        <img class="image-p-scroll" src="<?php echo $currentProduct->getMediaGalleryImages()->getFirstItem()->getUrl(); ?>"/>
+                    </div>
+                    <div class ="float-left right-custom">
+                        <p class="page-title-scroll"><?php echo $currentProduct->getName(); ?></p>
+                        <div class="price-scroll">
+                            <?php echo $block_product->getProductPrice($currentProduct); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class ="col-md-5 col-5">
+                <div class="button-submit-scroll">
+                <?php if ($currentProduct->isSaleable() && ($currentProduct->getTypeId() != 'simple' || $currentProduct->getFinalPrice() > 0  )) { ?>
+                    <button onclick="document.getElementById('product-orderhere-button').click()" title="<?php echo __('Order here'); ?>" class="action btn btn-primary order-here" id="product-orderhere-button-s">
+                        <span><?php echo __('Order here'); ?></span>
+                    </button>
+                    <button onclick="document.getElementById('product-addtocart-button').click()" title="<?php echo __('Add to Cart'); ?>" class="action btn btn-danger tocart" id="product-addtocart-button-s">
+                        <span><?php echo __('Add to Cart'); ?></span>
+                    </button>
+                <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- mobile -->
+<div class="detail-scroll-product-mobile">
+    <div class="container">
+        <div class="row">
+            <div class ="col-md-12 col-12">
+                <div class="mobile-custom-button">
+                <?php if ($currentProduct->isSaleable() && ($currentProduct->getTypeId() != 'simple' || $currentProduct->getFinalPrice() > 0  )) { ?>
+                    <button onclick="document.getElementById('product-orderhere-button').click()" title="<?php echo __('Order here'); ?>" class="action btn btn-primary order-here" id="product-orderhere-button-s-mobile">
+                        <span><?php echo __('Order here'); ?></span>
+                    </button>
+                    <button onclick="document.getElementById('product-addtocart-button').click()" title="<?php echo __('Add to Cart'); ?>" class="action btn btn-danger tocart" id="product-addtocart-button-s-mobile">
+                        <span><?php echo __('Add to Cart'); ?></span>
+                    </button>
+                <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+   require([ 'jquery', 'jquery/ui'], function($) {
+       var header = $(".detail-scroll-product");
+       var bottom =  $(".detail-scroll-product-mobile");
+       var width =  $(window).width();
+       var height_top = $(".menu-on-top").height();
+       var selector = $('#flag-scroll');
+       $(window).scroll(function() {
+           var scroll = $(window).scrollTop();
+           if(selector.length > 0){
+                var height_check = selector.offset().top;
+           }
+           height_top = $(".menu-on-top").height()+ 10;
+           if (scroll >= height_check) {
+               if (width <= 766) {
+                  $(".custom-fixed").css("top", height_top + "px");
+                   header.removeClass("custom-fixed");
+                   bottom.addClass("custom-fixed");
+               }else{
+                  $(".custom-fixed").css("top", height_top + "px");
+                   header.addClass("custom-fixed");
+                   bottom.removeClass("custom-fixed");
+               }
+           } else {
+               header.removeClass("custom-fixed");
+               bottom.removeClass("custom-fixed");
+           }
+       });
+      // click scroll review
+      $('.product-info-main .reviews-actions a').click(function (){
+         if (jQuery(window).width() > 766) {
+            $('html, body').animate({
+               scrollTop: $(".container-reviews").offset().top - 450
+            }, 1000)
+         }else{
+            $('html, body').animate({
+               scrollTop: $(".container-reviews").offset().top - 155
+            }, 1000)
+         }
+      });
+		// logic
+		$(window).resize(function(){
+         var scroll = $(window).scrollTop();
+         if(selector.length > 0){
+            var height_check = selector.offset().top;
+         }
+         height_top = $(".menu-on-top").height() + 10;
+         width =  $(window).width();
+         if (scroll >= height_check) {
+               if (width <= 766) {
+                   $(".custom-fixed").css("top", height_top + "px");
+                   header.removeClass("custom-fixed");
+                   bottom.addClass("custom-fixed");
+               }else{
+                  $(".custom-fixed").css("top", height_top + "px");
+                   header.addClass("custom-fixed");
+                   bottom.removeClass("custom-fixed");
+               }
+           } else {
+               header.removeClass("custom-fixed");
+               bottom.removeClass("custom-fixed");
+           }
+      });
+      $(document).ready(function(){
+          $('.product.attribute.overview .value').readmore({
+              speed: 75,
+              collapsedHeight: 132,
+              moreLink: '<div class="moreless"><a href="#"><?php  echo __('Show more sort desctiption'); ?> <i class="fa fa-caret-down" aria-hidden="true"></i></a></div>',
+              lessLink: '<div class="moreless"><a href="#"><?php  echo __('Show less sort desctiption'); ?> <i class="fa fa-caret-up" aria-hidden="true"></i></a></div>',
+              afterToggle: function(trigger, element, expanded) {
+                  if(! expanded) { // The "Close" link was clicked
+                      $('html, body').animate( { scrollTop: element.offset().top - 191 }, {duration: 100 } );
+                  }
+              }
+          });
+
+          $('#product-attribute-specs-table').readmore({
+              speed: 75,
+              collapsedHeight: 321,
+              moreLink: '<div class="row-show-more-specifications"><a class="show-more-specifications" href="#"><?php  echo __('Show more specifications'); ?> <i class="fa fa-caret-down" aria-hidden="true"></i></a></div>',
+              lessLink: '<div class="row-show-more-specifications"><a class="show-more-specifications" href="#"><?php  echo __('Show less specifications'); ?> <i class="fa fa-caret-up" aria-hidden="true"></i></a></div>',
+              afterToggle: function(trigger, element, expanded) {
+                  if(! expanded) { // The "Close" link was clicked
+                      $('html, body').animate( { scrollTop: element.offset().top - 191 }, {duration: 100 } );
+                  }
+              }
+          });
+
+          $('.product.attribute.description .value').readmore({
+              speed: 75,
+              collapsedHeight: 500,
+              moreLink: '<div class="moreless"><a href="#"><?php  echo __('Show description more'); ?> <i class="fa fa-caret-down" aria-hidden="true"></i></a></div>',
+              lessLink: '<div class="moreless"><a href="#"><?php  echo __('Show description less'); ?> <i class="fa fa-caret-up" aria-hidden="true"></i></a></div>',
+              afterToggle: function(trigger, element, expanded) {
+                  if(! expanded) { // The "Close" link was clicked
+                      $('html, body').animate( { scrollTop: element.offset().top - 54}, {duration: 100 } );
+                  }
+              }
+          });
+      });
+
+   });
+</script>

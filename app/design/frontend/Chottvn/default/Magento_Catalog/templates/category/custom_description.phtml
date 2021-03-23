@@ -1,0 +1,29 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$category = $_objectManager->create('Magento\Catalog\Model\Category')->setStoreId(0)->load($block->getCurrentCategory()->getId());
+?>
+<?php
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Category view template
+ *
+ * @var $block \Magento\Catalog\Block\Category\View
+ */
+?>
+<h1 class="category-page-title">
+	<span class="title-heading"><?= $category->getName(); ?></span>
+</h1>
+<?php if ($_description = $category->getDescription()) :?>
+    <div class="category-description">
+        <?= /* @noEscape */ $this->helper(Magento\Catalog\Helper\Output::class)->categoryAttribute(
+            $block->getCurrentCategory(),
+            $_description,
+            'description'
+        ) ?>
+    </div>
+<?php endif; ?>

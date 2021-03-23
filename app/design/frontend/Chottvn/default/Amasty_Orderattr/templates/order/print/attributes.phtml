@@ -1,0 +1,156 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+?>
+<?php
+/**
+ * @var \Amasty\Orderattr\Block\Order\PrintOrder $block
+ */
+    $arr_vat_invoice_required = [];
+    $arr_note_shipping = [];
+    $arr_bank_transfer_note = [];
+    $arr_guarantee_info = [];
+    $orderAttributeList = $block->getOrderAttributesData();
+    foreach ($orderAttributeList as $attribute){
+        if($attribute['code'] == 'vat_invoice_required' || $attribute['code'] == 'vat_company'  || $attribute['code'] == 'vat_address' ||$attribute['code'] == 'vat_number' ||$attribute['code'] == 'vat_contact_name' ||$attribute['code'] == 'vat_contact_phone_number' || $attribute['code'] == 'vat_contact_email' || $attribute['code'] == 'vat_contact_prefix'){
+            array_push($arr_vat_invoice_required, $attribute);
+        }
+        if($attribute['code'] == 'guarantee_info'){
+            array_push($arr_guarantee_info, $attribute);
+        }
+        if($attribute['code'] == 'bank_transfer_note'){
+            array_push($arr_bank_transfer_note, $attribute);
+        }
+        if($attribute['code'] == 'note_shipping'){
+            array_push($arr_note_shipping, $attribute);
+        }
+    }
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $checkoutSession = $objectManager->get('Magento\Checkout\Model\Session');
+    $getOrder = $checkoutSession->getLastRealOrder();
+    $customerEmail = $getOrder->getCustomerEmail();
+?>
+<style>
+.custom-label{
+    font-weight:600;
+}
+</style>
+<?php
+    // check data
+    foreach($arr_vat_invoice_required as $item){
+        if($item['code'] == 'vat_invoice_required' &&  $item['value'] == 'Không'){
+            $arr_vat_invoice_required = [];
+        }
+    }
+
+    $resultArray = array_map('current',$arr_vat_invoice_required);
+    $arr_vat_invoice_required_new = [];
+    if(!in_array("vat_contact_name" ,$resultArray))
+    {
+        foreach ($arr_vat_invoice_required as $item) {
+            if ($item['code'] == 'vat_contact_prefix') {
+                unset($item['code']);
+            }else{
+                array_push($arr_vat_invoice_required_new, $item);
+            }
+        }
+    }
+    if(sizeof($arr_vat_invoice_required_new) > 0){
+        $arr_vat_invoice_required = $arr_vat_invoice_required_new;
+    }
+?>
+<?php if(sizeof($arr_vat_invoice_required) > 0 || sizeof($arr_guarantee_info) > 0 || sizeof($arr_bank_transfer_note) > 0 || sizeof($arr_note_shipping) > 0  ) : ?>
+    <div class="col-sm-12 order-detail collapse show" style="display:none;">
+        <div class="row">
+             <?php if(sizeof($arr_note_shipping) > 0){ ?>
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?php echo __("Order notes"); ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php foreach ($arr_note_shipping as $item) : ?>
+                                <?= /** @noEscape */ $item['value']; ?>
+                                <br>
+                            <?php endforeach;?>
+                        </div>
+                    </div>
+                </div>
+            <?php }?>
+            <?php if(sizeof($arr_vat_invoice_required) > 0){ ?>
+                <div class="col-md-4 order-totals" id ="invoice-id"  style="display:none;">
+                    <p class="order-total-title"><?php echo __("Request an invoice"); ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php $i = 0; ?>
+                            <?php foreach ($arr_vat_invoice_required as $item) : ?>
+                                <?php $i++ ?>
+                                <?php if($i == 1) {?>
+                                    <?php continue; ?>
+                                <?php }else{ ?>
+                                        <?php if($i == 5 ){ ?>
+                                        <p class="custom-label"><span><?php /** @noEscape */ echo __('Contact Information'); ?> </span></p>
+                                        <p class="<?php echo $item['code'];?>"><span><?= /** @noEscape */ $item['label']; ?>: </span><?= /** @noEscape */ ucfirst($item['value']); ?></p>
+                                        <?php }else{ ?>
+                                            <p class="<?php echo $item['code'];?>"><span><?= /** @noEscape */ $item['label']; ?>: </span><?= /** @noEscape */ ucfirst($item['value']); ?></p>
+                                        <?php } ?>
+                                <?php } ?>
+                            <?php endforeach;?>
+                        </div>
+                    </div>
+                </div>
+            <?php }?>
+            <?php if(sizeof($arr_bank_transfer_note) > 0){ ?>
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?php echo __("Bank transfer"); ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php foreach ($arr_bank_transfer_note as $item) : ?>
+                                <?= /** @noEscape */ $item['value']; ?>
+                                <br>
+                            <?php endforeach;?>
+                            <?php
+                                if ($this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('bank-transfer-note')->toHtml() !== '') {
+                                    echo '<br>';
+                                    echo $this->getLayout()
+                                        ->createBlock('Magento\Cms\Block\Block')
+                                        ->setBlockId('bank-transfer-note')
+                                        ->toHtml();
+                                }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php }?>
+            <?php if(sizeof($arr_guarantee_info) > 0){ ?>
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?php echo __("Warranty information"); ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php foreach ($arr_guarantee_info as $item) : ?>
+                                <?= /** @noEscape */ $item['value']; ?>
+                                <br>
+                            <?php endforeach;?>
+                        </div>
+                    </div>
+                </div>
+            <?php }?>
+        </div>
+    </div>
+<?php endif; ?>
+<div class="col-sm-12 order-detail note-checkout-success">
+    <div class="row">
+        <div class="col-12">
+            <?php if(strpos($customerEmail, 'guest_') !== false): ?>
+            <?php else: ?>
+                <p>
+                    Thông tin chi tiết về đơn hàng đã được gửi đến mail <span class="email"><?= $customerEmail; ?></span>. Nếu không tìm thấy, vui lòng kiểu tra hộp thư Spam hoặc Junk Folder.
+                </p>
+            <?php endif; ?>
+            <p>
+                Mọi thắc mắc về đơn hàng. Quý khách vui lòng liên hệ với bộ phận chăm sóc khách hàng của CTy CP Chợ Trực Tuyến qua Hotline <span class="tele">0899 00 20 20</span> (8:00-20:00 hàng ngày kể cả Thứ 7, Chủ Nhật), hoặc email: <span class="email">lienhe@chotructuyen.co</span>
+            </p>
+        </div>
+    </div>
+</div>

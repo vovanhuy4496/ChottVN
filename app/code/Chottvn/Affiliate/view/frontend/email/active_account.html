@@ -1,0 +1,20 @@
+<!--@subject {{trans "Kích hoạt tài khoản CTV tại %store_name" store_name=$store.getFrontendName()}}  @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>{{trans "Chào %full_name," full_name=$fullName}}</p>
+<p>{{trans "Chúc mừng bạn đã đăng ký thành công tài khoản Cộng tác viên Tư vấn bán hàng tại <a href='%home_url'>chotructuyen.co</a>" home_url=$homeLink |raw}}</p>
+<p>{{trans "Mã CTV của bạn là: <strong>%affiliate_code</strong>" affiliate_code=$affiliateCode |raw}}</p>
+<p>{{trans "Tên đăng nhập là: <strong>%username</strong>" username=$username |raw}}</p>
+<p>{{trans "Vui lòng kích hoạt tài khoản theo đường link sau đây trong vòng <strong class="t-orange">%link_expired_period</strong> để chính thức trở thành cộng tác viên của <a href='%home_url'>chotructuyen.co</a>" home_url=$homeLink link_expired_period=$linkExpiredPeriod
+    |raw}}
+</p>
+<div class="ta-center mg-t-30 mg-b-30">{{trans "<a href='%active_url' class="btn-primary">Kích hoạt tài khoản cộng tác viên</a>" active_url=$activeLink |raw}}</div>
+<p>{{trans "Sau khi nhấn link kích hoạt tài khoản cộng tác viên, bạn <strong>hãy nhập mã xác thực được gửi đến số điện thoại đăng ký và thiết lập mật khẩu</strong> để đảm bảo tính bảo mật cho tài khoản." |raw}}</p>
+<p>{{trans "Mọi thắc mắc về tài khoản cộng tác viên, vui lòng liên hệ với Phòng Nhân sự, Cty CP Chợ Trực Tuyến qua email: <a href='mailto:lienhe@chotructuyen.co'>ctv@chotructuyen.co</a>" |raw}}</p>
+<br />
+<p>{{trans "Chúc bạn một ngày vui vẻ."}}</p>
+<p>{{trans "Trân trọng!"}}</p>
+<p>{{trans "Cty CP Chợ Trực Tuyến"}}</p>
+
+{{template config_path="design/email/footer_template"}}

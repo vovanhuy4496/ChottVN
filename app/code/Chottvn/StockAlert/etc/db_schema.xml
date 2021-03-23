@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="chottvn_stockalert_request Table" engine="innodb" name="chottvn_stockalert_request" onCreate="migrateDataFromAnotherTable(chottvn_stock_available_observer)" resource="default">
+		<column comment="Id" identity="true" name="id" nullable="false" unsigned="false" xsi:type="int"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="id"/>
+		</constraint>
+		<column comment="Customer Id" name="customer_id" nullable="true" xsi:type="int"/>
+		<column comment="product Id" name="product_id" nullable="true" xsi:type="int"/>
+		<column comment="Assignee Id" name="assignee_id" nullable="true" xsi:type="int"/>
+		<column comment="Name Customer Contact" length="255" name="contact_name" nullable="true" xsi:type="varchar"/>
+		<column comment="Contact phone number" length="255" name="contact_phone_number" nullable="true" xsi:type="varchar"/>
+		<column comment="Contact email" length="255" name="contact_email" nullable="true" xsi:type="varchar"/>
+		<column comment="Sms alert sent at" name="sms_alert_sent_at" nullable="true" xsi:type="varchar"/>
+		<column comment="Sms confirmation sent at" name="sms_confirmation_sent_at" nullable="true" xsi:type="varchar"/>
+		<column comment="Email alert sent at" name="email_alert_sent_at" nullable="true" xsi:type="varchar"/>
+		<column comment="Sms Alert Sent At" name="email_confirmation_sent_at" nullable="true" xsi:type="varchar"/>
+		<column comment="Status" name="status" nullable="true" xsi:type="smallint"/>
+		<column comment="Flag Form" name="flag_form" nullable="true" xsi:type="varchar"/>
+		<column comment="update at" name="updated_at" nullable="true" xsi:type="datetime"/>
+		<column comment="created at" name="created_at" nullable="true" xsi:type="datetime"/>
+	</table>
+	<table name="chottvn_stock_available_observer" disabled="true" />
+</schema>

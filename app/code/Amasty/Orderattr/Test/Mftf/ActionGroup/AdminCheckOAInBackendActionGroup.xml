@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminCheckOAInBackend">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{AdminAllOrdersPage.url}}" stepKey="navigateToOrder"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminOrdersGridSection.LastOrder}}" stepKey="waitForSelectOrder"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterClickLastOrder"/>
+        <see selector="{{AdminOrderSection.OALabelInAdditionalInformation(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel"/>
+        <see selector="{{AdminOrderSection.OAValueInAdditionalInformation(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="AdminCheckSaveValueForCheckboxGroupOAInReorder" extends="AdminCheckOAInBackend">
+        <click selector="{{AdminOrderSection.Reorder}}" stepKey="clickReorder"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterClickReorder"/>
+        <seeElement selector="{{AdminOrderSection.OALabelInReorder(adminCreateOASettings.DefaultLabel)}}"
+                    stepKey="seeOALabelInReorder"/>
+        <seeCheckboxIsChecked selector="{{AdminOrderSection.CheckboxOAValueInReorder(adminCreateOASettings.OAValue)}}"
+                              stepKey="seeCheckboxChecked"/>
+    </actionGroup>
+
+    <actionGroup name="AdminCheckSaveValueForDateOAInReorder" extends="AdminCheckOAInBackend">
+        <click selector="{{AdminOrderSection.Reorder}}" stepKey="clickReorder"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterClickReorder"/>
+        <seeElement selector="{{AdminOrderSection.OALabelInReorder(adminCreateOASettings.DefaultLabel)}}"
+                    stepKey="seeOALabelInReorder"/>
+        <seeElement selector="{{AdminOrderSection.DateOAValueInReorder(adminCreateOASettings.OAValue)}}"
+                    stepKey="seeSavedValue"/>
+    </actionGroup>
+
+    <actionGroup name="AdminCheckOAOnOrderGrid">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{AdminAllOrdersPage.url}}" stepKey="navigateToOrder"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <seeElement selector="{{AdminOrderSection.OAOnOrderGrid(adminCreateOASettings.OAValue)}}" stepKey="seeElement"/>
+    </actionGroup>
+
+    <actionGroup name="AdminCreateOrderWithTextFieldOA" extends="AdminCreateOrderChooseUserAndAddProducts">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+            <argument name="shippingMethods"/>
+        </arguments>
+        <remove keyForRemoval="enterSkuProductForAdd"/>
+        <fillField selector="{{AdminCreateOrderSection.TableProductsSearchSkuField}}" userInput="{{products}}"
+                   stepKey="enterSkuProduct" after="waitForAjaxLoad2"/>
+        <fillField selector="{{AdminOrderSection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}" stepKey="fillValueOA"/>
+        <scrollTo selector="{{AdminCreateOrderSection.PaymentAndShippingSection}}" stepKey="scrollToSectionShippingAndPayment"/>
+        <click selector="{{AdminCreateOrderSection.GetShippingMethodsButton}}" stepKey="waitForGetShippingMethods"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoadAfterGetShippingMethods"/>
+        <click selector="//input[@id='{{shippingMethods.shippingMethodsName}}']" stepKey="waitForSelectShippingMethods"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterShippingMethods"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoadAfterShippingMethods"/>
+        <click selector="{{AdminCreateOrderSection.SubmitOrderButton}}" stepKey="waitForSubmitOrder"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSubmitOrder"/>
+    </actionGroup>
+
+</actionGroups>

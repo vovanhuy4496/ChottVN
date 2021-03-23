@@ -1,0 +1,55 @@
+{
+    "chottvn_notification_messagetype": {
+        "column": {
+            "id": true,
+            "name": true,
+            "description": true,
+            "code": true,
+            "status": true,
+            "configuration": true,
+            "created_at": true,
+            "updated_at": true,
+            "deleted_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_notification_message": {
+        "column": {
+            "id": true,
+            "messagetype_id": true,
+            "created_by": true,
+            "customer_group_ids": true,
+            "title": true,
+            "description": true,
+            "image": true,
+            "taget_url": true,
+            "note": true,
+            "is_send_email": true,
+            "started_at": true,
+            "created_at": true,
+            "updated_at": true,
+            "deleted_at": true,
+            "content_email": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_notification_delivery": {
+        "column": {
+            "id": true,
+            "message_id": true,
+            "customer_id": true,
+            "read_at": true,
+            "read_count": true,
+            "customer_email": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

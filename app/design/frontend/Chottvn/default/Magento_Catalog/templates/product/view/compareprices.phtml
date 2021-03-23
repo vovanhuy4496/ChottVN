@@ -1,0 +1,48 @@
+<?php
+// Get Current Product
+$currentProduct = $block->getProduct();
+$modelProduct = $currentProduct->getData('model');
+//echo '<pre>';
+//print_r($currentProduct->getData('model'));exit;
+
+// Get API Giatt
+$helper = $this->helper('Chottvn\PriceComparison\Helper\Data');
+$values = $helper->callApiPriceComparison($modelProduct);
+$enablePriceComp = $helper->getEnable();
+
+if($values){
+  // HTTP CODE
+  $statuscode = $values->getStatusCode();
+
+  // Dât response
+  $data = $values->getBody();
+  if(!empty($data) && $statuscode == 200){
+    $models = json_decode($data)->_embedded->model;
+  }else{
+    $models = [];
+  }
+}else{
+  $statuscode = 0;
+  $models = [];
+}
+
+?>
+<?php 
+  if($statuscode == 200 && isset($models) && $enablePriceComp==1){
+?>
+<div class="price-comparison">Giá thị trường</div>
+
+<table class="table table-striped price-comparison-link">
+  <tbody>
+    <?php foreach ($models as $item) { ?>
+      <tr>
+        <td scope="row">
+          <a href="<?php echo $item->url; ?>" target="_blank"><?php echo $item->provider; ?> (click để xem)</a>
+        </td>
+        <td><?php echo number_format($item->price, 0, '', '.'); ?> đ</td>
+        <td><?php echo date('d-m-Y H:i:s', strtotime($item->last_updated));?></td>
+      </tr>
+    <?php } ?>
+  </tbody>
+</table>
+<?php } ?>

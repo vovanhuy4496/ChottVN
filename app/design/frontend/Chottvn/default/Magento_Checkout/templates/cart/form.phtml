@@ -1,0 +1,467 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/**  @var $block \Magento\Checkout\Block\Cart\Grid */
+?>
+<?php $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1); ?>
+<?php
+  $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+  $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+  $handlingOverWeightFee = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('carriers/tablerate/handling_over_weight_fee');
+  // initialize session
+  $coreSession = $objectManager->get('\Magento\Framework\Session\SessionManagerInterface');
+  $calcAddress = 0;
+  $checkoutSession = $objectManager->get('Magento\Checkout\Model\Session');
+  $quoteId = $checkoutSession->getQuote()->getId();
+  $helperbg = $this->helper('Chottvn\PriceQuote\Helper\Data');
+// $filterableAttributes = $objectManager->get('\Magento\Catalog\Model\Layer\Category\FilterableAttributeList');
+// $attributes = $filterableAttributes->getList();
+
+// $eavModel = $objectManager->create('Magento\Eav\Model\ResourceModel\Entity\Attribute');
+// $attr_id = $eavModel->getIdByCode('catalog_product','power_w_filter');
+
+// $eavConfig = $objectManager->create('Magento\Eav\Model\Config');
+// $attribute = $eavConfig->getAttribute('catalog_product', 'spraying_pressure_bar_filter');
+// $options = $attribute->getSource()->getAllOptions();
+
+// print_r($attribute->getFrontendLabel());
+// echo '<pre>';print_r(get_class_methods($attribute));echo '</pre>';exit;
+// echo '<pre>';print_r($options);echo '</pre>';exit;
+
+// get list address by customer
+// $customer_address = array();
+// if ($customerSession->isLoggedIn()) {
+//     $customer_id = $customerSession->getCustomerId();
+//     $customer_obj = $objectManager->create('Magento\Customer\Model\Customer')->load($customer_id);
+//     foreach ($customer_obj->getAddresses() as $address) {
+//         $array_address = $address->toArray();
+
+//         // create full-address
+//         if ($array_address['street']) {
+//             $tmp_fulladdress['street'] = $array_address['street'];
+//         }
+//         if ($array_address['township']) {
+//             $tmp_fulladdress['township'] = $array_address['township'];
+//         }
+//         if ($array_address['city']) {
+//             $tmp_fulladdress['city'] = $array_address['city'];
+//         }
+//         if ($array_address['region']) {
+//             $tmp_fulladdress['region'] = $array_address['region'];
+//         }
+
+//         // store full-address to array
+//         $array_address['full_address'] = implode(', ', $tmp_fulladdress);
+//         $customer_address[] = $array_address;
+
+
+//     }
+// }
+// var_dump($customer_address);
+
+
+?>
+<script>
+  window.overWeightValue = <?php echo $handlingOverWeightFee; ?>;
+  window.title_grand_total = "<?php echo __('Grand Total'); ?>";
+  window.title_grand_total_temp = "<?php echo __('Grand Total Temp'); ?>";
+  window.getOriginalTotalTitle = "<?php echo __('Original Total'); ?>";
+</script>
+
+<div class="page-title-wrapper cart">
+    <h1 class="page-title"><?= __("Cart"); ?> <span class="page-title-sub">(<?= $block->getItemsCountCTT($quoteId) ?> <?= $block->getItemsCountCTT($quoteId) > 1 ? __("products") : __("product") ?>)</span></h1>
+</div><!-- ./cart-title -->
+<?= $block->getChildHtml('form_before') ?>
+<div id ="cart-content">
+    <form action="<?= $block->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>"
+        method="post"
+        id="form-validate"
+        data-mage-init='{"Magento_Checkout/js/action/update-shopping-cart":
+                {"validationURL" : "<?= $block->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>",
+                "updateCartActionContainer": "#update_cart_action_container"}
+        }'
+        class="form form-cart">
+        <?= $block->getBlockHtml('formkey') ?>
+        <div class="cart table-wrapper<?= $mergedCells == 2 ? ' detailed' : '' ?>">
+            <?php if ($block->getPagerHtml()) :?>
+                <div class="cart-products-toolbar cart-products-toolbar-top toolbar"
+                    data-attribute="cart-products-toolbar-top"><?= $block->getPagerHtml() ?>
+                </div>
+            <?php endif ?>
+            <table id="shopping-cart-table"
+                class="cart items data table"
+                data-mage-init='{"shoppingCart":{"emptyCartButton": ".action.clear",
+                "updateCartActionContainer": "#update_cart_action_container"}}'>
+                <caption class="table-caption"><?= $block->escapeHtml(__('Shopping Cart Items')) ?></caption>
+                <thead>
+                    <tr>
+                        <th class="col item" scope="col">
+                        <!-- <span><?= $block->escapeHtml(__('Item')) ?></span> -->
+                        </th>
+                        <!-- <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th> -->
+                        <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Quantity x Price')) ?></span></th>
+                        <th class="col subtotal text-right" scope="col"><span><?= $block->escapeHtml(__('Amount')) ?></span></th>
+                    </tr>
+                </thead>
+                <?php 
+                    $items = $block->getItems();
+                    $arrayMain = array();
+                    $arrayMain = $helperbg->getListQuote($items);
+                    if(!empty($arrayMain) && count($arrayMain) > 0){ 
+                ?>
+                    <?php foreach ($arrayMain as $_item) :?>
+                        <?= $block->getItemHtml($_item) ?>
+                    <?php endforeach ?>
+                    
+                <?php } ?>
+
+            </table>
+            <?php if ($block->getPagerHtml()) :?>
+                <div class="cart-products-toolbar cart-products-toolbar-bottom toolbar"
+                    data-attribute="cart-products-toolbar-bottom"><?= $block->getPagerHtml() ?>
+                </div>
+            <?php endif ?>
+        </div>
+        <!-- address -->
+        <div class="cart main actions">
+                    <?php if ($block->getContinueShoppingUrl()) : ?>
+                        <a class="action continue" href="<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>" title="<?= $block->escapeHtml(__('Continue Shopping')) ?>">
+                            <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <div class="cart main actions-sencondary">
+                    <p>
+                        <?php 
+                            //$block->escapeHtml(
+                            // __(
+                            //     "Please select <a class='price-quote-shipping-address' href='%1'>shipping address</a> to get estimated delivery time and shipping fee.",
+                            //     '#'
+                            // ),
+                            // ['a']
+                            //) 
+                        ?>
+                        <?= __('PQ Please select ') ?><a class='price-quote-shipping-address' href='javascript:void(0)'><?= __('PQ shipping address') ?></a><?= __('PQ to get estimated delivery time and shipping fee.') ?>
+                    </p>
+                    <?php
+                    // get session
+                    $shipping_address_session = $coreSession->getCartShippingAddress();
+                    $filterAddress = 0;
+                    if ($customerSession->isLoggedIn()) {
+                        // filter list address
+                        if ($shipping_address_session['shipping-address']) {
+                            foreach($shipping_address_session['shipping-address'] as $item) {
+                                if ($item["street"] == 'N/A' || $item["township"] == null) {
+                                    $filterAddress++;
+                                }
+                                // var_dump($item);
+                                // echo '<br/>';
+                            }
+                        }
+                        // number addresses con lai sau khi filter
+                        $calcAddress = count($shipping_address_session['shipping-address']) - $filterAddress;
+                        // echo $calcAddress;
+                        if($shipping_address_session['action'] == 'option'){
+                            $region_id = ''; $city_id = ''; $township_id = ''; $street = '';
+                        }else{
+                            if($shipping_address_session['shipping-address-current']){
+                                // lấy giá trị đầu tiên trong array
+                                $shipping_address = $shipping_address_session['shipping-address-current'];
+
+                                // set data cho shipping address
+                                $region_id = $shipping_address['region_id'] ? $shipping_address['region_id'] : '';
+                                $city_id = $shipping_address['city_id'] ? $shipping_address['city_id'] : '';
+                                $township_id = $shipping_address['township_id'] ? $shipping_address['township_id'] : '';
+                                $street = $shipping_address['street'] ? $shipping_address['street'] : '';
+                            }
+                        }
+
+                        // if ($block->getShippingAddress()->getData('lastname') == 'option') {
+                        //     $region_id = '';
+                        //     $city_id = '';
+                        //     $township_id = '';
+                        //     $street = '';
+                        // } else {
+                        //     $region_id = $block->getShippingAddress()->getData('region_id') ? $block->getShippingAddress()->getData('region_id') : '';
+                        //     $city_id = $block->getShippingAddress()->getData('city_id') ? $block->getShippingAddress()->getData('city_id') : '';
+                        //     $township_id = $block->getShippingAddress()->getData('township_id') ? $block->getShippingAddress()->getData('township_id') : '';
+                        //     $street = $block->getShippingAddress()->getData('street') ? $block->getShippingAddress()->getData('street') : '';
+                        // }
+
+                        $tmp_cur_fulladdress = array();
+
+                        if ($block->getShippingAddress()->getData('street')) {
+                            $tmp_cur_fulladdress['street'] = $block->getShippingAddress()->getData('street');
+                        }
+                        if ($block->getShippingAddress()->getData('township')) {
+                            $tmp_cur_fulladdress['township'] = $block->getShippingAddress()->getData('township');
+                        }
+                        if ($block->getShippingAddress()->getData('city')) {
+                            $tmp_cur_fulladdress['city'] = $block->getShippingAddress()->getData('city');
+                        }
+                        if ($block->getShippingAddress()->getData('region')) {
+                            $tmp_cur_fulladdress['region'] = $block->getShippingAddress()->getData('region');
+                        }
+                        $tmp_cur_fulladdress = $block->getShippingAddress()->getData('street').$block->getShippingAddress()->getData('township_id').$block->getShippingAddress()->getData('city_id').$block->getShippingAddress()->getData('region_id');
+                        // echo $tmp_cur_fulladdress;
+
+                    } else {
+
+                        // default
+                        $region_id = ''; $city_id = ''; $township_id = ''; $street = '';
+                        // get session
+                        // $shipping_address_session = $coreSession->getPriceQuoteShippingAddress();
+
+                        // kiem tra session co con hay ko, phai la gues thi moi lay
+                        // va data khong empty thi moi lay
+                        if($shipping_address_session){
+                            if($shipping_address_session['type'] == 'guest' && isset($shipping_address_session['shipping-address-current'])){
+                                // lấy giá trị đầu tiên trong array
+                                $shipping_address = $shipping_address_session['shipping-address-current'];
+
+                                // set data cho shipping address
+                                $region_id = $shipping_address['region_id'] ? $shipping_address['region_id'] : '';
+                                $city_id = $shipping_address['city_id'] ? $shipping_address['city_id'] : '';
+                                $township_id = $shipping_address['township_id'] ? $shipping_address['township_id'] : '';
+                                $street = $shipping_address['street'] ? $shipping_address['street'] : '';
+                            }
+                        }
+                    }
+                    // echo '<pre>';print_r($shipping_address_session);echo '</pre>';
+                    ?>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12 col-12 shipping-address" <?php if($shipping_address_session['shipping-address-current']){echo 'style="display: block;"';}else{echo 'style="display: none;"';} ?>>
+                                <fieldset class="fieldset address">
+                                    <div class="control" style="display: none;">
+                                        <select name="country_id" id="country" class="required-entry" title="Quốc gia" data-validate="{'validate-select':true}">
+                                            <option value="VN" selected="selected">Việt Nam</option>
+                                        </select>
+                                        <input type="hidden" id="type_select_address" name="type_select_address" value="no">
+                                    </div>
+
+                                    <div class="row">
+                                        <?php if ($shipping_address_session['shipping-address'] && $calcAddress > 0) { ?>
+                                            <div class="col-md-12 col-sm-12 col-12">
+                                                <div class="field address-customer-list">
+                                                    <label class="label address-exist" for="address_exist">
+                                                        <span><?= $block->escapeHtmlAttr(__('Select available addresses:')) ?></span>
+                                                    </label>
+                                                    <div class="control" id="shipping_address_cart_option">
+                                                        <?php
+                                                        // $addr_i = 0;
+                                                        // var_dump($shipping_address_session['shipping-address']);
+                                                        foreach ($shipping_address_session['shipping-address'] as $addr) {
+                                                            $checked = '';
+
+                                                            if ($addr["street"] != 'N/A' && $addr["township"]) {
+                                                                if($shipping_address_session['shipping-address-current']){
+                                                                    $checked = ($tmp_cur_fulladdress == $addr['full_address_tmp']) ? 'checked' : '';
+                                                                }
+                                                                
+                                                                // display html
+                                                                echo '<label class="radio-inline">';
+                                                                echo '<input ' . $checked . ' type="radio" name="address-customer" value="' . htmlspecialchars(json_encode($addr)) . '">' . $addr['full_address'];
+                                                                echo '</label>';
+                                                            }
+                                                            //echo '<label for="male">'.$addr['full_address'].'</label><br>';
+
+                                                            // $addr_i++;
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ($calcAddress > 0): ?>
+                                            <div class="col-12">
+                                                <label class="label address-new" for="address_new">
+                                                    <span><?= $block->escapeHtmlAttr(__('Or enter a different address:')) ?></span>
+                                                </label>
+                                            </div>
+                                        <?php endif ?>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field region required">
+                                                <label class="label" for="region_id"><span><?= $block->escapeHtmlAttr(__('Aff Region')) ?></span></label>
+                                                <div class="control form-group-required">
+                                                    <select id="region_id" name="region_id" title="<?= $block->escapeHtmlAttr(__('Aff Region')) ?>" class="select-width-50 validate-select" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a region, state or province.')) ?></option>
+                                                    </select>
+                                                    <input type="text" id="region" name="region" title="region" value="<?= $block->escapeHtml($region_id) ?>" class="input-width-50 input-text validate-not-number-first <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('region')) ?>" <?= !$block->getConfig('general/region/display_all') ? ' disabled="disabled"' : '' ?> style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field city required">
+                                                <label class="label" for="city"><span><?= $block->escapeHtmlAttr(__('Aff City')) ?></span></label>
+                                                <div class="control form-group-required">
+                                                    <select id="city_id" name="city_id" title="<?= $block->escapeHtmlAttr(__('Aff City')) ?>" class="select-width-50 validate-select" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a city.')) ?></option>
+                                                    </select>
+                                                    <input type="text" value="<?= $block->escapeHtml($city_id) ?>" name="city" placeholder="<?= __('Aff Input City') ?>" title="<?= $block->escapeHtmlAttr(__('City')) ?>" class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('city')) ?>" id="city" style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field township">
+                                                <label class="label" for="township_id">
+                                                    <label class="label" for="township"><span><?= $block->escapeHtmlAttr(__('Aff Township')) ?></span></label>
+                                                </label>
+                                                <div class="control">
+                                                    <select id="township_id" name="township_id" title="<?= $block->escapeHtmlAttr(__('Aff Township')) ?>" class="select-width-50 validate-select required-entry" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a township.')) ?></option>
+                                                    </select>
+                                                    <input type="text" id="township" name="township" placeholder="<?= __('Aff Input Township') ?>" value="<?= $block->escapeHtml($township_id) ?>" title="<?= $block->escapeHtmlAttr(__('Aff Input Township')) ?>" class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('township')) ?>" style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field street">
+                                                <label for="street_1" class="label">
+                                                    <span>Địa chỉ</span>
+                                                </label>
+                                                <div class="control">
+                                                    <input type="text" name="street" placeholder="<?= __('Please Input Number Address, Street') ?>" value="<?= $block->escapeHtml($street) ?>" title="Địa chỉ" id="street_1" class="input-width-50 input-text" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <div class="actions-toolbar">
+                                    <div class="primary">
+                                        <button type="submit" name="update_cart_action" data-cart-empty="" value="shipping_address_cart" title="<?= $block->escapeHtml(__('Áp dụng')) ?>" class="action clear" id="shipping_address_cart">
+                                            <span><?= $block->escapeHtml(__('Áp dụng')) ?></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        require([
+                            'jquery',
+                            'mage/mage'
+                        ], function($) {
+
+                            var dataForm = $('#form-validate');
+                            var ignore = 'null';
+
+                            dataForm.mage('validation', {
+                                ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+                            }).find('input:text').attr('autocomplete', 'off');
+
+                        });
+                    </script>
+
+                    <script type="text/x-magento-init">
+                        {
+                    "#form-validate": {
+                        "addressValidation": {}
+                    },
+                    "#country": {
+                        "regionUpdater": {
+                            "optionalRegionAllowed": <?= /* @noEscape */ $block->getConfig('general/region/display_all') ? 'true' : 'false' ?>,
+                            "regionListId": "#region_id",
+                            "regionInputId": "#region",
+                            "postcodeId": "#zip",
+                            "form": "#form-validate",
+                            "regionJson": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getRegionJson() ?>,
+                            "defaultRegion": "<?= (int) $region_id ?>",
+                            "countriesWithOptionalZip": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getCountriesWithOptionalZip(true) ?>
+                        }
+                    },
+                    "#region_id": {
+                        "cityUpdater": {
+                            "cityListId": "#city_id",
+                            "cityInputId": "#city",
+                            "form": "#form-validate",
+                            "cityJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getCityJson() ?>,
+                            "defaultCity": "<?= (int) $city_id ?>"
+                        }
+                    },
+                    "#city_id": {
+                        "townshipUpdater": {
+                            "townshipListId": "#township_id",
+                            "townshipInputId": "#township",
+                            "form": "#form-validate",
+                            "townshipJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getTownshipJson() ?>,
+                            "defaultTownship": "<?= (int) $township_id ?>"
+                        }
+                    }
+                }
+            </script>
+        </div>
+        <!-- end address -->
+    </form>
+</div>
+<?= $block->getChildHtml('checkout.cart.order.actions') ?>
+<?= $block->getChildHtml('shopping.cart.table.after') ?>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/translate'
+        ], function($, $t) {
+            $('a.social-login-btn-cart').click(function() {
+                $('.sign-in-label a.social-login-btn').click();
+            });
+            // $("input[name='region']").each(function() {
+            //     $(this).css('border-color', 'red');
+            //     $(this).show();
+            // });
+   });
+</script>
+<!-- Huy: Bug #1120 [Địa chỉ] Reset lại Dropdown Quận/ Huyện, Phường/ Xã khi thay đổi giá trị trên dropdown Tỉnh / TP -->
+<script type="text/javascript">
+    require(['jquery','mage/translate','mage/validation'], function($, $t) {
+        $(document).on('change', 'select[name="region_id"]', function() {
+            if($('select[name="region_id"]').val() == ''){
+                $('select[name="city_id"]').val('');
+                $('input[name="city"]').val('');
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+			if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+            // if($('select[name="region_id"]').val() !== '' && $('select[name="city_id"]').val() !== '' ){
+            //     $('select[name="township_id"]').show();
+            //     $('input#township').hide();
+            //     $('input#township').val('');
+            //     $('select[name="township_id"]').val('');
+            // }
+        });
+        $(document).on('change', 'select[name="city_id"]', function() {
+            if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+    });
+</script>
+<style>
+    #city-error,#region_id-error,#region-error,#city_id-error{
+        display: none !important;
+    }
+    .shipping-address .field select.mage-error {
+        border: 1px solid #ff6000 !important;
+    }
+</style>

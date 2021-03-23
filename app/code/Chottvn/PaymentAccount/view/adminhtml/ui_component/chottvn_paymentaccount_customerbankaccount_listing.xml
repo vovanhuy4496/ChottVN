@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_listing_data_source</item>
+		</item>
+	</argument>
+	<settings>
+		<spinner>chottvn_paymentaccount_customerbankaccount_columns</spinner>
+		<deps>
+			<dep>chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_listing_data_source</dep>
+		</deps>
+		<buttons>
+			<button name="add">
+				<url path="*/*/new"/>
+				<class>primary</class>
+				<label translate="true">Add new CustomerBankAccount</label>
+			</button>
+		</buttons>
+	</settings>
+	<dataSource component="Magento_Ui/js/grid/provider" name="chottvn_paymentaccount_customerbankaccount_listing_data_source">
+		<settings>
+			<updateUrl path="mui/index/render"/>
+		</settings>
+		<aclResource>Chottvn_PaymentAccount::customerbankaccount</aclResource>
+		<dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="chottvn_paymentaccount_customerbankaccount_listing_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>customerba_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<listingToolbar name="listing_top">
+		<settings>
+			<sticky>true</sticky>
+		</settings>
+		<bookmark name="bookmarks"/>
+		<columnsControls name="columns_controls"/>
+		<filters name="listing_filters"/>
+		<paging name="listing_paging"/>
+	</listingToolbar>
+	<columns name="chottvn_paymentaccount_customerbankaccount_columns">
+		<settings>
+			<editorConfig>
+				<param name="selectProvider" xsi:type="string">chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_columns.ids</param>
+				<param name="enabled" xsi:type="boolean">true</param>
+				<param name="indexField" xsi:type="string">customerba_id</param>
+				<param name="clientConfig" xsi:type="array">
+					<item name="saveUrl" path="chottvn_paymentaccount/CustomerBankAccount/inlineEdit" xsi:type="url"/>
+					<item name="validateBeforeSave" xsi:type="boolean">false</item>
+				</param>
+			</editorConfig>
+			<childDefaults>
+				<param name="fieldAction" xsi:type="array">
+					<item name="provider" xsi:type="string">chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_listing.chottvn_paymentaccount_customerbankaccount_columns_editor</item>
+					<item name="target" xsi:type="string">startEdit</item>
+					<item name="params" xsi:type="array">
+						<item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
+						<item name="1" xsi:type="boolean">true</item>
+					</item>
+				</param>
+			</childDefaults>
+		</settings>
+		<selectionsColumn name="ids">
+			<settings>
+				<indexField>customerba_id</indexField>
+			</settings>
+		</selectionsColumn>
+		<column name="customerba_id">
+			<settings>
+				<filter>text</filter>
+				<sorting>asc</sorting>
+				<label translate="true">ID</label>
+			</settings>
+		</column>
+		<column name="customer_id">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Customer ID</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="customer_firstname">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Customer Name</label>
+				<sortable>false</sortable>
+			</settings>
+		</column>				
+		<column name="paymentaccount_bank_id">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Bank ID</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="bank_name">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Bank Name</label>
+				<sortable>false</sortable>
+			</settings>
+		</column>	
+		<column name="account_owner">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Account Owner</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="account_number">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Account Number</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="bank_branch">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Bank Branch</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="order">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Order</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="note">
+			<settings>
+				<label translate="true">Note</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="status">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Status</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="updated_at">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Updated At</label>
+				<sortable>false</sortable>
+			</settings>
+		</column>		
+		<actionsColumn class="Chottvn\PaymentAccount\Ui\Component\Listing\Column\CustomerBankAccountActions" name="actions">
+			<settings>
+				<indexField>customerba_id</indexField>
+				<resizeEnabled>false</resizeEnabled>
+				<resizeDefaultWidth>107</resizeDefaultWidth>
+			</settings>
+		</actionsColumn>
+	</columns>
+</listing>

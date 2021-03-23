@@ -1,0 +1,26 @@
+<?php
+
+$config   = $this->getData('config');
+$product = $this->getData('product');
+$status_labels = $this->getData('status_labels');
+
+$html_label = '';
+if($status_labels){
+	$html_label .= '<ul class="product-attr-labels">';
+	foreach ($status_labels as $label) {
+		if($product->getData($label->label_attribute)){
+			$html_label .= '<li class="'.$label->label_css.'"><span>'.$label->label_name.'</span></li>';
+		}
+	}
+	$html_label .= '</ul>';
+}
+?>
+<?php
+	if($html_label != ''){
+?>
+	<div class="product-attr-labels-container">
+		<?php echo $html_label; ?>
+	</div>
+<?php
+	}
+?>

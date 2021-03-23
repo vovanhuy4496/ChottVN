@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * A Magento 2 module named Chottvn/SigninPhoneNumber
+ * Copyright (C) 2020 Chottvn
+ *
+ * This file included in Chottvn/SigninWithPhoneNumber is licensed under OSL 3.0
+ *
+ * http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * Please see LICENSE.txt for the full text of the OSL 3.0 license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- API Preferences -->
+    <preference for="Chottvn\SigninPhoneNumber\Api\SigninInterface" type="Chottvn\SigninPhoneNumber\Model\Handler\Signin"/>
+	<preference for="Chottvn\SigninPhoneNumber\Api\PhoneVerificationRepositoryInterface" type="Chottvn\SigninPhoneNumber\Model\PhoneVerificationRepository"/>
+    <!-- Overrides -->
+    <!--   /API -->
+    <preference for="Magento\Customer\Api\AccountManagementInterface" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\AccountManagement" />
+
+    <!--   /Model -->
+    <preference for="Magento\Customer\Model\ResourceModel\Customer" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\ResourceModel\Customer" />
+    <preference for="Magento\Customer\Block\Form\Login" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Block\Form\Login"/>
+    <preference for="Magento\Customer\Model\CustomerRegistry" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\CustomerRegistry" />
+    <preference for="Magento\Customer\Api\CustomerRepositoryInterface" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\ResourceModel\CustomerRepository" />
+    <preference for="Magento\Customer\Model\EmailNotification" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\EmailNotification" />
+    <preference for="Magento\Customer\Model\Address\AbstractAddress" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\Address\AbstractAddress" />
+    <preference for="Magento\Newsletter\Model\Subscriber" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Newsletter\Model\Subscriber" />
+    <preference for="Magento\Sales\Model\Order\Address" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Sales\Model\Order\Address" />
+    <preference for="Magento\Sales\Model\Order\Address\Validator" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Sales\Model\Order\Address\Validator" />
+    <preference for="\Magento\Sales\Model\Order\Email\SenderBuilder" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Sales\Model\Order\Email\SenderBuilder" />
+    <preference for="\Magento\Customer\Model\Address\Mapper" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\Address\Mapper"/>
+    <!--  /Controller -->
+    <preference for="\Magento\Customer\Controller\Account\CreatePost" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\CreatePost" />
+    <preference for="\Magento\Customer\Controller\Account\EditPost" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\EditPost" />
+    <preference for="\Magento\Customer\Controller\Account\LoginPost" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\LoginPost" />
+    <preference for="\Magento\Customer\Controller\Account\ForgotPasswordPost" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\ForgotPasswordPost" />
+    <preference for="\Magento\Customer\Controller\Account\CreatePassword" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\CreatePassword" />
+    <preference for="\Magento\Customer\Controller\Account\ResetPasswordPost" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Account\ResetPasswordPost" />
+    <preference for="\Magento\Customer\Controller\Ajax\Login" type="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Controller\Ajax\Login" />
+
+    <type name="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Model\ResourceModel\Customer">
+        <plugin name="chottvn_validate_unique_phonenumber" type="Chottvn\SigninPhoneNumber\Plugin\Model\ResourceModel\Customer\ValidateUniquePhonenumber" sortOrder="10" disabled="false"  />
+    </type>
+
+    <preference for="Magento\Customer\Block\Widget\Dob" type="Chottvn\SigninPhoneNumber\Block\Magento\Customer\Block\Widget\Dob" />
+</config>

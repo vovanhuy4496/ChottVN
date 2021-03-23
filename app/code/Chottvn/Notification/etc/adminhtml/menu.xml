@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Chottvn Team
+ * @copyright Copyright (c) 2020 Chottvn (https://www.chotructuyen.co)
+ * @package Chottvn_Notification
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Chottvn_Notification::notification"
+             title="Notification"
+             module="Chottvn_Notification"
+             parent="Magento_Backend::marketing"
+             sortOrder="10"
+             resource="Chottvn_Notification::notification"/>
+
+        <add id="Chottvn_Notification::index"
+             title="Messages"
+             module="Chottvn_Notification"
+             sortOrder="10"
+             parent="Chottvn_Notification::notification"
+             action="chottvn_notification/message/index"
+             resource="Chottvn_Notification::index"/>
+        <add id="Chottvn_Notification::messageType"
+             title="Message Types"
+             module="Chottvn_Notification"
+             sortOrder="10"
+             parent="Chottvn_Notification::notification"
+		   action="chottvn_notification/messagetype/index"
+             resource="Chottvn_Notification::messageType"/>
+    </menu>
+</config>

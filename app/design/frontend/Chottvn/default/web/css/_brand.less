@@ -1,0 +1,582 @@
+.col-left-sidebar {
+	.sidebar-bg {
+		.actions-toolbar .primary a {
+			border-radius: 2px;
+			background: @color_theme_primary !important;
+		}
+		.sidebar-main {
+			padding-bottom: 10px;
+			.block-banners-inline {
+				margin-bottom: 20px;
+			}
+			.block-title {
+				margin-bottom: 10px !important;
+				strong {
+					font-weight: 300 !important;
+				}
+			}
+			.brand-searchform {
+				margin-bottom: 10px;
+			}
+			.options-brands {
+				display: table;
+				width: 100%;
+				.input-box {
+					display: table-cell;
+					vertical-align: top;
+					width: 100%;
+					input[type="text"] {
+						border: 1px solid @color_theme_secondary !important;
+						border-radius: 5px 0 0 5px;
+					}
+				}
+				.action-button {
+					display: table-cell;
+					vertical-align: top;
+					.search-submit {
+						border-radius: 0 5px 5px 0;
+						background: #02205f !important;
+					}
+					.search-submit:hover {
+						opacity: .9;
+					}
+				}
+			}
+			.brand-widget {
+				margin: 10px 0px 10px;
+				border: 1px solid @color_border_line;
+				position: relative;
+				.block-title {
+					display: none;
+				}
+				.block-content {
+					background: @white;
+					padding: 10px 15px;
+				}
+				.owl-dots {
+					display: none!important;
+				}
+				.owl-dots .owl-dot span,
+				.owl-dots .owl-dot.active span,
+				.owl-theme .owl-dots .owl-dot:hover span {
+					background: none;
+				}
+				.brandowl-play {
+					padding: 5px 45px;
+					overflow: hidden;
+					.owl-left,
+					.owl-right,
+					.owl-prev,
+					.owl-next {
+						background: #fafafa;
+						display: inline-block;
+						width: 30px;
+						height: 30px;
+						text-align: center;
+						line-height: 30px;
+						margin-top: -13px !important;
+						border: 1px solid @color_border_line;
+						overflow: hidden;
+						margin: 0;
+						position: absolute;
+						z-index: 100;
+						left: 0;
+						top: 50%;
+						padding: 0;
+						cursor: pointer;
+						-webkit-border-radius: 3px;
+						-moz-border-radius: 3px;
+						border-radius: 3px;
+						&:before {
+							content: '\f104';
+							display: inline-block;
+							font-family: FontAwesome;
+							font-style: normal;
+							font-weight: normal;
+							font-variant: normal;
+							font-synthesis: weight style;
+							font-stretch: normal;
+							font-size-adjust: none;
+							font-language-override: normal;
+							font-kerning: auto;
+							font-feature-settings: normal;
+							line-height: 1;
+							-webkit-font-smoothing: antialiased;
+							-moz-osx-font-smoothing: grayscale;
+							text-align: center;
+							font-size: 24px;
+							color: #464646;
+							line-height: normal;
+							&:hover {
+								color: @color_theme_secondary;
+							}
+						}
+						&:hover {
+							background-color: #eee;
+							color: @color_theme_secondary;
+							&:before {
+								color: @color_theme_secondary;
+							}
+						}
+						&.disabled {
+							opacity: 0.2;
+							filter: Alpha(opacity=20);
+						}
+					}
+					.owl-left {
+						margin-left: 10px;
+					}
+					.owl-right,
+					.owl-next {
+						right: 0;
+						left: auto;
+						margin-right: 10px;
+						&:before {
+							content: '\f105';
+						}
+					}
+				}
+			}
+		}
+		.sidebar-additional {
+			.empty {
+				padding: 10px 15px;
+			}
+			.block-title {
+				margin-bottom: 10px;
+				#block-compare-heading {
+					font-weight: 300 !important;
+				}
+			}
+		}
+	}
+}
+
+.col-right-main {
+	.rightmain-bg {
+		.brandlist {
+			.toolbar-products {
+				border-bottom: 0;
+			}
+			// .block-content {
+			// 	padding-bottom: 10px;
+			// 	border-bottom: 1px solid @color_border_line;
+			// }
+		}
+	}
+}
+
+.vesbrand-brand-view {
+	.more-container-blocks {
+		margin-top: 15px;
+		.ves-widget.brand-widget.brand-widget-home {
+			margin-bottom: 0;
+			.block-content.brandowl-play {
+				padding: 10px;
+				background-color: #ffffff;
+				border: 1px solid @color_border_line;
+			}
+			.brand-image img{
+				height:80px;
+			}
+			.owl-controls {
+				opacity: 1;
+				margin-top: 0px;
+				.owl-nav {
+					opacity: 0;
+					margin-top: 0px;
+					div {
+						opacity: 0.5;
+						width: 20px;
+						height: 40px;
+						justify-content: center;
+						text-align: center;
+						top: calc(~"50% - 20px");
+						position: absolute;
+						background: @darkblue;
+						margin: 0px;
+						&:hover {
+							opacity: 0.7;
+							background: @darkblue;
+						}
+						&::before {
+							line-height: 37px;
+							font-size: 15px;
+						}
+					}
+					.owl-next {
+						right: -10px;
+						border-radius: 10px 0px 0px 10px;
+						-moz-border-radius: 10px 0px 0px 10px;
+						-webkit-border-radius: 10px 0px 0px 10px;
+						&::before {
+							margin-left: 2px;
+						}
+					}
+					.owl-prev {
+						left: -10px;
+						border-radius: 0px 10px 10px 0px;
+						-moz-border-radius: 0px 10px 10px 0px;
+						-webkit-border-radius: 0px 10px 10px 0px;
+						&::before {
+							margin-right: 2px;
+						}
+					}
+				}
+			}
+			&:hover {
+				.owl-nav {
+					opacity: 1;
+				}
+				.owl-dots {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}
+
+// SIDE BAR CSS
+.vesbrand-index-index, .vesbrand-brand-view{
+	.brands-sidebar {
+	  padding: 10px;
+	  border: 1px solid @color_theme_line;
+
+	  @media (max-width: 767px) {
+			padding: 0;
+			border: 0;
+		}
+
+	  .brands-title{
+	  	text-transform: uppercase;
+	    margin-bottom: 15px;
+	  }
+
+	  .brands-content{
+	  	ul{
+	  		li{
+	  			&.brand-item{
+	  				a{
+	  					&:before {
+							  content: "\f105";
+							  font-family: "Font Awesome 5 Free";
+							  font-weight: 900;
+							  margin-right: 0px;
+							  padding: 4px 0px 0px 5px;
+							  display: inline-block;
+							  position: absolute;
+							  color: @color_theme_link !important;
+							}
+
+							img{
+								height: 30px;
+								margin-left: 20px;
+							}
+
+							.brand-name{
+								margin-left: 5px;
+
+								&:before {
+								  content: "-";
+								  padding-right: 5px;
+								  color: @color_theme_link !important;
+								}
+							}
+	  				}
+	  			}
+	  		}
+	  	}
+	  }
+	}
+
+	.vesbrand-sidebar-mobile-btn {
+	  cursor: pointer;
+	  position: fixed;
+	  left: 0;
+	  padding: 5px;
+	  writing-mode: vertical-lr;
+	  text-orientation: sideways;
+	  background: @color_warning_background;
+	  box-shadow: 2px 2px 5px #ccc;
+	  border-radius: 0px 5px 5px 0px;
+	  z-index: 1000;
+	  top: 200px;
+	}
+
+	&.sidebar-active{
+		.vesbrand-sidebar-mobile-btn{
+			&:before {
+			  content: '';
+			  position: fixed;
+			  left: 0;
+			  top: 0;
+			  display: block;
+			  width: 100%;
+			  height: 100%;
+			  background: rgba(0,0,0,0.3);
+			  z-index: 20010;
+			}
+		}
+	}
+
+	.sidebar-left{
+		&.active {
+		  display: block !important;
+		  position: fixed;
+		  top: 0px;
+		  height: 100%;
+		  overflow-y: scroll;
+		  z-index: 20020;
+		  transition: all .3s ease 0s;
+		  background: white;
+		  padding: 15px;
+		  width: 300px;
+		  left: -300px;
+		}
+	}
+}
+
+// VES BRAND LIST
+.vesbrand-index-index {
+  .brand-content-introduction {
+    background: @color_theme_box_bg;
+    padding: 15px;
+    margin-bottom: 10px;
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: @color_theme_text;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 15px;
+    }
+  } // .brand-content-introduction
+
+  .brandlist {
+    .block-content {
+      .block-content-wrapper {
+        &.play{
+          .brand-item {
+            opacity: 0;
+            position: relative;
+            animation-duration: .3s;
+            animation-timing-function: ease;
+            animation-fill-mode: both;
+            animation-name: fadeIn;
+          }
+        }
+
+        @-webkit-keyframes fadeIn {
+          0% {
+              opacity: 0;
+          }
+          100% {
+              opacity: 1;
+          }
+        }
+
+        @-moz-keyframes fadeIn {
+          0% {
+              opacity: 0;
+          }
+          100% {
+              opacity: 1;
+          }
+        }
+
+        @-o-keyframes fadeIn {
+          0% {
+              opacity: 0;
+          }
+          100% {
+              opacity: 1;
+          }
+        }
+
+        @keyframes fadeIn {
+          0% {
+              opacity: 0;
+          }
+          100% {
+              opacity: 1;
+          }
+        }
+
+        .brand-item {
+          padding: 0 0 15px 0;
+          border-bottom: solid 1px @color_theme_line;
+          margin: 0 0 15px 0;
+
+          .brand-image {
+            padding: 0 15px;
+            float: left;
+            width: 25%;
+            margin: 0 auto;
+            text-align: center;
+
+            @media (max-width: 767px) {
+        			width: 100%;
+              padding: 0px;
+        		}
+          }
+
+          .brand-description {
+            padding: 0 15px;
+            float: left;
+            width: 75%;
+            font-size: 14px;
+
+            @media (max-width: 767px) {
+        			width: 100%;
+              padding: 0px;
+        		}
+
+            .brand-name {
+              font-size: 18px;
+              font-weight: 600;
+              color: @color_theme_text;
+              line-height: 30px;
+              padding-bottom: 10px;
+              display: block;
+
+              &:hover {
+                color: @color_theme_secondary;
+              }
+            }
+
+            ul {
+              list-style-type: disc;
+              padding-left: 15px;
+            }
+
+          }
+        }
+      } // .block-content-wrapper
+
+      .load-more-action {
+        display: block;
+        margin: 0 auto;
+        overflow: hidden;
+        text-align: center;
+
+        .button-load-more {
+          width: auto;
+          background: @white !important;
+          border: solid 1px @color_theme_line !important;
+          border-radius: 8px;
+          -webkit-border-radius: 8px;
+          color: @color_theme_link !important;
+          padding: 5px 10px!important;
+          font-size: 14px!important;
+          text-transform: initial;
+          min-width: 150px;
+          height: auto;
+          line-height: unset;
+
+          &:hover {
+            color: @white !important;
+            background: @color_theme_link !important;
+          }
+
+          &:after {
+            display: none !important;
+          }
+
+          i {
+            margin: 0 10px;
+          }
+
+          &.loaded {
+            display: none !important;
+          }
+        }
+      } // .load-more-action
+    } // .block-content
+  }
+}
+
+// VES BRAND DETAIL
+.vesbrand-brand-view {
+  .brand-view {
+    padding-bottom: 15px;
+    
+    .brand-description {
+      background: @color_theme_box_bg;
+      padding: 15px;
+      margin-bottom: 10px;
+
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: @color_theme_text;
+        margin-bottom: 10px;
+      }
+
+      ul {
+        list-style-type: disc;
+        padding-left: 15px;
+      }
+    }
+
+    .brand-content-description {
+    	padding-bottom: 10px;
+    }
+
+    .brand-categories {
+      .brand-categories-label {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 10px;
+      } // .brand-categories-label
+
+      .brand-category-list {
+        ul {
+          float: left;
+          width: 25%;
+          padding: 0 15px;
+
+          @media (max-width: 767px) {
+          	width: 50%;
+         	}
+
+          @media (max-width: 375px) {
+    				width: 100%;
+    			}
+        }
+        li {
+          font-size: 14px;
+          line-height: 26px;
+        }
+      } // .brand-category-list
+
+      .brand-category-parent-item{
+        font-size: 14px;
+
+        a {
+          color: @color_theme_link;
+
+          &:hover {
+            color: @color_theme_secondary;
+          }
+        }
+      } // .brand-category-parent-item
+
+      .brand-category-child-item{
+        a {
+          color: @color_theme_text;
+
+          &:hover {
+            color: @color_theme_secondary;
+          }
+        }
+      } // .brand-category-child-item
+
+    } // .brand-categories
+
+  } // .brand-view
+}

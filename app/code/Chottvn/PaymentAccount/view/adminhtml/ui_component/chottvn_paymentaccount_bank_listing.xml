@@ -1,0 +1,175 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_listing_data_source</item>
+		</item>
+	</argument>
+	<settings>
+		<spinner>chottvn_paymentaccount_bank_columns</spinner>
+		<deps>
+			<dep>chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_listing_data_source</dep>
+		</deps>
+		<buttons>
+			<button name="add">
+				<url path="*/*/new"/>
+				<class>primary</class>
+				<label translate="true">Add new Bank</label>
+			</button>
+		</buttons>
+	</settings>
+	<dataSource component="Magento_Ui/js/grid/provider" name="chottvn_paymentaccount_bank_listing_data_source">
+		<settings>
+			<updateUrl path="mui/index/render"/>
+		</settings>
+		<aclResource>Chottvn_PaymentAccount::bank</aclResource>
+		<dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="chottvn_paymentaccount_bank_listing_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>bank_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<listingToolbar name="listing_top">
+		<settings>
+			<sticky>true</sticky>
+		</settings>
+		<bookmark name="bookmarks"/>
+		<columnsControls name="columns_controls"/>
+		<filters name="listing_filters"/>
+		<paging name="listing_paging"/>
+	</listingToolbar>
+	<columns name="chottvn_paymentaccount_bank_columns">
+		<settings>
+			<editorConfig>
+				<param name="selectProvider" xsi:type="string">chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_columns.ids</param>
+				<param name="enabled" xsi:type="boolean">true</param>
+				<param name="indexField" xsi:type="string">bank_id</param>
+				<param name="clientConfig" xsi:type="array">
+					<item name="saveUrl" path="chottvn_paymentaccount/Bank/inlineEdit" xsi:type="url"/>
+					<item name="validateBeforeSave" xsi:type="boolean">false</item>
+				</param>
+			</editorConfig>
+			<childDefaults>
+				<param name="fieldAction" xsi:type="array">
+					<item name="provider" xsi:type="string">chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_listing.chottvn_paymentaccount_bank_columns_editor</item>
+					<item name="target" xsi:type="string">startEdit</item>
+					<item name="params" xsi:type="array">
+						<item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
+						<item name="1" xsi:type="boolean">true</item>
+					</item>
+				</param>
+			</childDefaults>
+		</settings>
+		<selectionsColumn name="ids">
+			<settings>
+				<indexField>bank_id</indexField>
+			</settings>
+		</selectionsColumn>
+		<column name="bank_id">
+			<settings>
+				<filter>text</filter>
+				<sorting>asc</sorting>
+				<label translate="true">ID</label>
+			</settings>
+		</column>
+		<column name="name">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Name</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>		
+		<column name="name_short">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Short Name</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="code">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Code</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="description">
+			<settings>
+				<label translate="true">Description</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="image" class="Chottvn\PaymentAccount\Ui\Component\Listing\Column\BankThumbnail">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+               <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/thumbnail</item>
+               <item name="sortable" xsi:type="boolean">false</item>
+               <item name="altField" xsi:type="string">name</item>
+               <item name="has_preview" xsi:type="string">1</item>
+               <item name="label" xsi:type="string" translate="true">Bank Image</item>
+               <item name="sortOrder" xsi:type="number">20</item>
+               <item name="resizeEnabled" xsi:type="boolean">true</item>
+               <item name="resizeDefaultWidth" xsi:type="string">300</item>
+            </item>
+        </argument>
+    </column>	
+		<column name="status">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Status</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="order">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Order</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="updated_at">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Updated At</label>
+			</settings>
+		</column>		
+		<actionsColumn class="Chottvn\PaymentAccount\Ui\Component\Listing\Column\BankActions" name="actions">
+			<settings>
+				<indexField>bank_id</indexField>
+				<resizeEnabled>false</resizeEnabled>
+				<resizeDefaultWidth>107</resizeDefaultWidth>
+			</settings>
+		</actionsColumn>
+	</columns>
+</listing>

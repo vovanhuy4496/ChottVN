@@ -1,0 +1,1553 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * PriceQuote Index template
+ *
+ * @var $block \Chottvn\PriceQuote\Block\Index\Index
+ */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+// $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+// $reviewFactory = $objectManager->create('Magento\Review\Model\Review');
+// $storeId = $storeManager->getStore()->getId();
+// $saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$amPromoHelper = $this->helper('Amasty\Promo\Helper\Item');
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$blockRules = $block->getLayout()->createBlock('Chottvn\Frontend\Block\Rules');
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+$helperbg = $this->helper('Chottvn\PriceQuote\Helper\Data');
+// initialize session
+$coreSession = $objectManager->get('\Magento\Framework\Session\SessionManagerInterface');
+$calcAddress = 0;
+$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+$itemOptions = $objectManager->get('Magento\Quote\Model\ResourceModel\Quote\Item\Option\CollectionFactory');
+$checkoutSession = $objectManager->get('Magento\Checkout\Model\Session');
+$quoteId = $checkoutSession->getQuote()->getId();
+// $filterableAttributes = $objectManager->get('\Magento\Catalog\Model\Layer\Category\FilterableAttributeList');
+// $attributes = $filterableAttributes->getList();
+
+// $eavModel = $objectManager->create('Magento\Eav\Model\ResourceModel\Entity\Attribute');
+// $attr_id = $eavModel->getIdByCode('catalog_product','power_w_filter');
+
+// $eavConfig = $objectManager->create('Magento\Eav\Model\Config');
+// $attribute = $eavConfig->getAttribute('catalog_product', 'spraying_pressure_bar_filter');
+// $options = $attribute->getSource()->getAllOptions();
+
+// print_r($attribute->getFrontendLabel());
+// echo '<pre>';print_r(get_class_methods($attribute));echo '</pre>';exit;
+// echo '<pre>';print_r($options);echo '</pre>';exit;
+
+// get list address by customer
+// $customer_address = array();
+// if ($customerSession->isLoggedIn()) {
+//     $customer_id = $customerSession->getCustomerId();
+//     $customer_obj = $objectManager->create('Magento\Customer\Model\Customer')->load($customer_id);
+
+//     foreach ($customer_obj->getAddresses() as $address) {
+//         $array_address = $address->toArray();
+
+//         // create full-address
+//         if ($array_address['street']) {
+//             $tmp_fulladdress['street'] = $array_address['street'];
+//         }
+//         if ($array_address['township']) {
+//             $tmp_fulladdress['township'] = $array_address['township'];
+//         }
+//         if ($array_address['city']) {
+//             $tmp_fulladdress['city'] = $array_address['city'];
+//         }
+//         if ($array_address['region']) {
+//             $tmp_fulladdress['region'] = $array_address['region'];
+//         }
+
+//         // store full-address to array
+//         $array_address['full_address'] = implode(', ', $tmp_fulladdress);
+//         $customer_address[] = $array_address;
+
+
+//     }
+// }
+// echo '<pre>';print_r($customer_address);echo '</pre>';exit;
+?>
+<style>
+    .product-item-name span{
+        display: block;
+    }
+    .show-ajax{
+        display: none;
+    }
+</style>
+<div id="price-quote-content">
+    <?php
+    // Cart - items
+    if ($block->getItemsCount($quoteId) > 0) {
+    ?>
+        <!-- ./cart-title -->
+        <div class="page-title-wrapper cart">
+            <h1 class="page-title"><?= __("Price Quote"); ?>
+                <span class="page-title-sub">(<?= $block->getItemsCount($quoteId) ?> <?= $block->getItemsCount($quoteId) > 1 ? __("products") : __("product") ?>)</span>
+            </h1>
+        </div>
+
+        <div class="cart-container">
+            <form action="<?= $block->escapeUrl($block->getUrl('price_quote/index/updatePost')) ?>" method="post" id="form-validate" data-mage-init='{"Magento_Checkout/js/action/update-shopping-cart":
+              {"validationURL" : "<?= $block->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>",
+              "updateCartActionContainer": "#update_cart_action_container"}
+          }' class="form form-cart">
+                <div class="cart table-wrapper">
+                    <table id="shopping-cart-table" class="cart items data table">
+                        <?= $block->getBlockHtml('formkey') ?>
+                        <div class="cart-item-head">
+                            <thead>
+                                <tr>
+                                    <th class="col item" scope="col">
+                                    <th class="col qty" scope="col"><span><?= $block->escapeHtml(__('Quantity x Price')) ?></span></th>
+                                    <th class="col subtotal text-right" scope="col"><span><?= $block->escapeHtml(__('Amount')) ?></span></th>
+                                </tr>
+                            </thead>
+                        </div>
+                        <?php 
+                            $items = $block->getItems();
+                            $arrayMain = array();
+                            $arrayMain = $helperbg->getListQuote($items);
+                            $isReviewProduct = false;
+                            if(!empty($arrayMain) && count($arrayMain) > 0){ 
+                        ?>
+                            <?php foreach ($arrayMain as $item) : ?>
+                                <?php
+                                    // var_dump(get_class_methods($item));
+                                    $cartPromoOption = $item->getCartPromoOption();
+                                    $quoteId = $item->getQuoteId();
+                                    $quoteItemId = $item->getId();
+                                    $product = $item->getProduct();
+                                    $qtyCurrent = $item->getQty();
+                                    $checkGift = $helperbg->getQtyGift($quoteItemId,$qtyCurrent);
+                                    $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+                                    $productModel = $productResource->getData('model');
+                                    $attributesOption = $helperbg->getOptionsAttributes($quoteItemId);
+                                    $productidOfconfigurable = $product->getId();
+                                    $defaultStockconfigurable = 0;
+                                    if($attributesOption){
+                                        $itemQuote = $objectManager->get('Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory');
+                                        $itemQuoteCollection = $itemQuote->create()->addFieldToFilter('parent_item_id',$quoteItemId)->addFieldToFilter('product_type','simple');
+                                        $lastItemQuote = $itemQuoteCollection->getLastItem();
+                                        $productidOfconfigurable = $lastItemQuote->getData('product_id');
+                                        $defaultStockconfigurable = $helperbg->checkDefaultStock($productidOfconfigurable);
+                                    }else{
+                                        $defaultStockconfigurable = $helperbg->checkDefaultStock($product->getId());
+                                    }
+                                    // url and image
+                                    $jacket = array();
+                                    $productTypeInstance = $objectManager->get('Magento\Catalog\Model\ResourceModel\Eav\Attribute');
+                                    if ($attributesOption) {
+                                        foreach ($attributesOption as $key => $attr) {
+                                            $_attr = $productTypeInstance->load($key);
+                                            $attributeCode = $_attr->getAttributeCode();
+                                            $jacket[$attributeCode] = $attr;
+                                        }
+                                    }
+                                    
+                                    $getProductUrl = $product->getProductUrl();
+                                    if ($jacket) {
+                                        $getProductUrl = $getProductUrl . '#';
+                                        foreach($jacket as $key => $value){
+                                            $getProductUrl = $getProductUrl .$key. '='. $value .'&';
+                                        }
+                                        $getProductUrl = substr($getProductUrl, 0, -1);
+                                    }
+                                    if($productidOfconfigurable != $product->getId()){
+                                        $productResourceConfiguration = $objectManager->create('Magento\Catalog\Model\Product')->load($productidOfconfigurable);
+                                        if(!$productModel){
+                                            $productModel = $productResourceConfiguration->getData('model');
+                                        }
+                                        $productImage = $imageHelper->init($productResourceConfiguration, 'product_page_image_thumbnail')->setImageFile($productResourceConfiguration->getImage())->getUrl();
+                                    }else{
+                                        $productImage = $imageHelper->init($item->getProduct(), 'cart_page_product_thumbnail')->getUrl();
+                                    }
+                                    if (isset($productImage) && !($helperbg->url_exists($productImage))) {
+                                        $productImage = $imageHelper->getDefaultPlaceholderUrl('thumbnail');
+                                    }
+                                    if (!isset($productImage)) {
+                                        $productImage = $imageHelper->getDefaultPlaceholderUrl('thumbnail');
+                                    }
+                                    $guaranteeInfo = $productResource->getData('guarantee');
+                                    // $reviewFactory->getEntitySummary($productResource, $storeId);
+                                    // $ratingSummary = $productResource->getRatingSummary()->getRatingSummary();
+                                    // $ratingCount = $productResource->getRatingSummary()->getReviewsCount();
+                                    $productunit = $productResource->getData('product_unit') ? $productResource->getData('product_unit') : '';
+                                    $ruleIdsApplied = $item->getAppliedRuleIds();
+                                
+                                    // $rulesApplied = $saleRuleFactory->create()->addFieldToFilter('rule_id', array('in' => $ruleIdsApplied) )->addFieldToSelect('name');
+                                
+                                    $ruleNames = $helperbg->getRulesNameWithQuoteCTT($quoteItemId, $quoteId ,$ruleIdsApplied);
+                                    
+                                    // $isPromoItem = $amPromoHelper->isPromoItem($item);
+
+                                    $isPromoItem = $helperbg->isPromoItemCTT($cartPromoOption);
+
+                                    $itemDataDelete = array(
+                                        // "url" => $block->escapeUrl($block->getUrl('price_quote/index/delete')),
+                                        "id" => $item->getId()
+                                    );
+                                ?>
+                                <?php if ($detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+                                    <!-- Mobile View -->
+                                    <tbody class="cart item">
+                                        <tr class="item-info">
+                                            <td data-th="<?= __('Product'); ?>" class="col item">
+                                                <!-- Mobile View -->
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <div class="product-item-details-mobile clearfix">
+                                                        <div class="product-item-name">
+                                                            <?php if ($block->hasProductUrl($product)) : ?>
+                                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" title="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                    <?= $productResource->getNameLongHtml(); ?>
+                                                                </a>
+                                                            <?php else : ?>
+                                                                <span><?= $productResource->getNameLongHtml(); ?></span>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                                <!-- Brand, Model -->
+                                                <?php
+                                                        $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                                        $model = $productResource->getData('model');
+                                                        if ($productBrand || $model){
+                                                    ?>
+                                                    <div class="brand-model-mobile clearfix">
+                                                        <?php 
+                                                            if ($productBrand ){
+                                                        ?>
+                                                            <div class="brand-name">
+                                                                <span><?php echo __('Brands: '); ?></span>
+                                                                <span class="name"><?php echo $productBrand->getName(); ?></span>
+                                                            </div>
+                                                        <?php } ?>
+                                                        <?php if($model){ ?>
+                                                            <div class="model-name">
+                                                                <span><?php echo __('Model: '); ?></span>
+                                                                <span class="name"><?php echo $model; ?></span>
+                                                            </div>
+                                                        <?php } ?>
+                                                    </div>
+                                                <?php } ?>
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <!-- Guarantee -->
+                                                    <?php if ($guaranteeInfo) { ?>
+                                                        <div class="guarantee-info line-height-mobile">
+                                                            <span><?php echo __('Guarantee: '); ?></span>
+                                                            <span class="name"><?php echo $guaranteeInfo; ?></span>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                <!-- options -->
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <?php if ($attributesOption) { ?>
+                                                        <div class="guarantee-info line-height-mobile">
+                                                        <?php foreach($attributesOption as $key => $value): ?>
+                                                        <?php 
+                                                            $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                            $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                            $labelOptions = '';
+                                                            $valueOptions = '';
+                                                            foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                                $tmp_option = $value_o['values'];
+                                                                if(count($tmp_option) > 0)
+                                                                {   
+                                                                    foreach ($tmp_option as $tmp) {
+                                                                        if($key_o == $key && $tmp['value_index'] == $value){
+                                                                            $labelOptions = $value_o['store_label'];
+                                                                            $valueOptions = $tmp['label'];
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        ?>
+                                                            <span class="span-options-right"><?php echo $labelOptions; ?>: <?php echo $valueOptions; ?></span>
+                                                        <?php endforeach; ?>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                <div class="product-item-photo-mobile">
+                                                    <?php if ($block->hasProductUrl($product)) : ?>
+                                                        <a href="<?= $block->escapeUrl($getProductUrl) ?>" title="<?= $block->escapeHtml($block->getProductName()) ?>" tabindex="-1" class="product-item-photo">
+                                                            <span class="product-image-container">
+                                                                <span class="product-image-wrapper">
+                                                                    <img class="product-image-photo " src="<?= $productImage ?>" width="" height="" alt="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    <?php else : ?>
+                                                        <a title="<?= $block->escapeHtml($block->getProductName()) ?>" tabindex="-1" class="product-item-photo">
+                                                            <span class="product-image-container">
+                                                                <span class="product-image-wrapper">
+                                                                    <img class="product-image-photo " src="<?= $productImage ?>" width="" height="" alt="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <div class="product-item-details">
+                                                        <!-- Reviews -->
+                                                        <div class="field qty field-qty-mobile">
+                                                            <div class="control qty">
+                                                                <label for="cart-<?= $item->getId() ?>-qty">
+                                                                    <?php if (!$isPromoItem) { ?>
+                                                                        <span class="quantity-controls quantity-minus change-qty <?= $item->getQty() <= 1 ? "text-secondary" : ""  ?>" id="<?= $item->getId() ?>-minus-qty">-</span>
+                                                                        <input id="cart-<?= $item->getId() ?>-qty" default-stock="<?= $defaultStockconfigurable; ?>" oldQty="<?= $block->escapeHtmlAttr($item->getQty()) ?>" name="cart[<?= $item->getId() ?>][qty]" data-cart-item-id="<?= $block->escapeHtmlAttr($item->getSku()) ?>" value="<?= $block->escapeHtmlAttr($item->getQty()) ?>" title="<?= $block->escapeHtmlAttr(__('Qty')) ?>" type="number" size="4" class="input-text qty " data-validate="{required:true,'validate-greater-than-zero':true}" data-role="cart-item-qty">
+                                                                        <span class="quantity-controls quantity-plus change-qty" id="<?= $item->getId() ?>-plus-qty">+</span>
+                                                                        
+                                                                    <?php } else { ?>
+                                                                        <span class="quantity"><?= $item->getQty(); ?></span>
+                                                                    <?php } ?>
+                                                                </label>
+                                                            </div>
+                                                            <?php if (isset($productunit)) : ?>
+                                                                <span class="unit-product-mobile"><?= $productunit ? $productunit : ''; ?></span>
+                                                            <?php endif ?>
+                                                        </div>
+                                                        
+                                                        <!-- Item Price -->
+                                                        <span class="price-excluding-tax price-excluding-tax-mobile" data-label="<?= __('Tax not include') ?>">
+                                                            <span class="cart-price">
+                                                                <span class="price"><?= $block->formatPrice($item->getPrice()); ?></span>
+                                                            </span>
+                                                        </span>
+                                                        <?php
+                                                        $priceOriginal = $productResource->getPrice();
+                                                        $priceFinal = $item->getPriceInclTax();
+                                                        $savePercent = ($priceOriginal == 0) ? 0 : 100 - round(@($priceFinal / $priceOriginal) * 100);
+                                                        if ($savePercent != 0) { ?>
+                                                            <div class="checkout-cart-save-price line-height-mobile">
+                                                                <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                                                <span class="price-original"><span class="price"><?= $block->formatPrice($priceOriginal); ?></span></span>
+                                                            </div>
+                                                        <?php } ?>
+                                                        <!-- </td> -->
+                                                        <div class="subtotal subtotal-mobile">
+                                                            <span class="price-excluding-tax" data-label="<?= __('Tax not include') ?>">
+                                                                <span class="cart-price">
+                                                                    <span><?= $block->escapeHtml(__('Into Money: ')) ?></span>
+                                                                    <span class="price"><?= $block->formatPrice($item->getRowTotal()); ?></span>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                    
+                                                        <!-- Item Actions -->
+                                                        <?php if (!$isPromoItem) { ?>
+                                                            <div class="actions-toolbar item-actions actions-toolbar-mobile">
+                                                                <div title="<?= $block->escapeHtml(__('Delete')) ?>" class="remove-item" data-post='<?= json_encode($itemDataDelete) ?>'>
+                                                                    <a href="#" title="<?= $block->escapeHtml(__('Delete')) ?>">
+                                                                        <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        <?php } ?>
+                                                    </div>
+                                                <?php }else{ ?>
+                                                    <?php
+                                                        $itemId = $item->getId();
+                                                        $lastItemOptions = $itemOptions->create()->addFieldToFilter('item_id', array('eq' => $itemId));
+                                                        $lastItemOptions = $lastItemOptions->getLastItem();
+                                                        $rulesId = '';
+                                                        $nameRule = '';
+                                                        if(isset($lastItemOptions['value'])){
+                                                            $arrRulesId = json_decode($lastItemOptions['value'], true);
+                                                            if(isset($arrRulesId["options"]) && isset($arrRulesId["options"]['ampromo_rule_id'])){
+                                                                $rulesId = $arrRulesId["options"]['ampromo_rule_id'];
+                                                            }
+                                                        }
+                                                        if($rulesId){
+                                                            $nameRule = $helperbg->getRulesNameByIdRule($rulesId);
+                                                        }
+                                                        
+                                                    ?>
+                                                    <div class="product-item-details">
+                                                        <div class="rules-name-mobile">
+                                                            <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                            <br>
+                                                            <?php if ($block->hasProductUrl($product)) : ?>
+                                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" title="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                    <?= $productResource->getName(); ?>
+                                                                </a>
+                                                            <?php else : ?>
+                                                                <span><?= $productResource->getName(); ?></span>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                                <!-- Cart Rules -->
+                                                <?php if (!$isPromoItem) { ?>
+                                                        <?php if ((!empty($ruleNames)) && (count($ruleNames) > 0)) { ?>
+                                                            <div class="product-item-rule-mobile clearfix">
+                                                                <div class="promotion-info">
+                                                                    <ul class="rules-list">
+                                                                        <?php foreach ($ruleNames as $key => $rules) { ?>
+                                                                            <?php if(count($rules['sku']) > 0){ ?>
+                                                                                <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                                                    <?php 
+                                                                                        $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                                                        if (!empty($productData)){
+                                                                                            $productId = $productData->getId();
+                                                                                            $nameproduct = $productData->getName();
+                                                                                            $visibility = $helperbg->hasProductUrl($productRepository->load($productId));
+                                                                                            $urlProduct = $productData->getProductUrl();
+                                                                                            $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                                            $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int) $item['qty']: '';
+                                                                                            $resultString = '('.$qtyGift.$unitProduct.')';
+                                                                                            $arrayDefaultStockPromo = array();
+                                                                                            $arrayDefaultStockPromo[$key]['name_product'][]= $nameproduct;
+                                                                                            $arrayDefaultStockPromo[$key]['default_stock_promo'][] = (int) $rules['default-stock'][$index];
+                                                                                            $arrayDefaultStockPromo[$key]['sum_default_stock'][] = (int) $rules['sum-default-stock'][$index];
+                                                                                            $arrayDefaultStockPromo[$key]['qty_promo_current'][] = $qtyGift;
+                                                                                    ?>
+                                                                                    <li>
+                                                                                        <i class="fas fa-gift text-danger"></i><strong><?php echo __('Gift: '); ?></strong><span class="span-product"><?php echo $nameproduct; ?> <?php echo $resultString; ?> </span>
+                                                                                        <input type="hidden" value='<?= json_encode($arrayDefaultStockPromo); ?>' id="default-stock-promo-<?= $item->getId() ?>" />
+                                                                                        <?php if($visibility){?>
+                                                                                            <a class="see-more-rules" target="_blank" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                                                <span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+                                                                                            </a>
+                                                                                        <?php }?>
+                                                                                    </li>
+                                                                        <?php }}}} ?>
+                                                                    </ul>
+                                                                </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                <?php } else { ?>
+                                    <!-- Desktop View -->
+                                    <tbody class="cart item">
+                                        <tr class="item-info">
+                                            <td data-th="<?= __('Product'); ?>" class="col item">
+                                                <div class="product-item-photo">
+                                                    <div class="img-box">
+                                                    <?php if ($block->hasProductUrl($product)) : ?>
+                                                        <a href="<?= $block->escapeUrl($getProductUrl) ?>" title="<?= $block->escapeHtml($block->getProductName()) ?>" tabindex="-1" class="product-item-photo">
+                                                            <span class="product-image-container">
+                                                                <span class="product-image-wrapper">
+                                                                    <img class="product-image-photo " src="<?= $productImage ?>" width="" height="" alt="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    <?php else : ?>
+                                                        <a title="<?= $block->escapeHtml($block->getProductName()) ?>" tabindex="-1" class="product-item-photo">
+                                                            <span class="product-image-container">
+                                                                <span class="product-image-wrapper">
+                                                                    <img class="product-image-photo " src="<?= $productImage ?>" width="" height="" alt="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="product-item-details">
+                                                    <div class="product-item-name">
+                                                        <?php
+                                                            $itemId = $item->getId();
+                                                            $lastItemOptions = $itemOptions->create()->addFieldToFilter('item_id', array('eq' => $itemId));
+                                                            $lastItemOptions = $lastItemOptions->getLastItem();
+                                                            $rulesId = ''; $nameRule = '';
+                                                            if(isset($lastItemOptions['value'])){
+                                                                $arrRulesId = json_decode($lastItemOptions['value'], true);
+                                                                if(isset($arrRulesId["options"]) && isset($arrRulesId["options"]['ampromo_rule_id'])){
+                                                                    $rulesId = $arrRulesId["options"]['ampromo_rule_id'];
+                                                                }
+                                                            }
+                                                            if($rulesId){
+                                                                $nameRule = $helperbg->getRulesNameByIdRule($rulesId);
+                                                            }
+                                                        ?>
+                                                        <?php if ($block->hasProductUrl($product)) : ?>
+                                                            <a href="<?= $block->escapeUrl($getProductUrl) ?>" title="<?= $block->escapeHtml($block->getProductName()) ?>">
+                                                                <?php if($isPromoItem){ ?>
+                                                                    <!-- Rule Name -->
+                                                                    <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                                    <span><?= $productResource->getName(); ?></span>
+                                                                <?php }else{ ?>
+                                                                    <?= $productResource->getNameLongHtml(); ?>
+                                                                <?php } ?>
+                                                            </a>
+                                                        <?php else : ?>
+                                                                <?php if($isPromoItem){ ?>
+                                                                    <!-- Rule Name -->
+                                                                    <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                                    <!-- Name Product -->
+                                                                    <span><?= $productResource->getName(); ?></span>
+                                                                <?php }else{ ?>
+                                                                    <?= $productResource->getNameLongHtml(); ?>
+                                                                <?php } ?>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <!-- Brand, Model -->
+                                                    <div class="brand-model clearfix">
+                                                        <div class="brand-name">
+                                                            <?php
+                                                            $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                                            if ($productBrand) {
+                                                            ?>
+                                                                <span><?php echo __('Brands: '); ?></span>
+                                                                <span class="name"><?php echo $productBrand->getName(); ?></span>
+                                                            <?php } ?>
+                                                        </div>
+                                                        <div class="model-name">
+                                                            <?php
+                                                            if ($productModel) {
+                                                            ?>
+                                                                <span><?php echo __('Model: '); ?></span>
+                                                                <span class="name"><?php echo $productModel; ?></span>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Reviews -->
+                                                    <!-- Guarantee -->
+                                                    <?php if ($guaranteeInfo) { ?>
+                                                        <div class="guarantee-info">
+                                                            <span><?php echo __('Guarantee: '); ?></span>
+                                                            <span class="name"><?php echo $guaranteeInfo; ?></span>
+                                                        </div>
+                                                    <?php } ?>
+                                                    <?php if ($attributesOption) { ?>
+                                                        <div class="options-info">
+                                                        <?php foreach($attributesOption as $key => $value): ?>
+                                                        <?php 
+                                                            $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                            $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                            $labelOptions = '';
+                                                            $valueOptions = '';
+                                                            foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                                $tmp_option = $value_o['values'];
+                                                                if(count($tmp_option) > 0)
+                                                                {   
+                                                                    foreach ($tmp_option as $tmp)  {
+                                                                        if($key_o == $key && $tmp['value_index'] == $value){
+                                                                            $labelOptions = $value_o['store_label'];
+                                                                            $valueOptions = $tmp['label'];
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        ?>
+                                                            <span class="span-options-right"><?php echo $labelOptions; ?>: <?php echo $valueOptions; ?></span>
+                                                        <?php endforeach; ?>
+                                                        </div>
+                                                    <?php } ?>
+                                                    <!-- Cart Rules -->
+                                                    <?php if (!$isPromoItem) { ?>
+                                                        <?php if ((!empty($ruleNames)) && (count($ruleNames) > 0)) { ?>
+                                                            <div class="promotion-info">
+                                                                <ul class="rules-list">
+                                                                    <?php foreach ($ruleNames as $key => $rules) { ?>
+                                                                        <?php if(count($rules['sku']) > 0){ ?>
+                                                                            <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                                                <?php 
+                                                                                    $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                                                    if (!empty($productData)){
+                                                                                        $productId = $productData->getId();
+                                                                                        $nameproduct = $productData->getName();
+                                                                                        $visibility = $helperbg->hasProductUrl($productRepository->load($productId));
+                                                                                        $urlProduct = $productData->getProductUrl();
+                                                                                        $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                                        $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int) $item->getQty() : '';
+                                                                                        $resultString = '('.$qtyGift.$unitProduct.')';
+                                                                                        $arrayDefaultStockPromo = array();
+                                                                                        $arrayDefaultStockPromo[$key]['name_product'][]= $nameproduct;
+                                                                                        $arrayDefaultStockPromo[$key]['default_stock_promo'][] = (int) $rules['default-stock'][$index];
+                                                                                        $arrayDefaultStockPromo[$key]['sum_default_stock'][] = (int) $rules['sum-default-stock'][$index];
+                                                                                        $arrayDefaultStockPromo[$key]['qty_promo_current'][] = $qtyGift;
+                                                                                ?>
+                                                                                <li>
+                                                                                    <i class="fas fa-gift text-danger"></i><strong><?php echo __('Gift: '); ?></strong><span class="span-product"><?php echo $nameproduct; ?> <?php echo $resultString; ?> </span>
+                                                                                    <input type="hidden" value='<?= json_encode($arrayDefaultStockPromo); ?>' id="default-stock-promo-<?= $item->getId() ?>" />
+                                                                                    <?php if($visibility){?>
+                                                                                        <a class="see-more-rules" target="_blank" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                                            <span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+                                                                                        </a>
+                                                                                    <?php }?>
+                                                                                </li>
+                                                                    <?php }}}} ?>
+                                                                   
+                                                                </ul>
+                                                            </div>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </div>
+                                            </td>
+                                            <td class="col qty hidden-xs" data="" hidden-xs-th="<?= $block->escapeHtmlAttr(__('Qty')) ?>">
+                                                <div class="field qty">
+                                                    <div class="control qty">
+                                                        <label for="cart-<?= $item->getId() ?>-qty">
+                                                            <?php if (!$isPromoItem) { ?>
+                                                                <span class="quantity-controls quantity-minus change-qty <?= $item->getQty() <= 1 ? "text-secondary" : ""  ?>" id="<?= $item->getId() ?>-minus-qty">-</span>
+                                                                <input id="cart-<?= $item->getId() ?>-qty" data-post='<?= $item->getId(); ?>' default-stock="<?= $defaultStockconfigurable; ?>" oldQty="<?= $block->escapeHtmlAttr($item->getQty()) ?>" name="cart[<?= $item->getId() ?>][qty]" data-cart-item-id="<?= $block->escapeHtmlAttr($item->getSku()) ?>" value="<?= $block->escapeHtmlAttr($item->getQty()) ?>" title="<?= $block->escapeHtmlAttr(__('Qty')) ?>" type="number" size="4" class="input-text qty " data-validate="{required:true,'validate-greater-than-zero':true}" data-role="cart-item-qty">
+                                                                <span class="quantity-controls quantity-plus change-qty" id="<?= $item->getId() ?>-plus-qty">+</span>
+                                                                <span class="for-one-product"><?= $productunit ? ' ' . $productunit : ''; ?></span>
+                                                            <?php } ?>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <!-- Item Price -->
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <span class="price-excluding-tax" data-label="<?= __('Tax not include') ?>">
+                                                        <span class="cart-price">
+                                                            <span class="price"><?= $block->formatPrice($item->getPrice()); ?>
+                                                        </span>
+                                                    </span>
+                                                    <?php
+                                                    $priceOriginal = $productResource->getPrice();
+                                                    $priceFinal = $item->getPriceInclTax();
+                                                    $savePercent = ($priceOriginal == 0) ? 0 : 100 - round(@($priceFinal / $priceOriginal) * 100);
+                                                    if ($savePercent != 0) { ?>
+                                                        <div class="checkout-cart-save-price">
+                                                            <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                                            <span class="price-original"><span class="price"><?= $block->formatPrice($priceOriginal); ?></span></span>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                <!-- </td> -->
+                                                <!-- Item Actions -->
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <div class="actions-toolbar item-actions">
+                                                        <div title="<?= $block->escapeHtml(__('Delete')) ?>" class="remove-item" data-post='<?= json_encode($itemDataDelete) ?>'>
+                                                            <a href="#" title="<?= $block->escapeHtml(__('Delete')) ?>">
+                                                                <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                               
+                                            </td>
+                                            <td class="col subtotal hidden-xs" data-th="<?= $block->escapeHtml(__('Amount')) ?>">
+                                                <?php if (!$isPromoItem) { ?>
+                                                    <span class="price-excluding-tax" data-label="<?= __('Tax not include') ?>">
+                                                        <span class="cart-price">
+                                                            <span class="price"><?= $block->formatPrice($item->getRowTotal()); ?></span>
+                                                        </span>
+                                                    </span>
+                                                <?php } ?>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                <?php } ?>
+                            <?php endforeach ?>
+
+                        <?php } ?>
+                    </table>
+                </div>
+                <div class="cart main actions">
+                    <?php if ($block->getContinueShoppingUrl()) : ?>
+                        <a class="action continue" href="<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>" title="<?= $block->escapeHtml(__('Continue Shopping')) ?>">
+                            <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <div class="cart main actions-sencondary">
+                    <p>
+                        <?php 
+                            //$block->escapeHtml(
+                            // __(
+                            //     "Please select <a class='price-quote-shipping-address' href='%1'>shipping address</a> to get estimated delivery time and shipping fee.",
+                            //     '#'
+                            // ),
+                            // ['a']
+                            //) 
+                        ?>
+                        <?= __('PQ Please select ') ?><a class='price-quote-shipping-address' href='javascript:void(0)'><?= __('PQ shipping address') ?></a><?= __('PQ to get estimated delivery time and shipping fee.') ?>
+                    </p>
+                    <?php
+                    // get session
+                    $shipping_address_session = $coreSession->getCartShippingAddress();
+                    $filterAddress = 0;
+
+                    if ($customerSession->isLoggedIn()) {
+                        // filter list address
+                        if ($shipping_address_session['shipping-address']) {
+                            foreach($shipping_address_session['shipping-address'] as $item) {
+                                if ($item["street"] == 'N/A' || $item["township"] == null) {
+                                    $filterAddress++;
+                                }
+                                // var_dump($item);
+                                // echo '<br/>';
+                            }
+                        }
+                        // number addresses con lai sau khi filter
+                        $calcAddress = count($shipping_address_session['shipping-address']) - $filterAddress;
+                        // echo $calcAddress;
+                        if($shipping_address_session['action'] == 'option'){
+                            $region_id = ''; $city_id = ''; $township_id = ''; $street = '';
+                        }else{
+                            if($shipping_address_session['shipping-address-current']){
+                                // lấy giá trị đầu tiên trong array
+                                $shipping_address = $shipping_address_session['shipping-address-current'];
+
+                                // set data cho shipping address
+                                $region_id = $shipping_address['region_id'] ? $shipping_address['region_id'] : '';
+                                $city_id = $shipping_address['city_id'] ? $shipping_address['city_id'] : '';
+                                $township_id = $shipping_address['township_id'] ? $shipping_address['township_id'] : '';
+                                $street = $shipping_address['street'] ? $shipping_address['street'] : '';
+                            }
+                        }
+
+                        $tmp_cur_fulladdress = array();
+
+                        if ($block->getShippingAddress()->getData('street')) {
+                            $tmp_cur_fulladdress['street'] = $block->getShippingAddress()->getData('street');
+                        }
+                        if ($block->getShippingAddress()->getData('township')) {
+                            $tmp_cur_fulladdress['township'] = $block->getShippingAddress()->getData('township');
+                        }
+                        if ($block->getShippingAddress()->getData('city')) {
+                            $tmp_cur_fulladdress['city'] = $block->getShippingAddress()->getData('city');
+                        }
+                        if ($block->getShippingAddress()->getData('region')) {
+                            $tmp_cur_fulladdress['region'] = $block->getShippingAddress()->getData('region');
+                        }
+                        $tmp_cur_fulladdress = $block->getShippingAddress()->getData('street').$block->getShippingAddress()->getData('township_id').$block->getShippingAddress()->getData('city_id').$block->getShippingAddress()->getData('region_id');
+                        // echo $tmp_cur_fulladdress;
+
+                    } else {
+
+                        // default
+                        $region_id = ''; $city_id = ''; $township_id = ''; $street = '';
+                        // get session
+                        // $shipping_address_session = $coreSession->getCartShippingAddress();
+
+                        // kiem tra session co con hay ko, phai la gues thi moi lay
+                        // va data khong empty thi moi lay
+                        if($shipping_address_session){
+                            if($shipping_address_session['type'] == 'guest' && isset($shipping_address_session['shipping-address-current'])){
+                                // lấy giá trị đầu tiên trong array
+                                $shipping_address = $shipping_address_session['shipping-address-current'];
+
+                                // set data cho shipping address
+                                $region_id = $shipping_address['region_id'] ? $shipping_address['region_id'] : '';
+                                $city_id = $shipping_address['city_id'] ? $shipping_address['city_id'] : '';
+                                $township_id = $shipping_address['township_id'] ? $shipping_address['township_id'] : '';
+                                $street = $shipping_address['street'] ? $shipping_address['street'] : '';
+                            }
+                        }
+                    }
+                    // echo '<pre>';print_r($shipping_address_session);echo '</pre>';
+                    ?>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12 col-12 shipping-address" <?php if($shipping_address_session['shipping-address-current']){echo 'style="display: block;"';}else{echo 'style="display: none;"';} ?>>
+                                <fieldset class="fieldset address">
+                                    <div class="control" style="display: none;">
+                                        <select name="country_id" id="country" class="required-entry" title="Quốc gia" data-validate="{'validate-select':true}">
+                                            <option value="VN" selected="selected">Việt Nam</option>
+                                        </select>
+                                        <input type="hidden" id="type_select_address" name="type_select_address" value="no">
+                                    </div>
+
+                                    <div class="row">
+                                        <?php if ($shipping_address_session['shipping-address'] && $calcAddress > 0) { ?>
+                                            <div class="col-md-12 col-sm-12 col-12">
+                                                <div class="field address-customer-list">
+                                                    <label class="label address-exist" for="address_exist">
+                                                        <span><?= $block->escapeHtmlAttr(__('Select available addresses:')) ?></span>
+                                                    </label>
+                                                    <div class="control" id="shipping_address_cart_option">
+                                                        <?php
+                                                        // $addr_i = 0;
+                                                        foreach ($shipping_address_session['shipping-address'] as $addr) {
+                                                            $checked = '';
+                                                            if ($addr["street"] != 'N/A' && $addr["township"]) {
+                                                                if($shipping_address_session['shipping-address-current']){
+                                                                    $checked = ($tmp_cur_fulladdress == $addr['full_address_tmp']) ? 'checked' : '';
+                                                                }
+                                                                $tmp_fulladdress = [];
+                                                                // create full-address
+                                                                if ($addr['street']) {
+                                                                    $tmp_fulladdress['street'] = $addr['street'];
+                                                                }
+                                                                if ($addr['township']) {
+                                                                    $tmp_fulladdress['township'] = $addr['township'];
+                                                                }
+                                                                if ($addr['city']) {
+                                                                    $tmp_fulladdress['city'] = $addr['city'];
+                                                                }
+                                                                if ($addr['region']) {
+                                                                    $tmp_fulladdress['region'] = $addr['region'];
+                                                                }
+
+                                                                // store full-address to array
+                                                                $addr['full_address'] = implode(', ', $tmp_fulladdress);
+                                                                
+                                                                // display html
+                                                                echo '<label class="radio-inline">';
+                                                                echo '<input ' . $checked . ' type="radio" name="address-customer" valueAddress="'.$addr['full_address'].'" value="' . htmlspecialchars(json_encode($addr)) . '">' . $addr['full_address'];
+                                                                echo '</label>';
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ($calcAddress > 0): ?>
+                                            <div class="col-12">
+                                                <label class="label address-new" for="address_new">
+                                                    <span><?= $block->escapeHtmlAttr(__('Or enter a different address:')) ?></span>
+                                                </label>
+                                            </div>
+                                        <?php endif ?>
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field region required">
+                                                <label class="label" for="region_id"><span><?= $block->escapeHtmlAttr(__('Aff Region')) ?></span></label>
+                                                <div class="control">
+                                                    <select id="region_id" name="region_id" title="<?= $block->escapeHtmlAttr(__('Aff Region')) ?>" class="select-width-50 validate-select" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a region, state or province.')) ?></option>
+                                                    </select>
+                                                    <input type="text" id="region" name="region" title="region" value="<?= $block->escapeHtml($region_id) ?>" class="input-width-50 input-text validate-not-number-first <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('region')) ?>" <?= !$block->getConfig('general/region/display_all') ? ' disabled="disabled"' : '' ?> style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field city required">
+                                                <label class="label" for="city"><span><?= $block->escapeHtmlAttr(__('Aff City')) ?></span></label>
+                                                <div class="control">
+                                                    <select id="city_id" name="city_id" title="<?= $block->escapeHtmlAttr(__('Aff City')) ?>" class="select-width-50 validate-select" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a city.')) ?></option>
+                                                    </select>
+                                                    <input type="text" value="<?= $block->escapeHtml($city_id) ?>" name="city" placeholder="<?= __('Aff Input City') ?>" title="<?= $block->escapeHtmlAttr(__('City')) ?>" class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('city')) ?>" id="city" style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field township">
+                                                <label class="label" for="township_id">
+                                                    <label class="label" for="township"><span><?= $block->escapeHtmlAttr(__('Aff Township')) ?></span></label>
+                                                </label>
+                                                <div class="control">
+                                                    <select id="township_id" name="township_id" title="<?= $block->escapeHtmlAttr(__('Aff Township')) ?>" class="select-width-50 validate-select required-entry" autocomplete="off">
+                                                        <option value=""><?= $block->escapeHtml(__('Please select a township.')) ?></option>
+                                                    </select>
+                                                    <input type="text" id="township" name="township" placeholder="<?= __('Aff Input Township') ?>" value="<?= $block->escapeHtml($township_id) ?>" title="<?= $block->escapeHtmlAttr(__('Aff Input Township')) ?>" class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('township')) ?>" style="display: none;" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-6 col-12">
+                                            <div class="field street">
+                                                <label for="street_1" class="label">
+                                                    <span>Địa chỉ</span>
+                                                </label>
+                                                <div class="control">
+                                                    <input type="text" name="street" placeholder="<?= __('Please Input Number Address, Street') ?>" value="<?= $block->escapeHtml($street) ?>" title="Địa chỉ" id="street_1" class="input-width-50 input-text" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <div class="actions-toolbar">
+                                    <div class="primary">
+                                        <button type="submit" name="update_cart_action" data-cart-empty="" value="shipping_address_cart" title="<?= $block->escapeHtml(__('Áp dụng')) ?>" class="action clear" id="shipping_address_cart">
+                                            <span><?= $block->escapeHtml(__('Áp dụng')) ?></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        require([
+                            'jquery',
+                            'mage/mage'
+                        ], function($) {
+
+                            var dataForm = $('#form-validate');
+                            var ignore = 'null';
+
+                            dataForm.mage('validation', {
+                                ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+                            }).find('input:text').attr('autocomplete', 'off');
+
+                        });
+                    </script>
+
+                    <script type="text/x-magento-init">
+                        {
+                    "#form-validate": {
+                        "addressValidation": {}
+                    },
+                    "#country": {
+                        "regionUpdater": {
+                            "optionalRegionAllowed": <?= /* @noEscape */ $block->getConfig('general/region/display_all') ? 'true' : 'false' ?>,
+                            "regionListId": "#region_id",
+                            "regionInputId": "#region",
+                            "postcodeId": "#zip",
+                            "form": "#form-validate",
+                            "regionJson": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getRegionJson() ?>,
+                            "defaultRegion": "<?= (int) $region_id ?>",
+                            "countriesWithOptionalZip": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getCountriesWithOptionalZip(true) ?>
+                        }
+                    },
+                    "#region_id": {
+                        "cityUpdater": {
+                            "cityListId": "#city_id",
+                            "cityInputId": "#city",
+                            "form": "#form-validate",
+                            "cityJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getCityJson() ?>,
+                            "defaultCity": "<?= (int) $city_id ?>"
+                        }
+                    },
+                    "#city_id": {
+                        "townshipUpdater": {
+                            "townshipListId": "#township_id",
+                            "townshipInputId": "#township",
+                            "form": "#form-validate",
+                            "townshipJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getTownshipJson() ?>,
+                            "defaultTownship": "<?= (int) $township_id ?>"
+                        }
+                    }
+                }
+            </script>
+                </div>
+            </form>
+            <div class="cart-summary">
+                <h2 class="summary title"><?= $block->escapeHtml(__('Your price quote')) ?></h2>
+                <div class="cart-summary-main">
+                    <!-- <block class="Magento\Checkout\Block\Cart\Coupon" name="checkout.cart.coupon" as="coupon" template="Magento_Checkout::cart/coupon.phtml"/> -->
+                    <?php
+                        echo $this->getLayout()->createBlock("Magento\Checkout\Block\Cart\Coupon")->setTemplate("Magento_Checkout::cart/coupon.phtml")->toHtml();
+                    ?>
+                    <div id="cart-totals" class="cart-totals">
+                        <div class="table-wrapper">
+                            <!-- <div class="loading">
+                                <img class="loader-quote-price" src="<?php echo $block->getViewFileUrl('images/loader-2.gif') ?>" alt="<?php echo __('loader') ?>"/>
+                            </div> -->
+                            <table class="data table totals">
+                                <tbody>
+                                    <!-- tong tien hang -->
+                                    <tr class="totals sub">
+                                        <th class="mark" scope="row"><?= $block->escapeHtml(__('Original Total')) ?>:</th>
+                                        <td class="amount">
+                                            <span class="price" id="id-originaltotal" data-th="<?= $block->escapeHtml(__('Original Total')) ?>">
+                                                <?= $block->formatPrice($block->getOriginalTotal()); ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+
+                                    <!-- tiet kiem -->
+                                    <?php if ((int)$block->getSavingsAmount() > 0): ?>
+                                    <tr class="totals savings-amount">
+                                        <th class="mark" colspan="1" scope="row"><?= $block->escapeHtml(__('Savings Amount')) ?>:</th>
+                                        <td class="amount">
+                                            <span class="price" id="id-savingsamount" style="font-weight: 600; color: #ff6000;" >
+                                                <?= $block->formatPrice($block->getSavingsAmount()); ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <?php endif ?>
+
+                                    <!-- giam gia -->
+                                    <?php if (($block->getDiscountAmount()) < 0) : ?>
+                                        <tr class="totals discount hide-ajax" >
+                                            <th class="mark" scope="row">
+                                                <span class="title -enabled"><?= $block->escapeHtml(__('Discount Amount')) ?>:</span>
+                                            </th>
+                                            <td class="amount">
+                                                <span class="price" data-th="block-totals.discount" style="font-weight: 600;">
+                                                    <?php 
+                                                        $discountAmount = (string) $block->getDiscountAmount();
+                                                        $discountAmount = (int) substr($discountAmount, 1);
+                                                    ?>
+                                                    <?= $block->formatPrice($discountAmount); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endif ?>
+                                    <!-- discounts -->
+                                    <?php 
+                                        $discounts = $block->getDiscounts(); 
+                                    ?>
+                                    <?php if ((!empty($discounts)) && (count($discounts) > 0)) { ?>
+                                        <?php foreach ($discounts as $discount) : ?>
+                                            <tr class="total-rules-cart hide-total-rules hide-ajax">
+                                                <th class="mark" scope="row">
+                                                    <span class="rule-name"><?= $discount['name'] ?></span>
+                                                </th>
+                                                <td class="amount">
+                                                    <span class="rule-amount" style="font-weight: 600;"> <?= $block->formatPrice($discount['discount_amount']); ?> </span>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    <?php } ?>
+                                    <!-- discounts call ajax -->
+                                    <tr class="totals discount show-ajax">
+                                        <th class="mark" scope="row">
+                                            <span class="title -enabled"><?= $block->escapeHtml(__('Discount Amount')) ?>:</span>
+                                        </th>
+                                        <td class="amount">
+                                            <span class="price" id="id-discountamount" data-th="block-totals.discount" style="font-weight: 600;">
+                                                
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="total-rules-cart hide-total-rules">
+                                        <th class="mark" scope="row">
+                                            <span class="rule-name"></span>
+                                        </th>
+                                        <td class="amount">
+                                            <span class="rule-amount" style="font-weight: 600;">  </span>
+                                        </td>
+                                    </tr>
+                                    <!-- phi van chuyen -->
+                                    <tr class="totals shipping excl">
+                                        <th class="mark" scope="row">
+                                            <span><?= $block->escapeHtml(__('Shipping & Handling')) ?>:</span>
+                                        </th>
+                                        <td class="amount">
+                                            <span class="price" style="font-weight: 600;" id="id-shippingamount" data-th="<?= $block->escapeHtml(__('Shipping & Handling')) ?>"><?= $block->getCustomShippingAmount() ?></span>
+                                        </td>
+                                    </tr>
+
+                                    <!-- tong cong/tam tinh -->
+                                    <tr class="grand totals">
+                                        <th class="mark" scope="row">
+                                            <strong><span id="id-titlegrandtotal"><?= $block->getCustomTitleGrandTotal($block->getShippingAmount()) ?></span>:</strong>
+                                        </th>
+                                        <td class="amount" data-th="Tổng cộng">
+                                            <strong>
+                                                <span class="price" id="id-grandtotal"><?= $block->formatPrice($block->getGrandTotal()); ?></span>
+                                                <span class="include-vat"><?= __('Include VAT') ?></span>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+
+                <ul class="checkout methods items checkout-methods-items">
+                    <li class="item">
+                        <button type="button" data-toggle="modal" data-target="#modal-price-quote-request" data-backdrop="static" data-keyboard="false" title="<?= __("View price quote") ?>" class="action primary checkout view-cart" id='show-popup-bg'>
+                            <span><?= __("View price quote") ?></span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="cart-summary-sub">
+                    <?= $this->getLayout()
+                        ->createBlock('Magento\Cms\Block\Block')
+                        ->setBlockId('support-phone-number')
+                        ->toHtml(); ?>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            require([
+                    'jquery',
+                    'Chottvn_PriceQuote/js/view/ajax-qty-update'
+                ],
+                function($) {
+                    $(window).on("load", function() {
+
+                    });
+                });
+        </script>
+    <div class="price-quote-shipping-tmp" style="display: none !important;">
+        <?php echo $block->getChildHtml('shipping'); ?>
+    </div>
+    <?php
+        // Cart - empty
+    } else {
+    ?>
+
+        <div class="cart-empty">
+            <div class="page-title-wrapper cart">
+                <h1 class="page-title"><?= __("Price Quote"); ?> <span class="page-title-sub">(0 <?= __("product") ?>)</span></h1>
+            </div><!-- ./cart-title -->
+            <?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+            <div class="cart-empty-notes">
+                <p>
+                    <i class="fas fa-cart-plus cart-icon"></i>
+                </p>
+                <p>
+                    <?= $block->escapeHtml(__('Shopping cart is empty')) ?>
+                </p>
+                <p class="continue-shopping">
+                    <a href="<?= $block->escapeUrl($block->getContinueShoppingUrl()); ?>" title="<?= $block->escapeHtml(__('Continue shopping')); ?>" class="action continue-shopping primary btn-action btn-continue-shopping">
+                        <?= $block->escapeHtml(__('Continue shopping')); ?>
+                    </a>
+                </p>
+            </div>
+            <?= $block->getChildHtml('shopping.cart.table.after') ?>
+        </div>
+        <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_Checkout/js/empty-cart": {}
+                }
+            }
+        </script>
+
+        <!-- script hide data viewed products -->
+        <?php echo $block->getChildHtml('pricequote-no-items'); ?>
+        <!-- script hide data viewed products -->
+    <?php
+    }
+    ?>
+
+</div><!-- /#price-quote-content -->
+<style>
+    .modal-dialog {
+        max-width: 585px;
+    }
+
+    .close:hover {
+        color: #ffffff;
+    }
+
+    .block-title-modal {
+        border-bottom: 1px solid #ccc;
+        color: #00409d;
+        font-size: 18px;
+        font-weight: 700;
+        padding-bottom: 0px;
+        margin-bottom: 15px;
+    }
+
+    .modal-body {
+        padding: 0;
+    }
+
+    .form-group {
+        padding-bottom: 15px;
+        margin: 0;
+    }
+
+    .form-group-big .title-big {
+        padding-bottom: 15px;
+    }
+
+    .modal-footer {
+        padding: 0;
+    }
+
+    .modal-footer button {
+        margin-bottom: 0 !important;
+    }
+
+    .action.cancelquote {
+        text-align: center;
+        text-transform: none;
+        font-size: 14px !important;
+        border-radius: 8px;
+        border: 1px solid #00409d !important;
+        background-color: transparent;
+        color: #00409d !important;
+        height: 35px;
+        width: 100%;
+    }
+
+    .action.cancelquote:hover {
+        border: 0px !important;
+        background-color: #00409d;
+        color: #fff !important;
+    }
+</style>
+<!-- Modal -->
+<div class="modal fade" id="modal-price-quote-request" tabindex="-1" role="dialog" aria-labelledby="modal-price-quote-request" aria-hidden="true" style="z-index: 20000;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="<?= $block->escapeUrl($block->getUrl('price_quote/request/create')) ?>" method="post" id="form-price-quote-create" class="form form-price-quote" data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>" data-mage-init='{"validation":{}}' target="_blank">
+                <?= $block->getBlockHtml('formkey') ?>
+                <div class="modal-body">
+                    <div class="block-title-modal">
+                        <span id="block-customer-login-heading" role="heading" aria-level="2"><i class="fas fa-user"></i> <?= __('Sign up for a quote') ?></span>
+                        <button type="button" class="mfp-close price-quote" data-dismiss="modal">&times;</button>
+                    </div>
+                    <p class="greeting">
+                        <?= __("Please input company info to receive price quote") ?>
+                    </p>
+                    <div id="form-group-required">
+                        <div class="form-group field required">
+                            <label for=""><?= __("Company") ?></label>
+                            <input type="text" class="form-control" aria-describedby="company-help" placeholder="<?= __("Input company name") ?>" name="company_name" required>
+                        </div>
+                        <div class="form-group field required">
+                            <label for=""><?= __("Address") ?></label>
+                            <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Input address") ?>" name="company_address" id="set-address-bg" required>
+                        </div>
+                        <div class="form-group field required">
+                            <label for=""><?= __("VAT number") ?></label>
+                            <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Input VAT number") ?>" name="company_vat_number" required>
+                        </div>
+                    </div>
+                    <div class="form-group-big" id="form-group-not-required">
+                        <div class="title-big"><?= __("Contact/Price quote receiver info") ?></div>
+                        <div class="form-group field">
+                            <label for=""><?= __("Full name") ?></label>
+                            <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Input First name") ?>" name="contact_name">
+                        </div>
+                        <div class="form-group field">
+                            <label for=""><?= __("Phone number") ?></label>
+                            <input type="tel" class="form-control vali-tex-email" aria-describedby="" placeholder="<?= __("Input Telephone") ?>" name="contact_phone_number">
+                        </div>
+                        <div class="form-group field">
+                            <label for=""><?= __("Email") ?></label>
+                            <input type="email" class="form-control vali-tex-email" aria-describedby="" placeholder="<?= __("Input email quote") ?>" name="contact_email">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="action cancelquote hidden" data-dismiss="modal"><?= __("Cancel") ?></button>
+                    <button type="submit" class="action topricequote continue-shopping"><?= __("View price quote") ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    #company_name-error {
+        display: none !important;
+    }
+
+    #company_address-error {
+        display: none !important;
+    }
+
+    #company_vat_number-error {
+        display: none !important;
+    }
+
+    #contact_email-error {
+        display: none !important;
+    }
+
+    .mfp-close.price-quote {
+        top: 0;
+        width: 50px !important;
+        font-size: 28px !important;
+        position: absolute !important;
+        margin-top: -25px;
+        right: -25px;
+        padding: 0px !important;
+        height: 50px !important;
+        background-color: transparent;
+        color: #000 !important;
+    }
+
+    .mfp-close:hover,
+    .mfp-close:focus {
+        opacity: 1;
+        background: unset;
+    }
+</style>
+
+<script type="text/javascript">
+    require(['jquery',
+        'mage/translate'
+    ], function($, $t) {
+        var company_name = $("input[name='company_name']");
+        var company_vat_number = $("input[name='company_vat_number']");
+        var company_address = $("input[name='company_address']");
+        var contact_phone_number = $("input[name='contact_phone_number']");
+        var contact_email = $("input[name='contact_email']");
+
+        $('.form-control').on("keyup", function() {
+            $('.form-control').css('border-color', '#e0e0e0');
+        });
+
+        function validatePhone(value) {
+            return value.length > 9 && value.length <= 10 && /((09|03|07|08|05)+([0-9]{8})\b)/.test(value);
+        }
+
+        function validateTextbox(value) {
+            return value.length > 0;
+        }
+
+        function validateEmail(value) {
+            return value.length > 0 && /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+        }
+
+        function validateTax(value) {
+            return /^\d{10}$|^\d{10}(-)\d{3}$/.test(value);
+        }
+        $('#form-price-quote-create').submit(function() {
+            var isValid = true;
+
+            $('#form-group-required').find('input:text')
+                .each(function() {
+
+                    if ($(this).val().trim() == '') {
+                        isValid = false;
+                        $(this).css('border-color', '#ff6000');
+                    }
+                });
+
+            if (!isValid) {
+                $.toaster({
+                    title: $t('Notice'),
+                    priority: 'danger',
+                    message: '<?php echo __("Please input company info to receive price quote") ?>'
+                });
+                return isValid;
+            }
+
+            if (!validateTax(company_vat_number.val().trim())) {
+                isValid = false;
+                company_vat_number.css('border-color', '#ff6000');
+                company_vat_number.focus();
+                $.toaster({
+                    title: $t('Notice'),
+                    priority: 'danger',
+                    message: '<?php echo __('Please enter a valid fax number (Ex: 1234567890 or 1234567890-123).') ?>'
+                });
+                return isValid;
+            }
+
+            $('#form-group-not-required').find('input.vali-tex-email')
+                .each(function() {
+                    if ($(this).val().trim() !== '') {
+                        if ($(this).attr('name') == 'contact_phone_number') {
+                            if (!validatePhone($(this).val())) {
+                                isValid = false;
+                                $(this).css('border-color', '#ff6000');
+                                $(this).focus();
+                                $.toaster({
+                                    title: $t('Notice'),
+                                    priority: 'danger',
+                                    message: '<?php echo __('Invalid phone') ?>'
+                                });
+                            }
+                        }
+                        if ($(this).attr('name') == 'contact_email') {
+                            if (!validateEmail($(this).val())) {
+                                isValid = false;
+                                $(this).css('border-color', '#ff6000');
+                                $(this).focus();
+                                $.toaster({
+                                    title: $t('Notice'),
+                                    priority: 'danger',
+                                    message: '<?php echo __('Invalid email') ?>'
+                                });
+                            }
+                        }
+                    }
+                });
+            return isValid;
+        });
+
+        $(document).on("click", ".checkout-methods-items button", function(e) {
+            $('#modal-price-quote-request form').trigger("reset");
+        });
+
+        $(document).on('submit', '#modal-price-quote-request form', function() {
+            $("button.cancelquote").click();
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/translate'
+    ], function($, $t) {
+        $('a.social-login-btn-cart').click(function() {
+            $('.sign-in-label a.social-login-btn').click();
+        });
+        $('tr.totals.discount').click(function() {
+            // if ($('.total-rules-cart').hasClass('show-total-rules') && ($('.total-rules-cart').hasClass('show-ajax'))) {
+            //     return $('tr.totals.discount .title').addClass('-collapsed'),
+            //         $('.total-rules-cart').removeClass('show-total-rules'),
+            //         $('.total-rules-cart').removeClass('show-ajax'),
+            //         $('.total-rules-cart').addClass('hide-total-rules'), 1;
+            // }
+            if ($('.total-rules-cart').hasClass('show-total-rules')) {
+                return $('tr.totals.discount .title').addClass('-collapsed'),
+                    $('.total-rules-cart').removeClass('show-total-rules'),
+                    $('.total-rules-cart').addClass('hide-total-rules'), 1;
+            }
+            return $('tr.totals.discount .title').removeClass('-collapsed'),
+                $('.total-rules-cart').addClass('show-total-rules'),
+                $('.total-rules-cart').removeClass('hide-total-rules'), 1;
+        })
+    });
+</script>
+<!-- Huy: Bug #1120 [Địa chỉ] Reset lại Dropdown Quận/ Huyện, Phường/ Xã khi thay đổi giá trị trên dropdown Tỉnh / TP -->
+<script type="text/javascript">
+    require(['jquery','mage/translate','mage/validation'], function($, $t) {
+        $(document).on('change', 'select[name="region_id"]', function() {
+            if($('select[name="region_id"]').val() == ''){
+                $('select[name="city_id"]').val('');
+                $('input[name="city"]').val('');
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+			if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+            if($('select[name="region_id"]').val() !== '' && $('select[name="city_id"]').val() !== '' ){
+                $('select[name="township_id"]').show();
+                $('input#township').hide();
+            }
+        });
+        $(document).on('change', 'select[name="city_id"]', function() {
+            $('input#township').val('');
+            $('select[name="township_id"]').val('');
+            if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+    });
+</script>
+<!-- Huy: auto fill address cho popup -->
+<script type="text/javascript">
+    require(['jquery','mage/translate','mage/validation'], function($, $t) {
+        function getSelectedText(elementId) {
+            var elt = document.getElementById(elementId);
+
+            if (elt.selectedIndex == -1)
+                return null;
+
+            return elt.options[elt.selectedIndex].text;
+        }
+        $(document).on('click', '#show-popup-bg', function() {
+            $('#set-address-bg').val('');
+
+            $('label.radio-inline').find('input')
+                .each(function() {
+                    // console.log($(this).attr('valueAddress'));
+                    if ($(this).is(':checked')) {
+                        $('#set-address-bg').val($(this).attr('valueAddress'));
+                    }
+                });
+            if ($('#set-address-bg').val() == '') {
+                var addressPopup = '';
+                // var street = getSelectedText('street_1'),
+                //     township = getSelectedText('township_id'),
+                //     city = getSelectedText('city_id'),
+                //     region = getSelectedText('region_id'),
+                var tmp_fulladdress = [],
+                    street = $('input[name="street"]').val() ? $('input[name="street"]').val() : '',
+                    township =  $('select[name="township_id"]').val() ? $.trim($('select[name="township_id"]').children("option:selected").text()) : $('input[name="township"]').val(),
+                    city = $('select[name="city_id"]').val() ? $.trim($('select[name="city_id"]').children("option:selected").text()) : '',
+                    region = $('select[name="region_id"]').val() ? $.trim($('select[name="region_id"]').children("option:selected").text()) : '';
+                // create full-address
+                // console.log(street);
+                // console.log(township);
+                // console.log(city);
+                // console.log(region);
+
+                if (street) {
+                    // tmp_fulladdress = street;
+                    tmp_fulladdress.push(street);
+                }
+                if (township) {
+                    // tmp_fulladdress = township;
+                    tmp_fulladdress.push(township);
+
+                }
+                if (city) {
+                    // tmp_fulladdress = city;
+                    tmp_fulladdress.push(city);
+
+                }
+                if (region) {
+                    // tmp_fulladdress = region;
+                    tmp_fulladdress.push(region);
+
+                }
+                // console.log(tmp_fulladdress);
+
+                addressPopup = tmp_fulladdress.join(", ");
+                // console.log(addressPopup);
+                $('#set-address-bg').val(addressPopup);
+            }
+        });
+    });
+</script>
+<!-- Huy: 8. Expand/ collapse textbox "Mã giảm giá" trên trang giỏ hàng/ báo giá bị giật ngược lên trên -->
+<!-- <script type="text/javascript">
+require([
+    'jquery',
+    'mage/translate',
+    'Magento_Customer/js/customer-data',
+    'mage/validation',
+    ], function($, $t, customerData,validation) {
+        $(document).ready(function(){ 
+            var dataForm = $('#discount-coupon-form-v2');
+            dataForm.submit(function (e) {
+                e.preventDefault();
+            });
+            if ($('#coupon_code').val()) {
+                $('#coupon_code').prop('readonly', true);
+            }
+            $("#coupon_code").keyup(function() {
+                $(this).val($(this).val().toUpperCase());
+            });
+            $(document).on('click','button.ctt-button', function() {
+                var url = '<?= $block->escapeUrl($block->getUrl('price_quote/index/couponpost')) ?>';
+                var value = $('#coupon_code').val();
+                if (jQuery.trim(value).length > 0) {
+                    if ($("button.ctt-button").hasClass("apply")) {
+                        url +='?remove=0&coupon_code_ctt='+value;
+                    }else{
+                        url +='?remove=1&coupon_code_ctt='+value;
+                    }
+                    $.ajax({
+                        url: url,
+                        success: function(res) {
+                            var parsedResponse = $.parseHTML(res);
+                            var contentId = "#price-quote-content";
+                            var result = $(parsedResponse).find(contentId);
+                            var sections = ['cart'];    
+                            $(contentId).replaceWith(result);
+                            // The mini cart reloading  
+                            customerData.reload(sections, true);
+                            if ($('#coupon_code').val()) {
+                                $('#coupon_code').prop('readonly', true);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error);
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }else{
+                    $('#coupon_code').css({"border": "1px solid #ff6000"});
+                    $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+                }
+            });
+        });
+});
+
+</script> -->

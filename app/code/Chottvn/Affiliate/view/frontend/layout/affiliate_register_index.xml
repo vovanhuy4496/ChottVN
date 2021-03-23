@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceContainer name="content">
+        <block class="Chottvn\Affiliate\Block\Affiliate\Register" name="affiliate_register_index" template="Chottvn_Affiliate::register.phtml">
+        	<container name="div.category.affiliate.program" htmlTag="div" label="Catalog Affiliate Program Container" htmlClass="box-div-category-affiliate-program">
+            </container>
+            <container name="form.additional.info" as="form_additional_info"/>
+        </block>
+    </referenceContainer>
+    <referenceContainer name="form.additional.info">
+        <block class="Magento\Captcha\Block\Captcha" name="affiliate-create-captcha" as="affiliate.create.captcha" after="-">
+            <action method="setFormId">
+                <argument name="formId" xsi:type="string">affiliate_create</argument>
+            </action>
+            <action method="setImgWidth">
+                <argument name="width" xsi:type="string">230</argument>
+            </action>
+            <action method="setImgHeight">
+                <argument name="width" xsi:type="string">50</argument>
+            </action>
+        </block>
+        <block class="Magento\Framework\View\Element\Template" name="form_additional_info_customer" template="Magento_Customer::additionalinfocustomer.phtml"/>
+    </referenceContainer>
+</page>

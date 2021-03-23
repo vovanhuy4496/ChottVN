@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Chottvn\Finance\Api\RequestRepositoryInterface" type="Chottvn\Finance\Model\RequestRepository"/>
+	<preference for="Chottvn\Finance\Api\Data\RequestInterface" type="Chottvn\Finance\Model\Data\Request"/>
+	<preference for="Chottvn\Finance\Api\Data\RequestSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Finance\Model\ResourceModel\Request\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_finance_request</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Finance\Model\ResourceModel\Request\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_finance_request_listing_data_source" xsi:type="string">Chottvn\Finance\Model\ResourceModel\Request\Grid\Collection</item>
+				<item name="chottvn_finance_transactiontype_listing_data_source" xsi:type="string">Chottvn\Finance\Model\ResourceModel\TransactionType\Grid\Collection</item>
+				<item name="chottvn_finance_transaction_listing_data_source" xsi:type="string">Chottvn\Finance\Model\ResourceModel\Transaction\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+	<preference for="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" type="Chottvn\Finance\Model\TransactionTypeRepository"/>
+	<preference for="Chottvn\Finance\Api\Data\TransactionTypeInterface" type="Chottvn\Finance\Model\Data\TransactionType"/>
+	<preference for="Chottvn\Finance\Api\Data\TransactionTypeSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Finance\Model\ResourceModel\TransactionType\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_finance_transactiontype</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Finance\Model\ResourceModel\TransactionType\Collection</argument>
+		</arguments>
+	</virtualType>
+	<preference for="Chottvn\Finance\Api\TransactionRepositoryInterface" type="Chottvn\Finance\Model\TransactionRepository"/>
+	<preference for="Chottvn\Finance\Api\Data\TransactionInterface" type="Chottvn\Finance\Model\Data\Transaction"/>
+	<preference for="Chottvn\Finance\Api\Data\TransactionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Finance\Model\ResourceModel\Transaction\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_finance_transaction</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Finance\Model\ResourceModel\Transaction\Collection</argument>
+		</arguments>
+	</virtualType>
+</config>

@@ -1,0 +1,114 @@
+Posted:,Posted:
+Categories:,Categories:
+Tags:,Tags:
+Author:,Author:
+"We can't find posts matching the selection.","We can't find posts matching the selection."
+"Read more &#187;","Read more &#187;"
+"Read %1","Read %1"
+"&larr; Previous","&larr; Previous"
+"Next &rarr;","Next &rarr;"
+"Related Posts","Related Posts"
+"Related Products","Related Products"
+"Share with friends","Share with friends"
+"Read more","Read more"
+"Share This: ","Share This: "
+"See more","See more"
+"Posts loader","Posts loader"
+"%1 Comment(s)","%1 Comment(s)"
+"Add a comment...","Add a comment..."
+"Sign in to add a comment...","Sign in to add a comment..."
+"Full Name","Full Name"
+Email,Email
+Submit,Submit
+"Sign In","Sign In"
+"Load more comments","Load more comments"
+"Add a reply...","Add a reply..."
+Cancel,Cancel
+Reply,Reply
+"Show more replies in this thread","Show more replies in this thread"
+New,New
+"Add to Wish List","Add to Wish List"
+"Add to Compare","Add to Compare"
+"Add to Cart","Add to Cart"
+"In stock","In stock"
+"Out of stock","Out of stock"
+Archive,Archive
+"Archive %s","Archive %s"
+Categories,Categories
+"Featured Posts","Featured Posts"
+"Recent Posts","Recent Posts"
+"RSS Feed","RSS Feed"
+Search,Search
+"Search posts here...","Search posts here..."
+Tags,Tags
+"Read more >","Read more >"
+"We can't find products matching the selection.","We can't find products matching the selection."
+Sale,Sale
+"Learn More","Learn More"
+"Update Cart","Update Cart"
+Qty,Qty
+"Shopping Cart","Shopping Cart"
+"My Cart - ","My Cart - "
+Checkout,Checkout
+"All Categories","All Categories"
+"Go to Top","Go to Top"
+Setting,Setting
+Language,Language
+Currency,Currency
+Customer,Customer
+"My Account","My Account"
+"Welcome, %1!","Welcome, %1!"
+Logout,Logout
+"Create Your Account","Create Your Account"
+"Join Free","Join Free"
+or,or
+"Sign in","Sign in"
+"Follow Us","Follow Us"
+"More Categories","More Categories"
+"All ready","All ready"
+"Load more","Load more"
+Day,Day
+Days,Days
+Hour,Hour
+Hours,Hours
+Min,Min
+Mins,Mins
+Sec,Sec
+Secs,Secs
+"See All","See All"
+"Top Search:","Top Search:"
+" There are no search terms available."," There are no search terms available."
+"Advanced ++","Advanced ++"
+"Search entire store here...","Search entire store here..."
+Previous,Previous
+Next,Next
+"We can't find brands matching the selection.","We can't find brands matching the selection."
+"We can't find brand matching the selection.","We can't find brand matching the selection."
+"Brand Group","Brand Group"
+"Brands: ","Brands: "
+"Search Brand","Search Brand"
+"Search brands here…","Search brands here…"
+"Search for:","Search for:"
+Items,Items
+of,of
+"%1 Item","%1 Item"
+"%1 Items","%1 Items"
+"My Cart","My Cart"
+Close,Close
+item,item
+items,items
+"Your Product","Your Product"
+Price,Price
+"Recently added item(s)","Recently added item(s)"
+"You have no items in your shopping cart.","You have no items in your shopping cart."
+"View cart","View cart"
+"Product Description","Description"
+"Product Specs","Product Specs"
+"Your %store_name order #%increment_id confirmation","Your %store_name order #%increment_id confirmation",module,Magento_Sales
+"Your %store_name order #%increment_id - %frontend_label","Your %store_name order #%increment_id - %frontend_label",module,Magento_Sales
+"Your %store_name order #%increment_id - Shipment Update","Your %store_name order #%increment_id - Shipment Update",module,Magento_Sales
+"Your %store_name order #%increment_id - Invoice Update","Your %store_name order #%increment_id - Invoice Update",module,Magento_Sales
+"Processing","Đang tiến hành",module,Magento_Sales
+"Packaging","Đang đóng gói",module,Magento_Sales
+"Delivery","Đang giao hàng",module,Magento_Sales
+"Complete","Đã hoàn thành",module,Magento_Sales

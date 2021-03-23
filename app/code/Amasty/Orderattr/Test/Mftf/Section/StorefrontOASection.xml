@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+
+    <section name="StorefrontOASection">
+        <element name="FieldInput" type="input"
+                 selector=".control [name*={{adminCreateOASettings.AttributeCode}}]" parameterized="true"/>
+        <element name="FieldInputRequired" type="input"
+                 selector=".control [name*={{adminCreateOASettings.AttributeCode}}][aria-required=true]" parameterized="true"/>
+        <element name="OAInOrderSummary" type="block"
+                 selector="//td/span[contains (text(), '{{adminCreateOASettings.DefaultLabel}}')]" parameterized="true"/>
+        <element name="OAValueInOrderSummary" type="block"
+                 selector="//td/span[contains (text(), '{{OAValue}}')]" parameterized="true"/>
+        <element name="DropdownInput" type="select" selector=".select[name*={{adminCreateOASettings.AttributeCode}}]"
+                 parameterized="true"/>
+        <element name="MultipleInput" type="select"
+                 selector=".admin__control-multiselect[name*={{adminCreateOASettings.AttributeCode}}]" parameterized="true"/>
+        <element name="CheckOption" type="input"
+                 selector="//label[contains (text(), '{{adminCreateOASettings.OAValue}}')]" parameterized="true"/>
+        <element name="Html" type="button" selector="//a[contains (text(), '{{adminCreateOASettings.Title}}')]" parameterized="true"/>
+        <element name="OASortOrder1" type="block"
+                 selector="[class='order-attributes-form fieldset address']>div.field:nth-child(1) [name=text_field_2]"/>
+        <element name="OASortOrder2" type="block"
+                 selector="[class='order-attributes-form fieldset address']>div.field:nth-child(2) [name=text_field_3]"/>
+        <element name="OASortOrder3" type="block"
+                 selector="[class='order-attributes-form fieldset address']>div.field:nth-child(3) [name=text_field_1]"/>
+        <element name="Alert5" type="block" selector="//span[contains (text(), 'Please enter more or equal than 5 symbols.')]"/>
+        <element name="Alert10" type="block" selector="//span[contains (text(), 'Please enter less or equal than 10 symbols.')]"/>
+        <element name="TooltipForStoreView" type="block"
+                 selector="//div[contains (text(), '{{Tooltip}}')]/preceding-sibling::span[@id='tooltip']" parameterized="true"/>
+        <element name="TooltipOpen" type="block" selector="//div[@aria-hidden='false'][contains (text(), '{{Tooltip}}')]" parameterized="true"/>
+    </section>
+
+</sections>
+

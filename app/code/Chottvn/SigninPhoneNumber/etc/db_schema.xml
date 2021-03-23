@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="chottvn_signinphonenumber_verification Table" onCreate="migrateDataFromAnotherTable(chottvn_phone_verification)" engine="innodb" name="chottvn_signinphonenumber_verification" resource="default">
+		<column comment="Record Id" identity="true" name="id" nullable="false" unsigned="false" xsi:type="int"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="id"/>
+		</constraint>
+		<column comment="Customer Id" name="customer_id" nullable="false" xsi:type="int"/>
+		<column comment="Phone number" length="255" name="phone_number" nullable="false" xsi:type="varchar"/>
+		<column comment="Auth code of phone number" name="auth_code" nullable="true" xsi:type="int"/>
+		<column comment="Status verification of phone number" name="verify_status" nullable="false" xsi:type="smallint"/>
+		<column comment="Status of OTP code, used or not" name="code_status" nullable="false" xsi:type="smallint"/>
+		<column comment="Times send OTP code in day" name="requested_times" nullable="false" xsi:type="smallint"/>
+		<column comment="Time record created at" name="created_at" nullable="true" xsi:type="datetime"/>
+	</table>
+	<!-- <table comment="chottvn_signinphonenumber_otplog Table" onCreate="migrateDataFromAnotherTable(chottvn_send_otp_log)" engine="innodb" name="chottvn_signinphonenumber_otplog" resource="default">
+		<column comment="Record Id" identity="true" name="id" nullable="false" unsigned="false" xsi:type="int"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="id"/>
+		</constraint>
+		<column comment="Phone number" length="255" name="phone_number" nullable="false" xsi:type="varchar"/>
+		<column comment="Type of request send OTP (register, password, ...)" name="type" nullable="false" xsi:type="smallint"/>
+		<column comment="Status send OTP" name="status" nullable="false" xsi:type="smallint"/>
+		<column comment="Time send OTP" name="send_at" nullable="true" xsi:type="datetime"/>
+		<column comment="Provider send OTP" length="50" name="provider" nullable="false" xsi:type="varchar"/>
+		<column comment="Params send OTP" length="255" name="params" nullable="false" xsi:type="varchar"/>
+	</table> -->
+	<table name="chottvn_phone_verification" disabled="true" />
+</schema>

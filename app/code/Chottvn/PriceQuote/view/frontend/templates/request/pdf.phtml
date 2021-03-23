@@ -1,0 +1,737 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * PriceQuote Request View template
+ *
+ * @var $block \Magento\PriceQuote\Block\Request\View
+ */
+
+$items = $block->getItems();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+$reviewFactory = $objectManager->create('Magento\Review\Model\Review');
+$storeId = $storeManager->getStore()->getId();
+$saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$amPromoHelper = $this->helper('Amasty\Promo\Helper\Item');
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$blockRules = $block->getLayout()->createBlock('Chottvn\Frontend\Block\Rules');
+$priceQuoteRequest = $block->getPriceQuoteRequest();
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><?= __("Price Quote"); ?> - <?= $block->getCompanyName(); ?> - <?= $block->getRequestDate() ?></title>
+    <!--  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+    <style type="text/css">
+    	*{
+    		font-family: "Arial", "DejaVu Sans", Helvetica, "Times New Roman", serif;
+    	}
+
+      html {
+        padding: 0px;
+        margin: 0px;
+      }
+
+    	body{
+  			background-image: url("<?=$this->getViewFileUrl('images/logo-cho-truc-tuyen-watermark-3.png'); ?>") !important;
+  			background-repeat: no-repeat !important;
+  	    background-size: 25% auto !important;
+  	    background-position: center !important;
+  	    -webkit-print-color-adjust: exact;
+        padding: 40px;
+        margin: 0px;
+  		}
+  		@media print {
+    		* {
+    		    -webkit-print-color-adjust: exact !important; /*Chrome, Safari */
+    		    color-adjust: exact !important;  /*Firefox*/
+    		  }
+  		}
+    </style>
+
+    <style  type="text/css">
+        /*Bootstrap*/
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .float-right {
+            float: right !important;
+        }
+        .text-right{
+        	text-align: right;
+        }
+        .text-left{
+        	text-align: left;
+        }
+        .text-center{
+            text-align: center;
+        }
+        .text-uppercase {
+            text-transform: uppercase !important;
+        }
+
+        /*FontAwesome*/
+        @font-face {
+          font-family: "FontAwesomeRegular";
+          font-weight: normal;
+          font-style : normal;
+                 src : url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/webfonts/fa-regular-400.ttf") format("truetype");
+        }
+        @font-face {
+          font-family: "FontAwesomeBrands";
+          font-weight: normal;
+          font-style : normal;
+                 src : url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/webfonts/fa-brands-400.ttf") format("truetype");
+        }
+        @font-face {
+          font-family: "FontAwesomeSolid";
+          font-weight: bold;
+          font-style : normal;
+                 src : url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/webfonts/fa-solid-900.ttf") format("truetype");
+        }
+        .fas{
+            font-weight: bold !important;
+             font-family: FontAwesomeSolid !important;
+        }
+        .fas:before{
+            font-weight: bold !important;
+            font-family: FontAwesomeSolid !important;
+        }
+        .fab{
+            font-weight: normal !important;
+             font-family: FontAwesomeBrands !important;
+        }
+        .fab:before{
+             font-weight: normal !important;
+            font-family: FontAwesomeBrands !important;
+        }
+        .far{
+            font-weight: normal !important;
+             font-family: FontAwesomeRegular !important;
+        }
+        .far:before{
+             font-weight: normal !important;
+            font-family: FontAwesomeRegular !important;
+        }
+
+
+
+        /*Page CSS*/
+        .price_quote-request-view-pdf {
+          background-color: #ffffff !important;
+        }
+        .price_quote-request-view-pdf table,
+        .price_quote-request-view-pdf tr,
+        .price_quote-request-view-pdf td {
+          font-size: 13px;
+          padding: 0px;
+          margin: 0px;
+          line-height: 18px;
+        }
+        .price_quote-request-view-pdf p {
+          font-size: 13px;
+          padding: 0px;
+          margin: 0px;
+          line-height: 18px;
+        }
+        .price_quote-request-view-pdf .header-section {
+          font-size: 13px !important;
+          padding: 0px !important;
+          margin: 0px !important;
+          line-height: 16px !important;
+        }
+        .price_quote-request-view-pdf .header-section .logo img {
+          max-height: 70px!important;
+        }
+        .price_quote-request-view-pdf .header-section p {
+          font-size: 13px !important;
+          padding: 0px !important;
+          margin: 0px !important;
+          line-height: 16px !important;
+        }
+        .price_quote-request-view-pdf .header-section .text-uppercase {
+          text-transform: uppercase !important;
+          font-weight: bold !important;
+          padding: 5px 0px 2px 0px !important;
+        }
+        .price_quote-request-view-pdf .quote-title {
+          text-align: center !important;
+        }
+        .price_quote-request-view-pdf .quote-title h1 {
+          font-size: 28px !important;
+          text-transform: uppercase !important;
+          font-weight: bold !important;
+          padding: 40px 0px 0px 0px !important;
+          margin: 0px !important;
+        }
+        .price_quote-request-view-pdf .quote-title p {
+          font-size: 16px !important;
+          padding: 10px 0px 20px 0px;
+          margin: 0px;
+        }
+
+        .price_quote-request-view-pdf .quote-table thead th {
+          padding: 15px 5px 5px 5px;
+          border-bottom: solid 1px #e0e0e0;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        .price_quote-request-view-pdf .quote-table tbody tr td {
+          border-bottom: solid 1px #e0e0e0;
+          font-size: 14px;
+          padding: 5px;
+          vertical-align: top;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-item-photo img {
+          max-width: 120px;
+          margin: 0px;
+          padding: 0px;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-item-name {
+          font-size: 13px;
+          color: #000!important;
+          line-height: 18px;
+          padding-bottom: 5px;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-item-name strong {
+          font-weight: bold;
+        }
+
+        .price_quote-request-view-pdf .item-body .brand-name{
+          font-size: 13px!important;
+          color: #3e3e3e!important;
+          line-height: 18px!important;
+          padding-bottom: 5px!important;
+          width: 40%;
+          display: inline-block;
+        }
+        .price_quote-request-view-pdf .item-body .model-name {
+          font-size: 13px!important;
+          color: #3e3e3e!important;
+          line-height: 18px!important;
+          padding-bottom: 5px!important;
+          width: 60%;
+          display: inline-block;
+        }
+        .price_quote-request-view-pdf .item-body .rating-summary  {
+          padding-bottom: 0 0 5px 0;
+          margin: 0px;
+          line-height: 16px!important;
+        }
+        .price_quote-request-view-pdf .item-body .rating-summary .rating-result{
+          font-size: 11px;
+          /* display: inline-block; */
+          color: #707070;
+        }
+        .price_quote-request-view-pdf .item-body .rating-summary i {
+          font-size: 11px!important;
+          line-height: 16px!important;
+          display: inline-block;
+        }
+        .price_quote-request-view-pdf .item-body .rating-summary .rating-result .star.solid{
+          color: #ffce00;
+        }
+        .price_quote-request-view-pdf .item-body .rating-summary .rating-label {
+          color: #707070;
+          padding-left: 5px;
+          font-size: 11px!important;
+          line-height: 20px!important;
+        }
+
+        .price_quote-request-view-pdf .item-body .rules-list{
+          list-style: none;
+          padding-inline-start: 0 !important;
+          margin: 0;
+          padding: 0 0 5px 0;
+        }
+        .price_quote-request-view-pdf .item-body .rules-list li {
+          font-size: 12px;
+          color: #3e3e3e;
+          line-height: 20px;
+        }
+        .price_quote-request-view-pdf .item-body .rules-list li i {
+          font-size: 15px;
+          color: #ef0000;
+          line-height: 16px;
+          /* display: inline-block; */
+        }
+        .price_quote-request-view-pdf .item-body .rules-list li span {
+          font-size: 13px;
+          color: #3e3e3e;
+          line-height: 18px;
+        }
+        .price_quote-request-view-pdf .item-body .message-gift {
+          margin: 10px 0 0 0;
+          display: inline-block;
+          color: #fff !important;
+          background: #ef0000 !important;
+          font-size: 12px;
+          padding: 1px 8px;
+          border-radius: 8px;
+          -moz-border-radius: 8px;
+          -webkit-border-radius: 8px;
+          line-height: 16px;
+        }
+        .price_quote-request-view-pdf .item-body .message-gift i,
+        .price_quote-request-view-pdf .item-body .message-gift span {
+          display: inline-block;
+          line-height: 20px;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-price {
+          padding: 0px 5px;
+          text-align: left;
+          line-height: 24px;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-price .order-quantity {
+          font-size: 18px;
+          color: #000;
+          line-height: 24px;
+        }
+        .price_quote-request-view-pdf .item-body .product-price .order-price {
+          font-size: 18px;
+          color: #000;
+          line-height: 24px;
+        }
+        .price_quote-request-view-pdf .item-body .product-price .order-save-price {
+          line-height: 16px;
+          font-size: 18px;
+          color: #707070;
+        }
+
+        .price_quote-request-view-pdf .item-body .product-price .order-save-price .price-original {
+          text-decoration: line-through;
+          font-size: 14px;
+        }
+        .price_quote-request-view-pdf .item-body .product-price .order-save-price .price-original .price {
+          font-size: 14px;
+          color: #707070;
+        }
+        .price_quote-request-view-pdf .item-body .product-price .order-save-price .save-percent {
+          /* font-size: 10px;
+          margin: 0px 0 0 5px;
+          padding: 2px 4px;
+          border-radius: 6px;
+          -moz-border-radius: 6px;
+          -webkit-border-radius: 6px;
+          color: #fff;
+          line-height: 14px;
+          background: #ff6000;
+          display: inline-block; */
+          font-size: 14px;
+          color: #ff6000;
+        }
+
+        .price_quote-request-view-pdf .item-body .sales-price {
+          padding: 0px 5px;
+          text-align: right;
+        }
+        .price_quote-request-view-pdf .item-body .sales-price .price {
+          font-size: 18px;
+          font-weight: bold;
+          color: #000;
+          line-height: 24px;
+        }
+
+
+
+        .price_quote-request-view-pdf .quote-table tfoot tr {
+          border-bottom: solid 1px #e0e0e0;
+          font-size: 14px;
+        }
+        .price_quote-request-view-pdf .quote-table tfoot tr td {
+          vertical-align: top;
+        }
+        .price_quote-request-view-pdf .quote-table tfoot tr td p {
+          font-size: 14px;
+          line-height: 24px;
+        }
+
+        .price_quote-request-view-pdf .quote-table tfoot tr td p .amount {
+          font-weight: bold;
+        }
+        .price_quote-request-view-pdf .quote-table .totals.grand {
+          border-top: solid 1px #e0e0e0;
+          font-size: 18px;
+          margin-top: 5px;
+        }
+        .price_quote-request-view-pdf .quote-table .totals.grand .amount {
+          color: #ff6000;
+        }
+        .price_quote-request-view-pdf .quote-table .totals.grand .amount .vat-info {
+          font-style: italic;
+          font-size: 14px;
+          font-weight: normal;
+          color: #707070;
+          display: block;
+        }
+
+        .price-quote-note {
+          font-size: 13px;
+          color: #3e3e3e;
+          line-height: 18px;
+        }
+
+        .price-quote-note {
+          font-size: 13px;
+          color: #3e3e3e;
+          line-height: 18px;
+          padding-top: 15px;
+        }
+
+        .price-quote-note p {
+          margin: 0;
+          padding: 0;
+          line-height: 20px;
+        }
+
+        .price-quote-note ul {
+          list-style: none;
+          padding-inline-start: 0 !important;
+          margin: 0;
+          padding: 0;
+        }
+        .price-quote-note ul li {
+          line-height: 20px;
+          font-size: 13px;
+          color: #3e3e3e;
+        }
+
+        .quote-request-view-pdf .cart-empty {
+          padding: 0 10px;
+          text-align: center;
+        }
+        .price_quote-request-view-pdf .cart-empty .cart-icon {
+          color: #707070;
+          font-size: 70px;
+        }
+        .price_quote-request-view-pdf .cart-empty .btn-continue-shopping {
+          color: #ffffff;
+          border-color: #00409d;
+          background-color: #00409d;
+        }
+
+        .price_quote-request-view-pdf .cart-empty-sub {
+          padding: 0 10px;
+        }
+    </style>
+
+</head>
+<body class="price_quote-request-view-pdf">
+<div class="page-wrapper container">
+	<table style="width: 100%; ">
+    <tr>
+      <td class="header-section" style="width: 60%;">
+        <div class="logo">
+          <img src="<?= $block->getViewFileUrl('images/logo-cho-truc-tuyen-desktop.png');  ?>"
+               alt="<?php echo $block->getLogoAlt() ?>"
+    		       <?php echo $block->getLogoWidth() ? 'width="' . $block->getLogoWidth() . '"' : '' ?>
+    		       <?php echo $block->getLogoHeight() ? 'height="' . $block->getLogoHeight() . '"' : '' ?>
+    		  />
+    		</div>
+			</td>
+			<td class="header-section" style="width: 40%;">
+				<?= $this->getLayout()
+			        ->createBlock('Magento\Cms\Block\Block')
+			        ->setBlockId('price-quote-print-header-right')
+			        ->toHtml(); ?>
+			</td>
+    </tr>
+  </table>
+  <table style="width: 100%; ">
+    <tr>
+      <td class="quote-title">
+        <h1><?= __("Price Quote Table") ?></h1>
+        <p><?= __("Date") ?>: <?= $block->getRequestDate() ?></p>
+      </td>
+    </tr>
+  </table>
+  <table style="width: 100%; ">
+    <tr>
+      <td class="greeting-section" style="width: 62px;">
+        <p><?= __("Dear") ?>:</p>
+      </td>
+      <td class="greeting-section">
+        <p><span class="contact-name"><?= __("Mr/Mrs") ?> <?= $block->getContactName(); ?></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td class="greeting-section" style="width: 62px;">
+      </td>
+      <td class="greeting-section">
+        <p><span class="company-name"><?= $block->getCompanyName(); ?></span></p>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" class="greeting-section">
+  		<?= $this->getLayout()
+  	        ->createBlock('Magento\Cms\Block\Block')
+  	        ->setBlockId('price-quote-greeting')
+  	        ->toHtml(); ?>
+      </td>
+    </tr>
+  </table>
+</div><!-- ./page-header -->
+<div class="page-content" style="width: 100%; ">
+<?php if(! $block->isRequestNotFound()){ //Request EXIST ?>
+	<?php
+	// Cart - items
+	if ($block->getItemsCount() > 0) {
+	?>
+  <table class="quote-table" style="width: 100%;">
+    <thead>
+      <tr>
+        <th colspan="2" style="text-align: left;">
+          <?= $block->escapeHtml(__('Product information')) ?>
+        </th>
+        <th style="width: 120px; text-align: left;">
+          <?= $block->escapeHtml(__('Qty')) ?>
+        </th>
+        <th style="width: 120px; text-align: right;">
+          <?= $block->escapeHtml(__('Subtotal')) ?>
+        </th>
+      </tr>
+    </thead>
+    <tbody class="cart-items">
+    <?php foreach ($block->getItems() as $item) :?>
+    <?php
+      $product = $item->getProduct();
+      $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+      $guaranteeInfo = $productResource->getData('guarantee');
+
+      $reviewFactory->getEntitySummary($productResource, $storeId);
+      $ratingSummary = $productResource->getRatingSummary()->getRatingSummary();
+      $ratingCount = $productResource->getRatingSummary()->getReviewsCount();
+      $starSolid = 0;
+      $starTransparent = 5;
+      if ($ratingSummary < 20) {
+      } else if ($ratingSummary <40) {
+        $starSolid = 1;
+        $starTransparent = 4;
+      } else if ($ratingSummary <60) {
+        $starSolid = 2;
+        $starTransparent = 3;
+      } else if ($ratingSummary <80) {
+        $starSolid = 3;
+        $starTransparent = 2;
+      } else if ($ratingSummary <100) {
+        $starSolid = 4;
+        $starTransparent = 1;
+      } else {
+        $starSolid = 5;
+        $starTransparent = 0;
+      }
+
+      // $ruleIdsApplied = $item->getAppliedRuleIds();
+      // $rulesApplied = $saleRuleFactory->create()->addFieldToFilter('rule_id', array('in' => $ruleIdsApplied) )->addFieldToSelect('name');
+      $cartRuleNames = $blockRules->getCartRuleByProduct($product);
+      $catalogRuleNames = $blockRules->getCatalogRuleByProduct($product);
+      $ruleNames = array_merge($cartRuleNames, $catalogRuleNames);
+      $productImage = $imageHelper->init($item->getProduct(), 'cart_page_product_thumbnail')->getUrl();
+      $isPromoItem = $amPromoHelper->isPromoItem($item);
+    ?>
+      <tr class="cart-item-body">
+        <td class="item-body" style="width: 130px;">
+          <div class="product-item-photo">
+              <div class="img-box">
+                  <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($item->getName()) ?>" />
+              </div>
+          </div>
+        </td>
+        <td class="item-body">
+          <p class="product-item-name">
+            <?= $isPromoItem ? __("Gift")." - " : "" ?>
+            <?= $item->getName(); ?>
+          </p>
+          <?php
+          $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+              if ($productBrand ){
+          ?>
+          <p class="brand-name">
+            <span><?php echo __('Brands: '); ?></span>
+            <span class="name"><?php echo $productBrand->getName(); ?></span>
+          </p>
+          <?php } ?>
+          <?php
+              $productModel = $productResource->getData('model');
+              if ($productModel) {
+          ?>
+          <p class="model-name">
+            <span class="label"><?php echo __('Model: '); ?></span>
+            <span class="name"><?php echo $productModel; ?></span>
+          </p>
+          <?php } ?>
+          <!-- Reviews -->
+          <p class="rating-summary">
+            <span class="rating-result" title="<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+            <?php
+              for ($x = 0; $x < $starSolid; $x++) {
+                echo "<i class='fas fa-star star solid'></i>";
+              }
+              for ($x = 0; $x < $starTransparent; $x++) {
+                echo "<i class='fas fa-star star'></i>";
+              }
+            ?>
+            </span>
+            <span class="rating-label">
+              <?php if ($ratingCount == 0) {
+               echo __('No review on product');
+              } else {
+               echo __('Have %1 reviews', $ratingCount);
+              }
+              ?>
+            </span>
+          </p>
+          <!-- Cart Rules -->
+          <ul class="rules-list">
+              <?php foreach ($ruleNames as $rule) {
+                  echo '<li><i class="fas fa-gift"></i> <span>'.$rule.'</span></li>';
+              } ?>
+          </ul>
+          <!-- Guarantee -->
+          <?php if ($guaranteeInfo) { ?>
+          <p class="guarantee-info">
+              <span class="label"><?php echo __('Guarantee: '); ?></span>
+              <span class="name"><?php echo $guaranteeInfo; ?></span>
+          </p>
+          <?php } ?>
+          <?php if($isPromoItem){ ?>
+          <div class="message-gift">
+            <i class="fas fa-gift"></i> <span><?= $item->getMessage(); ?></span>
+          </div>
+          <?php } ?>
+        </td>
+        <td class="item-body" style="width: 140px;">
+          <div class="product-price">
+            <p class="order-quantity"><?= (int) $item->getQty();  ?></p>
+            <p class="order-price"><?= $block->formatPrice($item->getPrice());  ?></p>
+            <?php
+                  $priceOriginal = $productResource->getPrice();
+                  $priceFinal= $item->getPriceInclTax();
+                  if ($priceFinal < $priceOriginal) {
+                    $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                  } else {
+                    $savePercent = 0;
+                  }
+                  //$savePercent = ($priceOriginal == 0) ? 0 : 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                  if ($savePercent != 0) {
+            ?>
+            <p class="order-save-price">
+                <span class="price-original"><?= $block->formatPrice($priceOriginal); ?></span>
+            </p>
+            <p class="order-save-price">
+                <span class="save-percent">(-<?= $savePercent; ?>%)</span>
+            </p>
+          <?php } ?>
+          </div>
+        </td>
+        <td class="item-body" style="width: 140px;">
+          <div class="sales-price">
+              <?= $block->formatPrice($item->getRowTotal());  ?>
+          </div>
+        </td>
+      </tr><!-- /.cart-item-body -->
+    <?php endforeach ?>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>
+          <p class="totals sub">
+            <?= $block->escapeHtml(__('Subtotal')) ?>:
+          </p>
+          <p class="totals">
+            <?= $block->escapeHtml(__('Saving amount')) ?>:
+          </p>
+          <p class="total shipping">
+            <?= $block->escapeHtml(__('Shipping & Handling')) ?>:
+          </p>
+          <p class="totals grand">
+            <?= $block->escapeHtml(__('Grand Total')) ?>:
+          </p>
+        </td>
+        <td style="text-align: right;">
+          <p class="totals sub">
+            <span class="amount"><?= $block->formatPrice($block->getSubtotal());  ?></span>
+          </p>
+          <p class="totals">
+            <span class="amount"><?= $block->formatPrice($block->getDiscountAmount()); ?></span>
+          </p>
+          <p class="total shipping">
+            <span class="amount"><?= $block->formatPrice($block->getShippingAmount()); ?></span>
+          </p>
+          <p class="totals grand">
+            <span class="amount"><?= $block->formatPrice($block->getGrandTotal());  ?>
+              <span class="vat-info"><?php echo __('Include VAT') ?></span>
+            </span>
+          </p>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  <table style="width: 100%;">
+    <tr>
+      <td class="price-quote-note">
+        <?= $this->getLayout()
+	        ->createBlock('Magento\Cms\Block\Block')
+	        ->setBlockId('price-quote-note')
+	        ->toHtml(); ?>
+      </td>
+    </tr>
+  </table>
+	<?php
+	// Cart - empty
+	} else{
+	?>
+	<div class="cart-empty">
+	    <p>
+	        <i class="fa fa-cart-plus cart-icon"></i>
+	    </p>
+	    <p>
+	        <?= $block->escapeHtml(__('Shopping cart is empty')) ?>
+	    </p>
+	    <p>
+	        <a href="<?= $block->escapeUrl($block->getContinueShoppingUrl()); ?>"
+	            title="<?= $block->escapeHtml(__('Continue shopping')); ?>"
+	            class="btn btn-primary btn-continue-shopping">
+	            <?= $block->escapeHtml(__('Continue shopping')); ?>
+	        </a>
+	    </p>
+	</div>
+	<?php
+	}
+	?>
+<?php }else{ // Request NOT FOUND ?>
+	<div class="page-title text-center mt-3">
+		<h3><?= __("Price Quote Not Found") ?></h3>
+	</div>
+<?php } ?>
+</div><!-- .page-content -->
+
+</div><!-- ./page-wrapper -->
+
+
+
+</body>
+</html>

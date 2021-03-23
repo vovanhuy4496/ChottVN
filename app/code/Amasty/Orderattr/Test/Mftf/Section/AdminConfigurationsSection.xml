@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+
+    <section name="AdminConfigurationsOASection">
+        <element name="Save" type="button" selector="#save"/>
+        <!--        CheckoutSettings Tab-->
+        <element name="CheckoutSettingsTab" type="button" selector="#amorderattr_checkout-head"/>
+        <element name="CheckoutSettingsTabOpen" type="block" selector="#amorderattr_checkout-head[class=open]"/>
+        <element name="DisplayAttributeInOrderSummary" type="select" selector="#amorderattr_checkout_progress"/>
+        <element name="DateFormat" type="select" selector="#amorderattr_checkout_format"/>
+        <element name="TimeFormat" type="select" selector="#amorderattr_checkout_time_format"/>
+        <element name="IncludeOrderAttributesIntoEmails" type="select" selector="#amorderattr_checkout_email"/>
+        <element name="SendAttributes" type="select" selector="#amorderattr_checkout_send_on_shipping_step"/>
+        <!--        PDF Documents Tab-->
+        <element name="PDFDocumentsTab" type="button" selector="#amorderattr_pdf-head"/>
+        <element name="PDFDocumentsTabOpen" type="block" selector="#amorderattr_pdf-head[class=open]"/>
+        <element name="IncludeOrderAttributesIntoShipment" type="select" selector="#amorderattr_pdf_shipment"/>
+        <element name="IncludeOrderAttributesIntoInvoice" type="select" selector="#amorderattr_pdf_invoice"/>
+        <!--        InvoicesAndShipments Tab-->
+        <element name="InvoicesAndShipmentsTab" type="button" selector="#amorderattr_invoices_shipments-head"/>
+        <element name="InvoicesAndShipmentsTabOpen" type="block" selector="#amorderattr_invoices_shipments-head[class=open]"/>
+        <element name="DisplayOAOnInvoiceGrid" type="select" selector="#amorderattr_invoices_shipments_invoice_grid"/>
+        <element name="DisplayOAWhenCreatingInvoice" type="select" selector="#amorderattr_invoices_shipments_invoice_create"/>
+        <element name="DisplayOAWhenViewingInvoice" type="select" selector="#amorderattr_invoices_shipments_invoice_view"/>
+        <element name="DisplayOAOnShipmentsGrid" type="select" selector="#amorderattr_invoices_shipments_shipment_grid"/>
+        <element name="DisplayOAWhenCreatingShipment" type="select" selector="#amorderattr_invoices_shipments_shipment_create"/>
+        <element name="DisplayOAWhenViewingShipment" type="select" selector="#amorderattr_invoices_shipments_shipment_view"/>
+    </section>
+       <!--        Manage Order Attributes-->
+    <section name="AdminManageOASection">
+        <element name="EditOrderAttribute" type="block"
+                 selector="//td/div[contains (text(), '{{adminCreateOASettings.AttributeCode}}')]" parameterized="true"/>
+        <element name="DeleteAttribute" type="button" selector="#delete"/>
+        <element name="ConfirmDeleting" type="button" selector="button[class='action-primary action-accept']"/>
+        <element name="AddNewOrderAttribute" type="button" selector="#add"/>
+        <element name="SaveAndContinueEdit" type="button" selector="#save_and_edit_button"/>
+        <!--        General Configuration-->
+        <element name="DefaultLabel" type="input" selector="#attribute_label"/>
+        <element name="AttributeCode" type="input" selector="#attribute_code"/>
+        <element name="CustomerGroups" type="select" selector="#customer_groups"/>
+        <element name="FrontendInputType" type="select" selector="#frontend_input"/>
+        <element name="ValuesRequired" type="select" selector="#is_required"/>
+        <element name="DefaultValue" type="input"
+                 selector="[id=default_value_{{adminOATypeSettings.DefaultValue}}]" parameterized="true"/>
+        <!--        Attribute Display Settings-->
+        <element name="Position" type="select" selector="#checkout_step"/>
+        <element name="SortOrder" type="input" selector="#sorting_order"/>
+        <element name="SaveEnteredValue" type="select" selector="#save_to_future_checkout"/>
+        <element name="ShowOnAdminGrids" type="select" selector="#show_on_grids"/>
+        <element name="IncludeIntoHTML" type="select" selector="#include_in_html_print_order"/>
+        <element name="IncludeIntoPDF" type="select" selector="#include_in_pdf"/>
+        <element name="IncludeIntoTransactionalEmails" type="select" selector="#include_in_email"/>
+        <!--        Attribute Type Settings-->
+        <element name="VisibleOnFrontEnd" type="select" selector="#is_visible_on_front"/>
+        <element name="VisibleOnBackEnd" type="select" selector="#is_visible_on_back"/>
+        <element name="InputValidation" type="select" selector="#input_validation"/>
+        <element name="MinimumTextLength" type="input" selector="#min_text_length"/>
+        <element name="MaximumTextLength" type="input" selector="#max_text_length"/>
+        <element name="InputOutputFilter" type="select" selector="#input_filter"/>
+        <element name="MinimalValue" type="input" selector="#date_range_min"/>
+        <element name="MaximumValue" type="input" selector="#date_range_max"/>
+        <element name="MultipleSelectSize" type="input" selector="#multiselect_size"/>
+        <!--        Manage Options For Order Attribute-->
+        <element name="OptionsTab" type="button" selector="//span[contains (text() , 'Title, Tooltip, Options')]"/>
+        <element name="ShippingMethodsTab" type="button" selector="a[title='Shipping Methods']"/>
+        <element name="ShippingMethods" type="select" selector="#shipping_methods"/>
+        <element name="ManageOptionsTab" type="button" selector="strong[data-target='#manage-options-panel']"/>
+        <element name="ManageOptionsTabOpen" type="button"
+                 selector="div[class='fieldset-wrapper-content in collapse selected-type-options']"/>
+        <element name="ManageTitlesTab" type="button" selector="strong[data-target='#manage-titles-content']"/>
+        <element name="ManageTitlesTabOpen" type="button"
+                 selector="div[class='fieldset-wrapper admin__collapsible-block-wrapper opened']"/>
+        <element name="ManageTooltipTab" type="button" selector="strong[data-target='#manage-tooltip-panel']"/>
+        <element name="ManageTooltipTabOpen" type="button"
+                 selector="div[class='fieldset-wrapper-content in collapse'][id='manage-tooltip-panel']"/>
+        <element name="AddOption" type="button" selector="#add_new_option_button"/>
+        <element name="DefaultStoreViewOption1" type="input" selector="input[name='option[value][option_0][1]']"/>
+        <element name="AdminOption1" type="input" selector="input[name='option[value][option_0][0]']"/>
+        <element name="DefaultStoreViewOption2" type="input" selector="input[name='option[value][option_1][1]']"/>
+        <element name="AdminOption2" type="input" selector="input[name='option[value][option_1][0]']"/>
+        <element name="DefaultStoreViewOption3" type="input" selector="input[name='option[value][option_2][1]']"/>
+        <element name="AdminOption3" type="input" selector="input[name='option[value][option_2][0]']"/>
+        <element name="InputTitleForAttributeCustomStoreView" type="input" selector="//td[@class='col-store-view'][2]/input"/>
+        <element name="InputTitleForAttributeDefaultStoreView" type="input" selector="//td[@class='col-store-view'][1]/input"/>
+        <element name="InputTooltipForAttributeDefaultStoreView" type="input" selector="//td[@class='col-store-view multi-input'][1]/input"/>
+        <element name="InputTooltipForAttributeAdmin" type="input" selector="//td[@class='col-store-view multi-input'][2]/input"/>
+        <element name="InputTooltipForCustomStoreView" type="input" selector="//td[@class='col-store-view multi-input'][3]/input"/>
+    </section>
+         <!--       Manage Order Attribute Relations-->
+    <section name="AdminManageOARelations">
+        <element name="EditOrderAttributeRelations" type="block"
+                 selector="//td/div[contains (text(), '{{adminCreateOASettings.DefaultLabel}}')]" parameterized="true"/>
+        <element name="DeleteRelation" type="button" selector="#delete"/>
+        <element name="ConfirmDeleting" type="button" selector="button[class='action-primary action-accept']"/>
+        <element name="AddNewRelation" type="button" selector="#add"/>
+        <element name="SaveAndContinueEdit" type="button" selector="#save_and_continue"/>
+        <element name="RelationName" type="input" selector=".admin__control-text[name=name]"/>
+        <element name="ParentAttribute" type="select" selector=".admin__control-select"/>
+        <element name="AttributeOptions" type="select" selector=".admin__control-multiselect[name=attribute_options]"/>
+        <element name="DependentAttributes" type="select" selector=".admin__control-multiselect[name=dependent_attributes]"/>
+    </section>
+
+</sections>

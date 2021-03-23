@@ -1,0 +1,262 @@
+<!-- app/code/Chottvn/Notification/Block/Account/Notification.php -->
+<style>
+    .notify-read {
+        background: #f4f4f4;
+    }
+    .customer-account-notification .page-title-wrapper {
+        display: block;
+    }
+    .customer-account-notification .page-title-wrapper h1.page-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #3e3e3e;
+        text-transform: none;
+        margin-bottom: 15px;
+    }
+    .customer-account-notification .page-title-wrapper h1.page-title:before {
+        display: none;
+    }
+    .notify-unread {
+        font-weight: 600;
+    }
+    .notify-messages table {
+        table-layout: fixed;
+        width: 100%;
+        display: table;
+    }
+    .notify-messages tr {
+        cursor: pointer;
+        -webkit-box-shadow: inset 0 -1px 0 0 rgba(100,121,143,0.122);
+        box-shadow: inset 0 -1px 0 0 rgba(100,121,143,0.122);
+        display: block;
+        position: relative;
+    }
+    /* .notify-messages tr:last-child {
+        border-bottom: unset;
+    } */
+    .notify-messages tr:hover {
+        -webkit-box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+        box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+        z-index: 1;
+    }
+    .notify-messages td {
+        overflow: hidden;
+        display: inline-block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    /* .notify-messages .message-type {
+        width: 25%;
+    } */
+    /* .notify-messages .message-title {
+        width: 89%;
+    } */
+    .notify-messages .message-date {
+        text-align: end;
+    }
+    .notify-messages .message-detail {
+        width: 100%;
+    }
+    .message-hide-detail {
+        display: none !important;
+    }
+    .message-show-detail {
+        display: inline-block !important;
+    }
+    .message-description {
+        white-space: normal;
+        font-weight: 100;
+        padding: 0 10px;
+    }
+    .hide-ajax-loader {
+        display: none !important;
+    }
+    .show-ajax-loader {
+        display: inline-block !important;
+    }
+    .ajax-loader {
+        /* background-color: rgba(255,255,255,0.7); */
+        width: 100%;
+        text-align: center;
+    }
+    .ajax-loader i {
+        position: relative;
+        font-size: 20px;
+    }
+    .show-more-message {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .show-more-message button {
+        width: auto;
+        background: #fff !important;
+        border: solid 1px #f5f5f5 !important;
+        border-radius: 8px;
+        -webkit-border-radius: 8px;
+        color: #288ad3 !important;
+        font-size: 14px;
+        text-transform: initial;
+        min-width: 150px;
+    }
+    .show-more-message button .fa-caret-down {
+        padding-left: 10px;
+    }
+    .show-more-message button .fa-spinner {
+        display: none;
+        font-size: 22px;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+    .show-more-message button:hover {
+        color: #fff !important;
+        background: #288ad3 !important;
+    }
+    @media (max-width: 575.98px) {
+        .notify-messages .message-title {
+            width: 70%;
+        }
+        .notify-messages .message-date {
+            width: 28%;
+        }
+    }
+    @media (min-width: 576px) and (max-width: 1199.98px) {
+        .notify-messages .message-title {
+            width: 79%;
+        }
+        .notify-messages .message-date {
+            width: 20%;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .notify-messages .message-title {
+            width: 89%;
+        }
+        .notify-messages .message-date {
+            width: 10%;
+        }
+    }
+</style>
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+    $messages = $block->getMessageCollection();
+    $timezone = $objectManager->get('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+    $getSize = $block->getAllMessageCollection();
+?>
+<div class="notify-messages">
+    <table id="notify-messages-detail">
+        <?php foreach($messages as $message): ?>
+            <?php $getReadAtMessage = $block->getReadAtMessage($message['id']); ?>
+            <?php $getMessageType = $block->getMessageType($message['messagetype_id']); ?>
+            <tr class="<?= !isset($getReadAtMessage[0]['read_at']) ? 'notify-unread' : 'notify-read' ?>" message-id="<?= $message['id']; ?>">
+                <!-- <td class="message-type"><?= $getMessageType[0]['name']; ?></td> -->
+                <td class="message-title"><?= $message['title']; ?></td>
+                <td class="message-date">
+                    <?= $message['started_at'] ? $timezone->date($message['started_at'])->format('d-m-Y') : $timezone->date($message['created_at'])->format('d-m-Y') ?>
+                </td>
+                <td class="ajax-loader hide-ajax-loader" id="ajax-loader-<?= $message['id']; ?>">
+                    <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+                </td>
+                <td class="message-detail message-hide-detail" id="message-detail-<?= $message['id']; ?>">
+                    <div class="message-description"></div>
+                </td>
+            </tr>
+            <?php $lastId = $message['id']; ?>
+        <?php endforeach ?>
+    </table>
+    <?php if ($getSize > 3): ?>
+        <div class="show-more-message" id="remove_row">
+            <button lastId="<?= $lastId; ?>">
+                <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+                <?= __('Load more notification') ?>
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+            </button>
+        </div>
+    <?php endif ?>
+</div>
+<!-- show detail message -->
+<script type="text/javascript">
+    require(["jquery"],function($) {
+        $(document).ready(function() {
+            $('#notify-messages-detail').on('click', 'tr', function() {
+                var customUrl = "<?= $this->getUrl().'customer/account/message'?>";
+                var messageId = $(this).attr('message-id');
+                $('#notify-messages-detail td.message-detail').addClass('message-hide-detail');
+
+                if ($('#message-detail-' + messageId).hasClass('message-show-detail')) {
+                    $('#notify-messages-detail td.message-detail').removeClass('message-show-detail');
+                    return true;
+                }
+                $(this).removeClass('notify-unread');
+
+                $('#notify-messages-detail td.message-detail').removeClass('message-show-detail');
+                $.ajax({
+                    url: customUrl,
+                    data: {
+                        id: messageId
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $('#ajax-loader-' + messageId).removeClass("hide-ajax-loader");
+                        $('#ajax-loader-' + messageId).addClass("show-ajax-loader");
+                    },
+                    success: function(data, status, xhr) {
+                        $('#message-detail-' + messageId).addClass('message-show-detail');
+                        $('#message-detail-' + messageId).removeClass('message-hide-detail');
+                        $('#message-detail-' + messageId + ' .message-description').html(data.data.description);
+                    },
+                    complete: function() {
+                        $('#ajax-loader-' + messageId).removeClass("show-ajax-loader");
+                        $('#ajax-loader-' + messageId).addClass("hide-ajax-loader");
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                        console.log(errorThrown);
+                    }
+                });
+            });
+        });
+    });
+</script>
+<!-- show more message -->
+<script type="text/javascript">
+    require(["jquery"],function($) {
+        $(document).ready(function() {
+            $('.show-more-message').find('button').click(function() {
+                var customUrl = "<?= $this->getUrl().'customer/account/loadmoremessage'?>";
+                var lastId = $(this).attr('lastId');
+                $.ajax({
+                    url: customUrl,
+                    data: {
+                        lastId: lastId
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $('.show-more-message button .fa-spinner').css('display', 'inline-block');
+                    },
+                    success: function(data, status, xhr) {
+                        if (data != '') {
+                            $('#notify-messages-detail').append(data);
+                        }
+                        var itemsCount = $("#notify-messages-detail > tbody > tr, #notify-messages-detail > tr").length;
+                        var getSize = <?= $getSize ?>;
+                        if (itemsCount >= getSize) {
+                            $('#remove_row').hide();
+                        }
+                    },
+                    complete: function() {
+                        $('.show-more-message button .fa-spinner').css('display', 'none');
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                        console.log(errorThrown);
+                    }
+                });
+            });
+        });
+    });
+</script>

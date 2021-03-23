@@ -1,0 +1,22 @@
+--- a/vendor/magento/module-offline-shipping/Model/ResourceModel/Carrier/Tablerate/CSV/ColumnResolver.php	2019-09-19 12:30:54.000000000 +0700
++++ b/vendor/magento/module-offline-shipping/Model/ResourceModel/Carrier/Tablerate/CSV/ColumnResolver.php	2020-07-03 10:15:02.000000000 +0700
+@@ -14,7 +14,7 @@
+     const COLUMN_WEIGHT = 'Weight (and above)';
+     const COLUMN_WEIGHT_DESTINATION = 'Weight (and above)';
+     const COLUMN_PRICE = 'Shipping Price';
+-
++    const COLUMN_MAX_DELIVERY_DATES = 'Max delivery dates';
+     /**
+      * @var array
+      */
+@@ -25,8 +25,10 @@
+         self::COLUMN_WEIGHT => 3,
+         self::COLUMN_WEIGHT_DESTINATION => 3,
+         self::COLUMN_PRICE => 4,
++        self::COLUMN_MAX_DELIVERY_DATES => 5,
+     ];
+ 
++
+     /**
+      * @var array
+      */

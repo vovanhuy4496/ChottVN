@@ -1,0 +1,26 @@
+<form class="chottvn-admin" id="distributor_export_form" name="distributor-export-form" action="<?php echo $block->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
+    <div class="no-display">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+    </div>
+    <fieldset class="fieldset admin__fieldset " id="base_fieldset">
+        <legend class="admin__legend legend">
+            <span><?= $block->escapeHtml(__('Calculate Affiliate Reward')) ?></span>
+        </legend><br>
+
+        <div class="messages">
+        </div>
+
+        <div class="admin-field field-import-file">
+            <label class="label" for="order_ids"><span><?= $block->escapeHtml(__('Order Ids')) ?></span></label>
+            <div class="control">
+                <input type="text" name="order_ids" id="order_ids" class="custom-file-input admin__control-text" required />
+                <p class="" style="color: red; font-size: small;"><?=  __("Separator") ?> : `,`</p>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div class="action-buttons">
+        <button id="distributors-export-btn" class="action-scalable" type="submit"><span><?= $block->escapeHtml(__('Submit')) ?></span></button>
+    </div>
+</form>

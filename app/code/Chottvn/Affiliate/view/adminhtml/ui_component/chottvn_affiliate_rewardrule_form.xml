@@ -1,0 +1,299 @@
+<?xml version="1.0" ?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_affiliate_rewardrule_form.rewardrule_form_data_source</item>
+		</item>
+		<item name="label" translate="true" xsi:type="string">General Information</item>
+		<item name="template" xsi:type="string">templates/form/collapsible</item>
+	</argument>
+	<settings>
+		<buttons>
+			<button class="Chottvn\Affiliate\Block\Adminhtml\RewardRule\Edit\BackButton" name="back"/>
+			<button class="Chottvn\Affiliate\Block\Adminhtml\RewardRule\Edit\DeleteButton" name="delete"/>
+			<button class="Chottvn\Affiliate\Block\Adminhtml\RewardRule\Edit\SaveButton" name="save"/>
+			<button class="Chottvn\Affiliate\Block\Adminhtml\RewardRule\Edit\SaveAndContinueButton" name="save_and_continue"/>
+		</buttons>
+		<namespace>chottvn_affiliate_rewardrule_form</namespace>
+		<dataScope>data</dataScope>
+		<deps>
+			<dep>chottvn_affiliate_rewardrule_form.rewardrule_form_data_source</dep>
+		</deps>
+	</settings>
+	<dataSource name="rewardrule_form_data_source">
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+		<settings>
+			<submitUrl path="*/*/save"/>
+		</settings>
+		<dataProvider class="Chottvn\Affiliate\Model\RewardRule\DataProvider" name="rewardrule_form_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<fieldset name="general">
+		<settings>
+			<label>General</label>
+		</settings>
+		<field formElement="input" name="name" sortOrder="10">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Name</label>
+				<dataScope>name</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="select" name="status" sortOrder="20">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Status</label>
+				<dataScope>status</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Magento\Config\Model\Config\Source\Enabledisable"/>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="date" name="start_date" sortOrder="30">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Start Date</label>
+				<dataScope>start_date</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="date" name="end_date" sortOrder="40">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">End Date</label>
+				<dataScope>end_date</dataScope>
+			</settings>
+		</field>
+		<field formElement="select" name="reward_level" sortOrder="50">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Reward Level</label>
+				<dataScope>reward_level</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Affiliate\Model\Customer\Attribute\Source\RewardLevel"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="select" name="affiliate_level" sortOrder="60">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Affliate Level</label>
+				<dataScope>affiliate_level</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Affiliate\Model\Customer\Attribute\Source\AffiliateLevel"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field name="product_brand_id" formElement="select" sortOrder="70">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Product Brand</label>
+				<dataScope>product_brand_id</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Affiliate\Model\Config\Source\ProductBrand"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="select" name="product_kind" sortOrder="80">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Product Kind</label>
+				<dataScope>product_kind</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Affiliate\Model\Customer\Attribute\Source\ProductKind"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="textarea" name="conditions" sortOrder="90">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+                    <item name="rows" xsi:type="number">10</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Conditions</label>
+				<dataScope>conditions</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+        <field name="description" template="ui/form/field" sortOrder="100" formElement="wysiwyg">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="wysiwygConfigData" xsi:type="array">
+                        <item name="height" xsi:type="string">100px</item>
+                        <item name="add_variables" xsi:type="boolean">false</item>
+                        <item name="add_widgets" xsi:type="boolean">false</item>
+                        <item name="add_images" xsi:type="boolean">true</item>
+                        <item name="add_directives" xsi:type="boolean">true</item>
+                    </item>
+					<item name="source" xsi:type="string">RewardRule</item>
+                </item>
+            </argument>
+            <settings>
+				<label translate="true">Description</label>
+				<dataScope>description</dataScope>
+            </settings>
+            <formElements>
+                <wysiwyg class="Magento\Catalog\Ui\Component\Category\Form\Element\Wysiwyg">
+                    <settings>
+                        <rows>8</rows>
+                        <wysiwyg>true</wysiwyg>
+                    </settings>
+                </wysiwyg>
+            </formElements>
+        </field>
+		<field formElement="input" name="priority" sortOrder="110">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Priority</label>
+				<dataScope>priority</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="checkbox" name="discard_subsequent_rules" sortOrder="120">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Discard Subsequent Rules</label>
+				<dataScope>discard_subsequent_rules</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<checkbox>
+					<settings>
+						<options class="Magento\Config\Model\Config\Source\Yesno"/>
+						<valueMap>
+							<map name="false" xsi:type="string">no</map>
+							<map name="true" xsi:type="string">yes</map>
+						</valueMap>
+						<prefer>toggle</prefer>
+					</settings>
+				</checkbox>
+			</formElements>
+		</field>
+		<field formElement="textarea" name="notes" sortOrder="130">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">RewardRule</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Notes</label>
+				<dataScope>notes</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+	</fieldset>
+</form>

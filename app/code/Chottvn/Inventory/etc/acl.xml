@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Chottvn_Inventory::inventory" sortOrder="10" title="Chottvn Inventory">
+					<resource id="Chottvn_Inventory::log" sortOrder="10" title="Log">
+						<resource id="Chottvn_Inventory::log_save" sortOrder="10" title="Save Log"/>
+						<resource id="Chottvn_Inventory::log_delete" sortOrder="20" title="Delete Log"/>
+						<resource id="Chottvn_Inventory::log_update" sortOrder="30" title="Update Log"/>
+						<resource id="Chottvn_Inventory::log_view" sortOrder="40" title="View Log"/>
+					</resource>
+					<resource id="Chottvn_Inventory::importexport" sortOrder="10" title="Inventory Price/Qty">
+						<resource id="Chottvn_Inventory::export_new" sortOrder="10" title="New Export"/>
+						<resource id="Chottvn_Inventory::export_save" sortOrder="10" title="Save Export"/>
+						<resource id="Chottvn_Inventory::import_new" sortOrder="10" title="New Import"/>
+						<resource id="Chottvn_Inventory::import_save" sortOrder="10" title="Save Import"/>
+					</resource>
+					<resource id="Chottvn_Inventory::categoryposition" sortOrder="10" title="Category Position">
+						<resource id="Chottvn_Inventory::categoryposition_script" sortOrder="10" title="Script Category Position"/>
+						<resource id="Chottvn_Inventory::categoryposition_run" sortOrder="10" title="Run Category Position"/>
+					</resource>
+					<resource id="Chottvn_Inventory::categoryorderby" sortOrder="10" title="Category Order By">
+						<resource id="Chottvn_Inventory::categoryorderby_script" sortOrder="10" title="Script Category Order By"/>
+						<resource id="Chottvn_Inventory::categoryorderby_run" sortOrder="10" title="Run Category Order By"/>
+					</resource>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

@@ -1,0 +1,592 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Form\Register $block */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$captcha = $objectManager->get('Magento\Captcha\Block\Captcha');
+
+$data_persistor = $objectManager->get('Magento\Framework\App\Request\DataPersistorInterface');
+
+// echo '<pre>';print_r($data_persistor->get('affiliate_create'));echo '</pre>';exit;
+// echo $captcha->toHtml();exit;
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$region_id = ''; $city_id = ''; $township_id = ''; $street = ''; $firstname = ''; $phone_number = ''; $email = ''; $dob = ''; $customer_group_id = 0;$affiliate_status = ''; $bank_number = ''; $bank_id = '';
+if($customerSession->isLoggedIn()) {
+	$shippingAddressId = $customerSession->getCustomerData()->getDefaultShipping();
+	$addressFactory = $objectManager->create('Magento\Customer\Model\Address');
+	$addressShippingCustomer = $addressFactory->load($shippingAddressId);
+	// echo '<pre>'; print_r(get_class_methods($customerSession->getCustomerData())); echo '</pre>';
+	if($data_persistor->get('affiliate_create')){
+		$data_persistor_affiliate_create = $data_persistor->get('affiliate_create');
+		$region_id = isset($data_persistor_affiliate_create['region_id']) ? $data_persistor_affiliate_create['region_id']:'';
+		$city_id = isset($data_persistor_affiliate_create['city_id']) ? $data_persistor_affiliate_create['city_id']:'';
+		$township_id = isset($data_persistor_affiliate_create['township_id']) ? $data_persistor_affiliate_create['township_id']:'';
+		$street = isset($data_persistor_affiliate_create['street'][0]) ? $data_persistor_affiliate_create['street'][0]:'';
+		$firstname = isset($data_persistor_affiliate_create['firstname']) ? $data_persistor_affiliate_create['firstname']:'';
+		$phone_number = isset($data_persistor_affiliate_create['phone_number']) ? $data_persistor_affiliate_create['phone_number']:'';
+		$email = isset($data_persistor_affiliate_create['customer_email']) ? $data_persistor_affiliate_create['customer_email']:'';
+		$dob = isset($data_persistor_affiliate_create['dob']) ? $data_persistor_affiliate_create['dob']:'';
+		if($dob){
+			$dob = explode("/", $dob);
+	        $dob = intval($dob[2]) . "-" . intval($dob[1]) . "-" . intval($dob[0]);
+	        $dob = date('Y-m-d', strtotime($dob));
+		}
+		$bank_number = isset($data_persistor_affiliate_create['bank_number']) ? $data_persistor_affiliate_create['bank_number']:'';
+		$bank_id = isset($data_persistor_affiliate_create['bank_id']) ? $data_persistor_affiliate_create['bank_id']:'';
+	}else{
+		$region_id = $addressShippingCustomer->getData('region_id') ? $addressShippingCustomer->getData('region_id'):'';
+		$city_id = $addressShippingCustomer->getData('city_id') ? $addressShippingCustomer->getData('city_id'):'';
+		$township_id = $addressShippingCustomer->getData('township_id') ? $addressShippingCustomer->getData('township_id'):'';
+		$street = $addressShippingCustomer->getData('street') ? $addressShippingCustomer->getData('street'):'';
+		$firstname = $customerSession->getCustomerData()->getFirstname();
+		$phone_number = $customerSession->getCustomerData()->getCustomAttribute('phone_number')->getValue();
+		$email = $customerSession->getCustomerData()->getCustomAttribute('customer_email') ? $customerSession->getCustomerData()->getCustomAttribute('customer_email')->getValue():'';
+		if($email == ''){
+			$email = $customerSession->getEmail() ? $customerSession->getEmail():'';
+		}
+		$dob = $customerSession->getCustomerData()->getDob() ? $customerSession->getCustomerData()->getDob():'';
+	}
+	
+	$customer_group_id = $customerSession->getCustomerData()->getGroupId();
+	$affiliate_status = $customerSession->getCustomerData()->getCustomAttribute('affiliate_status') ? $customerSession->getCustomerData()->getCustomAttribute('affiliate_status')->getValue():'';
+}elseif($data_persistor->get('affiliate_create')){
+	$data_persistor_affiliate_create = $data_persistor->get('affiliate_create');
+	$region_id = isset($data_persistor_affiliate_create['region_id']) ? $data_persistor_affiliate_create['region_id']:'';
+	$city_id = isset($data_persistor_affiliate_create['city_id']) ? $data_persistor_affiliate_create['city_id']:'';
+	$township_id = isset($data_persistor_affiliate_create['township_id']) ? $data_persistor_affiliate_create['township_id']:'';
+	$street = isset($data_persistor_affiliate_create['street'][0]) ? $data_persistor_affiliate_create['street'][0]:'';
+	$firstname = isset($data_persistor_affiliate_create['firstname']) ? $data_persistor_affiliate_create['firstname']:'';
+	$phone_number = isset($data_persistor_affiliate_create['phone_number']) ? $data_persistor_affiliate_create['phone_number']:'';
+	$email = isset($data_persistor_affiliate_create['customer_email']) ? $data_persistor_affiliate_create['customer_email']:'';
+	$dob = isset($data_persistor_affiliate_create['dob']) ? $data_persistor_affiliate_create['dob']:'';
+	if($dob){
+		$dob = explode("/", $dob);
+        $dob = intval($dob[2]) . "-" . intval($dob[1]) . "-" . intval($dob[0]);
+        $dob = date('Y-m-d', strtotime($dob));
+	}
+	$bank_number = isset($data_persistor_affiliate_create['bank_number']) ? $data_persistor_affiliate_create['bank_number']:'';
+	$bank_id = isset($data_persistor_affiliate_create['bank_id']) ? $data_persistor_affiliate_create['bank_id']:'';
+}
+// get group_id customer
+$modelGroupCustomer = $objectManager->create('Magento\Customer\Model\Group');
+$cus_grp_code = 'Affiliate';
+$existing_group = $modelGroupCustomer->load($cus_grp_code, 'customer_group_code');
+$group_affiliate_id = $existing_group->getId();
+
+// Phuoc add 2020-08-12 for load bank in select option
+$paymentAccountHelperData = $this->helper('Chottvn\PaymentAccount\Helper\Data');
+$bankCollection = $paymentAccountHelperData->getBankCollection();
+
+?>
+<?php if($affiliate_status == '' || $affiliate_status == 're-register'){ ?>
+<?= $block->getChildHtml('form_fields_before') ?>
+<?php /* Extensions placeholder */ ?>
+<?= $block->getChildHtml('customer.form.register.extra') ?>
+<!-- Page Info -->
+<h1 class="affiliate-title-page"><span><!-- <i class="fas fa-user"></i> --><?= $block->escapeHtml(__('Affiliate Program - Register')); ?></span></h1>
+<!-- Page Info -->
+<form class="form create account form-affiliate-create-account" method="post" id="form-validate" enctype="multipart/form-data" autocomplete="off">
+    <?= /* @noEscape */ $block->getBlockHtml('formkey'); ?>
+    <div class="container affiliate-register-container">
+		<div class="row">
+		    <div class="col-md-12 col-sm-12 col-12 contract-information">
+		    	<div class="col-affiliate">
+			    	<!-- Contract Agreement -->
+			    	<fieldset class="fieldset affiliate-register-block">
+				    	<?php
+				    		echo $this->getLayout()
+					          ->createBlock('Magento\Cms\Block\Block')
+					          ->setBlockId('affiliate-contract-agreement')
+					          ->toHtml();
+				    	?>
+				    </fieldset>
+			        <!-- Contract Agreement -->
+		    	</div>
+			</div>
+
+			<div class="col-md-6 col-sm-12 col-12 personal-information">
+				<div class="col-affiliate-height-auto">
+					<!-- Account Info -->
+					<fieldset class="fieldset create info">
+				        <legend class="legend"><span><?= $block->escapeHtml(__('Aff Personal Information')) ?></span></legend><br>
+
+
+				        <div class="field field-name-firstname required">
+				            <label class="label" for="firstname"><span><?= $block->escapeHtml(__('Aff Fullname')) ?></span></label>
+				            <div class="control">
+				                <input <?php if($firstname && $customerSession->isLoggedIn()){ echo 'disabled'; } ?> type="text" id="firstname" name="firstname" value="<?= $firstname ?>" title="<?= $block->escapeHtml(__('Aff Fullname')) ?>" placeholder="<?= $block->escapeHtml(__('Aff Input Fullname')) ?>" class="input-width-50 input-text required-entry" data-validate="{'required-firstname':true}" autocomplete="off" aria-required="true">
+				            </div>
+				        </div>
+
+				        <div class="field required">
+				            <label for="phone_number" class="label"><span><?= $block->escapeHtml(__('Aff Phone number')) ?></span></label>
+				            <div class="control">
+				                <input <?php if($phone_number && $customerSession->isLoggedIn()){ echo 'disabled'; } ?> type="tel" name="phone_number" id="phone_number" value="<?= $phone_number ?>" title="<?= $block->escapeHtml(__('Aff Phone number')) ?>" placeholder="<?= $block->escapeHtml(__('Aff Input Phone number')) ?>" class="input-text account-key" data-validate="{'validate-phone-VN': true, 'required': true}" aria-required="true">
+				            </div>
+				        </div>
+
+				        <div class="field required">
+				            <label for="email_address" class="label"><span><?= $block->escapeHtml(__('Aff Email')) ?></span></label>
+				            <div class="control">
+				                <input type="email" name="customer_email" autocomplete="email" id="email_address" value="<?= $email ?>" title="<?= $block->escapeHtml(__('Aff Email')) ?>" placeholder="<?= $block->escapeHtml(__('Aff Input Email')) ?>" class="input-text  account-key" data-validate="{'required': true,'validate-email':true}">
+				            </div>
+				        </div>
+
+				        <?php $_dob = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class) ?>
+				        <?= $_dob->setDate($dob)->toHtml() ?>
+
+				    </fieldset>
+				    <!-- Account Info -->
+
+				    <!-- Bank Info -->
+				    <fieldset class="fieldset create account">
+				        <legend class="legend"><span><?= $block->escapeHtml(__('Your Bank Information')) ?></span></legend><br>
+
+				        <div class="field required">
+				            <label for="bank_number" class="label"><span><?= $block->escapeHtml(__('Aff Bank number')) ?></span></label>
+				            <div class="control">
+				                <input type="tel" name="bank_number" id="bank_number" value="<?= $bank_number ?>" title="<?= $block->escapeHtml(__('Aff Bank number')) ?>" placeholder="<?= $block->escapeHtml(__('Aff Input Bank number')) ?>" class="input-text account-key" data-validate="{'validate-bank-VN': true, 'required': true}" aria-required="true">
+				            </div>
+				        </div>
+
+
+				        <div class="field bank_info required">
+				            <label class="label" for="bank_id">
+				                <label class="label" for="bank_id"><span><?= $block->escapeHtmlAttr(__('Aff Bank Information')) ?></span></label>
+				            </label>
+				            <div class="control">
+				                <select id="bank_id" name="bank_id"
+				                        title="<?= $block->escapeHtmlAttr(__('Aff Bank Information')) ?>"
+				                        class="select-width-50 validate-select required-entry"
+				                        autocomplete="off">
+									<option value=""><?= $block->escapeHtml(__('Please select a bank information.')) ?></option>
+
+									<?php
+									// Phuoc add 2020-08-12 for load list bank
+									foreach ($bankCollection as $item) : ?>
+										<option value="<?= $item['bank_id']; ?>" <?= ($item['bank_id'] == $bank_id) ? 'selected':'' ?> >
+											<?php
+												if($item['name_short'] == $item['code']){
+													echo $item['name_short'];
+												}else{
+													echo $item['name_short'].' - '.$item['code'];
+												}
+											?>
+										</option>
+									<?php endforeach; ?>
+				                </select>
+				            </div>
+				        </div>
+				    </fieldset>
+				    <!-- Bank Info -->
+				</div>
+			</div>
+
+			<div class="col-md-6 col-sm-12 col-12 address-information">
+				<div class="col-affiliate-height-auto">
+				<!-- Address Info -->
+				    <fieldset class="fieldset address">
+				        <legend class="legend"><span><?= $block->escapeHtml(__('Aff Address Information')) ?></span></legend><br>
+				            <input type="hidden" name="create_address" value="1" />
+				            <input type="hidden" id="primary_billing" name="default_billing" value="1">
+				            <input type="hidden" id="primary_shipping" name="default_shipping" value="1">
+
+				            <?php //$address = $block->getLayout()->createBlock('Magento\Customer\Block\Address\Edit');
+
+				            //print_r($this->helper(\Magento\Directory\Helper\Data::class)->getCountriesWithOptionalZip(true));exit;
+				            ?>
+
+				            <div class="control" style="display: none;">
+				                <select name="country_id" id="country" class="required-entry" title="Quốc gia" data-validate="{'validate-select':true}"><option value="VN" selected="selected">Việt Nam</option></select>
+				            </div>
+
+				            <div class="field region required">
+					            <label class="label" for="region_id">
+					                <span><?= $block->escapeHtmlAttr(__('Aff Region')) ?></span>
+					            </label>
+					            <div class="control">
+					                <select id="region_id" name="region_id"
+					                        title="<?= $block->escapeHtmlAttr(__('Aff Region')) ?>"
+					                        class="select-width-50 validate-select"
+					                        autocomplete="off">
+					                    <option value=""><?= $block->escapeHtml(__('Aff Please select a region, state or province.')) ?></option>
+					                </select>
+					                <input type="text"
+				                       id="region"
+				                       name="region"
+				                       title="region"
+				                       value="<?= $block->escapeHtml($region_id) ?>"
+				                       class="input-width-50 input-text validate-not-number-first <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('region')) ?>"<?= !$block->getConfig('general/region/display_all') ? ' disabled="disabled"' : '' ?>
+				                       style="display: none;"
+				                       autocomplete="off"/>
+					            </div>
+					        </div>
+
+					        <div class="field city required">
+					            <label class="label" for="city"><span><?= $block->escapeHtmlAttr(__('Aff City')) ?></span></label>
+					            <div class="control">
+					                <select id="city_id" name="city_id"
+					                        title="<?= $block->escapeHtmlAttr(__('Aff City')) ?>"
+					                        class="select-width-50 validate-select"
+					                        autocomplete="off">
+					                    <option value=""><?= $block->escapeHtml(__('Aff Please select a city.')) ?></option>
+					                </select>
+					                <input type="text"
+					                       name="city"
+					                       value="<?= $block->escapeHtml($city_id) ?>"
+					                       placeholder="<?= __('Aff Input City') ?>"
+					                       title="<?= $block->escapeHtmlAttr(__('City')) ?>"
+					                       class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('city')) ?>"
+					                       id="city"
+					                       style="display: none;"
+					                       autocomplete="off"/>
+					            </div>
+					        </div>
+
+					        <div class="field township">
+					            <label class="label" for="township_id">
+					                <label class="label" for="township"><span><?= $block->escapeHtmlAttr(__('Aff Township')) ?></span></label>
+					            </label>
+					            <div class="control">
+					                <select id="township_id" name="township_id"
+					                        title="<?= $block->escapeHtmlAttr(__('Aff Township')) ?>"
+					                        class="select-width-50 validate-select required-entry"
+					                        autocomplete="off">
+					                    <option value=""><?= $block->escapeHtml(__('Aff Please select a township.')) ?></option>
+					                </select>
+					                <input type="text"
+					                       id="township"
+					                       placeholder="<?= __('Aff Input Township') ?>"
+					                       name="township"
+					                       value="<?= $block->escapeHtml($township_id) ?>"
+					                       title="<?= $block->escapeHtmlAttr(__('Aff Input Township')) ?>"
+					                       class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('township')) ?>"
+					                       style="display: none;"
+					                       autocomplete="off" />
+					            </div>
+					        </div>
+
+					        <div class="field street">
+					            <label for="street_1" class="label">
+					                <span><?= $block->escapeHtml(__('Aff Address')) ?></span>
+					            </label>
+					            <div class="control">
+					                <input type="text"
+					                       name="street[]"
+					                       placeholder="<?= __('Aff Input Address') ?>"
+					                       value="<?= $block->escapeHtml($street) ?>"
+					                       title="Địa chỉ"
+					                       id="street_1"
+					                       class="input-width-50 input-text"
+					                       autocomplete="off"/>
+					            </div>
+					        </div>
+
+				    </fieldset>
+			    <!-- Address Info -->
+			    </div>
+
+                <?= // Phuoc add 2020-08-16 for load additional info (captcha)
+				$block->getChildHtml('form_additional_info') ?>
+			    <div class="actions-toolbar">
+			    	<div class="control">
+				        <input type="checkbox" name="checkbox_contract_agree_affiliate" value="" data-validate="{'required': true}"/>
+				        <span><?= $block->escapeHtml(__('Agree to the terms of the contract')) ?></span>
+				    </div>
+			    	<div class="control">
+					    <!-- <input onchange="document.getElementById('submit-affiliate').disabled = !this.checked;" type="checkbox" name="checkbox_agree_affiliate" value="" data-validate="{'required': true}"/> -->
+					    <input type="checkbox" name="checkbox_agree_affiliate" value="" data-validate="{'required': true}"/>
+					    <span><?= $block->escapeHtml(__('Confirm Agreement Affiliate')) ?></span>
+					</div>
+
+			        <div class="primary">
+			            <button disabled type="submit" class="action submit primary" id="submit-affiliate" title="<?= $block->escapeHtmlAttr(__('Create an Account')) ?>"><span class="image-loading"></span><span><?= $block->escapeHtml(__('Create an Account')) ?></span></button>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<script>
+require([
+    'jquery',
+    'mage/mage'
+], function($){
+
+    var dataForm = $('#form-validate');
+    var ignore = <?= /* @noEscape */ $_dob->isEnabled() ? '\'input[id$="full"]\'' : 'null' ?>;
+
+    dataForm.mage('validation', {
+    <?php if ($_dob->isEnabled()) : ?>
+        errorPlacement: function(error, element) {
+            if (element.prop('id').search('full') !== -1) {
+                var dobElement = $(element).parents('.customer-dob'),
+                    errorClass = error.prop('class');
+                error.insertAfter(element.parent());
+                dobElement.find('.validate-custom').addClass(errorClass)
+                    .after('<div class="' + errorClass + '"></div>');
+            }
+            else {
+                error.insertAfter(element);
+            }
+        },
+        ignore: ':hidden:not(' + ignore + ')'
+    <?php else : ?>
+        ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+    <?php endif ?>
+    }).find('input:text').attr('autocomplete', 'off');
+
+});
+</script>
+
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "addressValidation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?= /* @noEscape */ $block->getConfig('general/region/display_all') ? 'true' : 'false' ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getRegionJson() ?>,
+                "defaultRegion": "<?= (int) $region_id ?>",
+                "countriesWithOptionalZip": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getCountriesWithOptionalZip(true) ?>
+            }
+        },
+        "#region_id": {
+            "cityUpdater": {
+                "cityListId": "#city_id",
+                "cityInputId": "#city",
+                "form": "#form-validate",
+                "cityJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getCityJson() ?>,
+                "defaultCity": "<?= (int) $city_id ?>"
+            }
+        },
+        "#city_id": {
+            "townshipUpdater": {
+                "townshipListId": "#township_id",
+                "townshipInputId": "#township",
+                "form": "#form-validate",
+                "townshipJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getTownshipJson() ?>,
+                "defaultTownship": "<?= (int) $township_id ?>"
+            }
+        }
+    }
+</script>
+
+<script type="text/javascript">
+require(['jquery','mage/translate','mage/validation'], function($,$t){
+	var dataForm = $('.form-affiliate-create-account');
+	dataForm.mage('validation', {});
+	$('button#submit-affiliate').click( function(e) { //can be replaced with any event
+		e.preventDefault();
+		var status = dataForm.validation('isValid'); //validates form and returns boolean
+		if(status){
+			console.log('form is validated'); //form is valid
+			$.ajax({
+	            url: "/affiliate/register/create",
+	            data: $('.form-affiliate-create-account').serialize(),
+	            type: 'POST',
+	            dataType: 'json',
+	            beforeSend: function() {
+	                // show some loading icon
+	                $("button#submit-affiliate").attr("disabled", true);
+	                $("button#submit-affiliate .image-loading").css('display','inline-block');
+	            },
+	            success: function(data, status, xhr) {
+	            	// hide some loading icon
+	                $("button#submit-affiliate").attr("disabled", false);
+	                $("button#submit-affiliate .image-loading").css('display','none');
+
+	            	$('.action.captcha-reload'). trigger ('click');
+	                if(data.status == 'error'){
+	                	switch(data.error_code) {
+						case 'empty_captcha':
+							location.reload();
+						break;
+
+						default:
+							$.toaster({ title: $t('Notice'), priority: 'danger', message: data.message });
+						}
+	                }else{
+	                	window.location.href = data.redirect_url;
+	                }
+	            },
+	            error: function (xhr, status, errorThrown) {
+	            	// hide some loading icon
+	                $("button#submit-affiliate").attr("disabled", false);
+	                $("button#submit-affiliate .image-loading").css('display','none');
+
+	            	$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Error happens. Try again.'); ?>' });
+	            }
+	        });
+		}else{
+			// hop dong
+			var input_checkbox_contract_agree_affiliate = $(".form-affiliate-create-account input[name='checkbox_contract_agree_affiliate']");
+
+			// thong tin ca nhan
+			var firstname = $(".form-affiliate-create-account input[name='firstname']");
+			var phone_number = $(".form-affiliate-create-account input[name='phone_number']");
+			var customer_email = $(".form-affiliate-create-account input[name='customer_email']");
+
+			// thong tin tai khoan ngan hang
+			var bank_number = $(".form-affiliate-create-account input[name='bank_number']");
+			var bank_id = $(".form-affiliate-create-account select[name='bank_id']");
+
+			// thong tin dia chi
+			var region_id = $(".form-affiliate-create-account select[name='region_id']");
+			var city_id = $(".form-affiliate-create-account select[name='city_id']");
+
+			// dob
+			var dob = $(".form-affiliate-create-account input[name='dob']");
+			var captcha = $(".form-affiliate-create-account input[name='captcha[affiliate_create]']");
+
+			if(input_checkbox_contract_agree_affiliate.valid() == 0){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Please check checkbox contract agree affiliate'); ?>' });
+			}else if(firstname.valid() == 0){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter firstname'); ?>' });
+			}else if(phone_number.valid() == 0){
+				if(phone_number.val() == ''){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter mobile phone number'); ?>' });
+				}else if((phone_number.val().length < 9 || phone_number.val().length > 10) && /^(0)\d{9}$|^(84)\d{9}$/.test(phone_number) === false){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate invalid mobile phone number'); ?>' });
+				}
+			}else if(customer_email.valid() == 0){
+				if(customer_email.val() == ''){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter email'); ?>' });
+				}else if(/^([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*@([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*\.(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]){2,})$/i.test(customer_email) === false){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate invalid email'); ?>' });
+				}
+			}else if(dob.valid() == 0){
+				var age = getAge(dob.val());
+				if(age < 18){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate dob under 18 age'); ?>' });
+				}else if(/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/.test(dob.val()) === false){
+					$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate dob invalid'); ?>' });
+				}
+			}else if(bank_number.valid() == 0 && (bank_number.val().length > 20 || /^[0-9a-zA-Z]+$/.test(bank_number) === false)){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate invalid bank account number'); ?>' });
+			}else if(bank_number.valid() == 0 || bank_id.valid() == 0){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter your bank account information'); ?>' });
+			}else if(region_id.valid() == 0 || city_id.valid() == 0){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter your address information'); ?>' });
+			}else if(captcha.valid() == 0){
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Affiliate please enter captcha'); ?>' });
+			}else{
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+			}
+
+		}
+	});
+
+	function toDate(dateStr) {
+        var parts = dateStr.split("/");
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
+    function getAge(dateString) {
+        var birthDate = toDate(dateString);
+        var today = new Date();
+        var age = today.getFullYear() - birthDate.getFullYear();
+
+        var m = today.getMonth() - birthDate.getMonth();
+
+        var d = today.getDate() - birthDate.getDate();
+
+        if (age === 18 && m === 0 && d < 0) {
+            age--;
+        }
+        return age;
+    }
+
+	$('input[name="checkbox_agree_affiliate"]').click(function(){
+	    if($(this).is(":checked") && $('input[name="checkbox_contract_agree_affiliate"]').is(":checked")){
+	        $('#submit-affiliate').prop('disabled', false);
+	    }else{
+	    	$('#submit-affiliate').prop('disabled', true);
+	    }
+	});
+
+	$('input[name="checkbox_contract_agree_affiliate"]').click(function(){
+	    if($(this).is(":checked") && $('input[name="checkbox_agree_affiliate"]').is(":checked")){
+	        $('#submit-affiliate').prop('disabled', false);
+	    }else{
+	    	$('#submit-affiliate').prop('disabled', true);
+	    }
+	});
+
+});
+</script>
+
+<?php }else{
+	// get info affiliate
+	switch ($affiliate_status) {
+		case 'approved':
+			$message = __("Your affiliate account was approved. Please check your email to activate account.");
+			break;
+
+		case 'rejected':
+			$message = __("Your affiliate account was rejected.");
+			break;
+
+		case 'registered':
+		case 'phone_verified':
+		case 'processing':
+			$message = __("Your account registered Affiliate Program. Please waiting to approved.");
+			break;
+
+		default:
+			$message = __("Affiliate Register Exists").' <a href="/" title="Cty Cổ Phần Chợ Trực Tuyến">'.$block->escapeHtmlAttr(__('Homepage')).'</a>';
+			break;
+	}
+
+?>
+
+<div class="affiliate-register">
+	<div class="affiliate-register-img">
+		<img style="width: 300px;" class="affiliate-register-success" src="<?= $this->getViewFileUrl('images/access_restricted.jpg');  ?>" alt="Chợ Trưc Tuyến"/>
+	</div>
+	<div class="affiliate-register-message">
+		<p><?= $message ?></a></p>
+	</div>
+</div>
+<?php } ?>
+<!-- Huy: Bug #1120 [Địa chỉ] Reset lại Dropdown Quận/ Huyện, Phường/ Xã khi thay đổi giá trị trên dropdown Tỉnh / TP -->
+<script type="text/javascript">
+    require(['jquery','mage/translate','mage/validation'], function($, $t) {
+        $(document).on('change', 'select[name="region_id"]', function() {
+            if($('select[name="region_id"]').val() == ''){
+                $('select[name="city_id"]').val('');
+                $('input[name="city"]').val('');
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+			if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+        $(document).on('change', 'select[name="city_id"]', function() {
+            $('input#township').val('');
+            $('select[name="township_id"]').val('');
+            if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+    });
+</script>

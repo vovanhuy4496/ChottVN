@@ -1,0 +1,225 @@
+<?php
+/**
+ * Copyright © chotructuyen.co All rights reserved.
+ * See COPYING.txt for license details.
+ */
+declare(strict_types=1);
+
+namespace Chottvn\Affiliate\Api\Data;
+
+interface RewardRuleInterface extends \Magento\Framework\Api\ExtensibleDataInterface
+{
+
+    const STATUS = 'status';
+    const CONDITIONS = 'conditions';
+    const END_DATE = 'end_date';
+    const DESCRIPTION = 'description';
+    const NOTES = 'notes';
+    const NAME = 'name';
+    const REWARDRULE_ID = 'id';
+    const REWARD_LEVEL = 'reward_level';
+    const PRODUCT_BRAND_ID = 'product_brand_id';
+    const AFFILIATE_LEVEL = 'affiliate_level';
+    const START_DATE = 'start_date';
+    const PRIORITY = 'priority';
+    const PRODUCT_KIND = 'product_kind';
+    const DISCARD_SUBSEQUENT_RULES = 'discard_subsequent_rules';
+
+    /**
+     * Get id
+     * @return string|null
+     */
+    public function getRewardruleId();
+
+    /**
+     * Set id
+     * @param string $rewardruleId
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setRewardruleId($rewardruleId);
+
+    /**
+     * Get name
+     * @return string|null
+     */
+    public function getName();
+
+    /**
+     * Set name
+     * @param string $name
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setName($name);
+
+    /**
+     * Retrieve existing extension attributes object or create a new one.
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleExtensionInterface|null
+     */
+    public function getExtensionAttributes();
+
+    /**
+     * Set an extension attributes object.
+     * @param \Chottvn\Affiliate\Api\Data\RewardRuleExtensionInterface $extensionAttributes
+     * @return $this
+     */
+    public function setExtensionAttributes(
+        \Chottvn\Affiliate\Api\Data\RewardRuleExtensionInterface $extensionAttributes
+    );
+
+    /**
+     * Get status
+     * @return string|null
+     */
+    public function getStatus();
+
+    /**
+     * Set status
+     * @param string $status
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setStatus($status);
+
+    /**
+     * Get start_date
+     * @return string|null
+     */
+    public function getStartDate();
+
+    /**
+     * Set start_date
+     * @param string $startDate
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setStartDate($startDate);
+
+    /**
+     * Get end_date
+     * @return string|null
+     */
+    public function getEndDate();
+
+    /**
+     * Set end_date
+     * @param string $endDate
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setEndDate($endDate);
+
+    /**
+     * Get reward_level
+     * @return string|null
+     */
+    public function getRewardLevel();
+
+    /**
+     * Set reward_level
+     * @param string $rewardLevel
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setRewardLevel($rewardLevel);
+
+    /**
+     * Get affiliate_level
+     * @return string|null
+     */
+    public function getAffiliateLevel();
+
+    /**
+     * Set affiliate_level
+     * @param string $affiliateLevel
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setAffiliateLevel($affiliateLevel);
+
+    /**
+     * Get product_brand_id
+     * @return string|null
+     */
+    public function getProductBrandId();
+
+    /**
+     * Set product_brand_id
+     * @param string $productBrandId
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setProductBrandId($productBrandId);
+
+    /**
+     * Get product_kind
+     * @return string|null
+     */
+    public function getProductKind();
+
+    /**
+     * Set product_kind
+     * @param string $productKind
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setProductKind($productKind);
+
+    /**
+     * Get conditions
+     * @return string|null
+     */
+    public function getConditions();
+
+    /**
+     * Set conditions
+     * @param string $conditions
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setConditions($conditions);
+
+    /**
+     * Get description
+     * @return string|null
+     */
+    public function getDescription();
+
+    /**
+     * Set description
+     * @param string $description
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setDescription($description);
+
+    /**
+     * Get priority
+     * @return string|null
+     */
+    public function getPriority();
+
+    /**
+     * Set priority
+     * @param string $priority
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setPriority($priority);
+
+    /**
+     * Get discard_subsequent_rules
+     * @return string|null
+     */
+    public function getDiscardSubsequentRules();
+
+    /**
+     * Set discard_subsequent_rules
+     * @param string $discardSubsequentRules
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setDiscardSubsequentRules($discardSubsequentRules);
+
+    /**
+     * Get notes
+     * @return string|null
+     */
+    public function getNotes();
+
+    /**
+     * Set notes
+     * @param string $notes
+     * @return \Chottvn\Affiliate\Api\Data\RewardRuleInterface
+     */
+    public function setNotes($notes);
+}
+

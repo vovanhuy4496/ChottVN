@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckSaveEnteredValueByCustomerAndAdmin">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Checkbox Group Order Attribute by Customer and Admin"/>
+            <title value="Check Checkbox Group  Order Attribute by Customer and Admin"/>
+            <description value="Check Save Entered Value For Future Checkout and Reorder by Customer and Admin"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-27"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckCheckboxOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create Checkbox Group Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsDropdown" stepKey="createOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsDropdownDefault"/>
+            </actionGroup>
+            <!-- Manage Options for Checkbox Group Order Attribute-->
+            <actionGroup ref="AdminManageOptionsForOrderAttribute" stepKey="manageOptionsForCheckboxGroup">
+                <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Login as Simple US Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="login">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheFirstTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check and Fill  Checkbox Group Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithCheckOptionActionForCustomerCheckoutStepOne" stepKey="checkOAForCustomer">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrderForTheFirstTime">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheSecondTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check Save Value for Checkbox Group Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithCheckOptionActionWithSaveEnteredValue" stepKey="checkSaveValueForCustomer">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrderForTheSecondTime">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check  Checkbox Group Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+        </actionGroup>
+        <!-- Check Saved Checkbox Group Order Attribute in Backend Reorder-->
+        <actionGroup ref="AdminCheckSaveValueForCheckboxGroupOAInReorder" stepKey="checkOAViaAdminInBackendReorder">
+            <argument name="adminCreateOASettings" value="SetOACheckboxGroupSaveValue"/>
+        </actionGroup>
+
+    </test>
+</tests>

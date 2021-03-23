@@ -1,0 +1,37 @@
+{
+    "chottvn_paymentaccount_bank": {
+        "column": {
+            "bank_id": true,
+            "name": true,
+            "name_short": true,
+            "code": true,
+            "description": true,
+            "image": true,
+            "status": true,
+            "order": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_paymentaccount_customerba": {
+        "column": {
+            "customerba_id": true,
+            "customer_id": true,
+            "paymentaccount_bank_id": true,
+            "account_owner": true,
+            "account_number": true,
+            "bank_branch": true,
+            "order": true,
+            "note": true,
+            "status": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

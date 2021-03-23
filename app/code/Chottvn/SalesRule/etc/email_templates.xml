@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="chottvn_promo_configuration_voucher_cttpromo_html_item"
+              label="CTT Promo HTML Item"
+              file="cttpromo_html_item.html"
+              type="html"
+              module="Chottvn_SalesRule"
+              area="frontend"
+    />
+</config>

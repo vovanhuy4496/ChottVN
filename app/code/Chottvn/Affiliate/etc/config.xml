@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <customer>
+            <captcha>
+                <shown_to_logged_in_user>
+                    <affiliate_create>1</affiliate_create>
+                </shown_to_logged_in_user>
+            </captcha>
+        </customer>
+        <captcha translate="label">
+            <frontend>
+                <areas>
+                    <affiliate_create>
+                        <label>Affiliate Create</label>
+                    </affiliate_create>
+                </areas>
+            </frontend>
+        </captcha>
+        <email_affiliate>            
+            <new_affiliate>
+                <enabled>1</enabled>
+            </new_affiliate>
+            <withdrawal_affiliate>
+                <enabled>1</enabled>
+            </withdrawal_affiliate>
+        </email_affiliate>     
+    </default>
+</config>

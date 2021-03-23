@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="catalog_sorter_configuration" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+            <class>separator-top</class>
+            <tab>catalog</tab>
+            <resource>Chottvn_CustomCatalog::config</resource>
+            <label>Sorter Configuration</label>
+            <group id="general" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>General Configuration</label>
+                <field id="json_catalog_sorter_config" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>JSON Sorter Toolbar</label>
+                    <comment>Create Toolbar HTML, sort by toolbar</comment>
+                </field>
+            </group>
+        </section>
+        <section id="catalog_compare_configuration" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+            <class>separator-top</class>
+            <tab>catalog</tab>
+            <resource>Chottvn_CustomCatalog::config</resource>
+            <label>Compare Products Configuration</label>
+            <group id="general" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>General Configuration</label>
+                <field id="json_compare_catalog_detect_device_config" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Device Config</label>
+                    <comment>Config number products by device (desktop, tablet, mobile)</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

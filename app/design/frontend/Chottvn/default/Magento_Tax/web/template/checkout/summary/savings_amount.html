@@ -1,0 +1,15 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<!-- ko if: isDisplayed() && validateSavingsAmount() > 0 -->
+<tr class="totals savings-amount">
+    <th data-bind="i18n: title + ':'" class="mark" scope="row"></th>
+    <td class="amount">
+        <span class="price" data-bind="text: getSavingsAmountTotal(), attr: {'data-th': title}"></span>
+    </td>
+</tr>
+<!-- /ko -->

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckSortOrderTextFieldShippingAddressAsCustomer">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Customer and Admin"/>
+            <title value="Check Order Attribute by Customer and Admin"/>
+            <description value="Check Sort Order for Text Field Order Attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-22"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckTextFieldOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create First Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createFirstTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField1"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+            <!-- Create Second Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createSecondTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField2"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+            <!-- Create Third Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createThirdTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField3"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete First Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteFirstAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField1"/>
+            </actionGroup>
+            <!-- Delete Second Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteSecondAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField2"/>
+            </actionGroup>
+            <!-- Delete Third Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteThirdAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextField3"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Login as Simple US Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="login">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCart">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check and Fill Text Field Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckSortOrderWithTextFieldOAForCustomer" stepKey="checkSortOrder">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextField1"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+
+    </test>
+</tests>

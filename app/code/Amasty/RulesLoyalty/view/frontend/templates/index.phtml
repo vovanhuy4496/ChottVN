@@ -1,0 +1,49 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_RulesLoyalty
+ */
+?>
+
+<div class="page-head">
+    <h2><?php echo $this->scopeConfig->getValue(
+            'amrulesloyalty/general/descr_header',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ); ?></h2>
+</div>
+<p><?php echo $this->scopeConfig->getValue(
+        'amrulesloyalty/general/description',
+        \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+    ); ?></p>
+
+<div class="fieldset">
+    <h2 class="legend"><?php echo $this->scopeConfig->getValue(
+            'amrulesloyalty/general/stats_header',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ); ?></h2>
+    <?php if(1 < $this->getMembership() || 0 == $this->getMembership()): ?>
+        <p><?php echo __('You are with us for <b>%1</b> days', $this->getMembership()); ?></p>
+    <?php else: ?>
+        <p><?php echo __('You are with us for <b>%1</b> day', $this->getMembership()); ?></p>
+    <?php endif; ?>
+
+    <p><strong><?php echo __('Total:') ?></strong><br/>
+        <?php echo __('Number of completed orders is <b>%1</b>', $this->getOrdersCount()); ?><br>
+        <?php echo __('Average order value is <b>%1</b>', $this->getOrdersAve()); ?><br>
+        <?php echo __('Order amount is <b>%1</b>', $this->getOrdersAmount()); ?>
+    </p>
+
+    <p>
+        <strong><?php echo __('This Month:') ?></strong><br/>
+        <?php echo __('Number of completed orders is <b>%1</b>', $this->getThisMonthCount()); ?><br>
+        <?php echo __('Average order value is <b>%1</b>', $this->getThisMonthAve()); ?><br>
+        <?php echo __('Order amount is <b>%1</b>', $this->getThisMonthAmount()); ?>
+    </p>
+    <p>
+        <strong><?php echo __('Last Month:') ?></strong><br/>
+        <?php echo __('Number of completed orders was <b>%1</b>', $this->getLastMonthCount()); ?><br>
+        <?php echo __('Average order value was <b>%1</b>', $this->getLastMonthAve()); ?><br>
+        <?php echo __('Order amount was <b>%1</b>', $this->getLastMonthAmount()); ?>
+    </p>
+</div>

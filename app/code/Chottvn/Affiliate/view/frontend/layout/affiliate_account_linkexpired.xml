@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Link active expired</title>
+    </head>
+    <body>
+		 <referenceBlock name="breadcrumbs">  
+		 		<action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">home</argument>
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string">Home</item>
+                <item name="label" xsi:type="string" translate="true">Home</item>
+                <item name="link" xsi:type="string">/</item>
+            </argument>
+        </action>
+        <action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">affiliate</argument>
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string">Affiliate</item>
+                <item name="label" xsi:type="string" translate="true">Affiliate</item>
+                <item name="link" xsi:type="string">/affiliate/account</item>
+            </argument>
+        </action>
+        <action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">linkexpired</argument>    
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string" translate="true">Link active expired</item>
+                <item name="label" xsi:type="string" translate="true">Link active expired</item>
+            </argument>        
+        </action>
+    </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Chottvn\Affiliate\Block\LinkExpired" name="linkexpired" template="Chottvn_Affiliate::linkexpired.phtml">
+            </block>
+        </referenceContainer>
+    </body>
+</page>

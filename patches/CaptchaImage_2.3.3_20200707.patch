@@ -1,0 +1,29 @@
+--- a/vendor/zendframework/zend-captcha/src/Image.php	2020-07-07 14:26:34.939921100 +0000
++++ b/vendor/zendframework/zend-captcha/src/Image.php	2020-07-07 14:31:28.102999800 +0000
+@@ -66,7 +66,7 @@
+      *
+      * @var int
+      */
+-    protected $fsize = 24;
++    protected $fsize = 30;
+ 
+     /**
+      * Image font file
+@@ -103,7 +103,7 @@
+      *
+      * @var int
+      */
+-    protected $dotNoiseLevel = 100;
++    protected $dotNoiseLevel = 40;
+ 
+     /**
+      * Number of noise lines on image
+@@ -111,7 +111,7 @@
+      *
+      * @var int
+      */
+-    protected $lineNoiseLevel = 5;
++    protected $lineNoiseLevel = 4;
+ 
+     /**
+      * Constructor

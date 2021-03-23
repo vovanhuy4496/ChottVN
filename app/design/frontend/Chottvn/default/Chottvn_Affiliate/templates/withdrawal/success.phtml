@@ -1,0 +1,54 @@
+<?php
+    $check = $block->getNotification();
+?>
+<div class="col-sm-12 order-timeline">
+    <div class="row order-progress" >
+        <div class="col-sm-4 col-4 order-progress-step complete">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-1.png');  ?>" alt=""/> -->
+                <p class="order-steps-label" ><?= __('Step initialization'); ?></p>
+            </div>
+        </div>
+        <div class="col-sm-4 col-4 order-progress-step complete">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-2.png');  ?>" alt=""/> -->
+                <p class="order-steps-label" ><?= __('Step confirm'); ?></p>
+            </div>
+        </div>
+
+        <div class="col-sm-4 col-4 order-progress-step complete">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-3.png');  ?>" alt=""/> -->
+                <p class="order-steps-label" ><?= __('Step result'); ?></p>
+            </div>
+        </div>
+    </div>
+</div><!-- /.order-progress -->
+<div class="col-sm-12 col-md-12">
+    <div class="noti-success">
+        <p>
+            <?php if($check == 'success'){ ?>
+                <?= __('CHO TRUC TUYEN has confirmed the withdrawal request. We will pay you within 7 working days') ?>
+                
+            <?php }elseif($check == 'amountinvalid'){ ?>
+                <?= __('The requested amount is not appropriate. Your withdrawal request has been canceled. Please do it again.') ?>
+
+            <?php }elseif($check == 'otpexpired'){ ?>
+                <?= __('Authentication code has been invalid. Your withdrawal request has been canceled. Please do it again.') ?>
+                
+            <?php }else{ ?>
+                <?= __('There was an error processing the request. Your withdrawal request has been canceled. Please do it again.') ?>
+
+            <?php } ?>
+        </p>
+    </div>
+</div>

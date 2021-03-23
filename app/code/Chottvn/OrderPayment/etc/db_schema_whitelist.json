@@ -1,0 +1,20 @@
+{
+    "chottvn_orderpayment_bankaccount": {
+        "column": {
+            "bankaccount_id": true,
+            "bank_name": true,
+            "bank_image": true,
+            "bank_branch": true,
+            "account_owner": true,
+            "account_number": true,
+            "status": true,
+            "note": true,
+            "order": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

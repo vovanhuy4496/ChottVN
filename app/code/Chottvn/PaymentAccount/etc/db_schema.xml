@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="Chottvn Bank Table" engine="innodb" name="chottvn_paymentaccount_bank" resource="default">
+		<column comment="Entity Id" identity="true" name="bank_id" nullable="false" padding="6" unsigned="true" xsi:type="int"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="bank_id"/>
+		</constraint>
+		<column length="1000" name="name" nullable="false" xsi:type="varchar"/>
+		<column length="500" name="name_short" nullable="true" xsi:type="varchar"/>
+		<column length="255" name="code" nullable="true" xsi:type="varchar"/>
+		<column name="description" nullable="true" xsi:type="text"/>
+		<column name="image" nullable="true" xsi:type="text"/>
+		<column default="1" identity="false" name="status" nullable="true" xsi:type="int"/>
+		<column identity="false" name="order" nullable="true" xsi:type="int"/>
+		<column name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column name="updated_at" nullable="true" xsi:type="timestamp"/>
+		
+	</table>
+	<table comment="Chottvn Customer Bank Account Table" engine="innodb" name="chottvn_paymentaccount_customerba" resource="default">
+		<column comment="Entity Id" identity="true" name="customerba_id" nullable="false" padding="6" unsigned="true" xsi:type="int"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="customerba_id"/>
+		</constraint>
+		<column identity="false" name="customer_id" nullable="false" xsi:type="int"/>
+		<column identity="false" name="paymentaccount_bank_id" nullable="false" xsi:type="int"/>
+		<column length="255" name="account_owner" nullable="false" xsi:type="varchar"/>
+		<column length="255" name="account_number" nullable="false" xsi:type="varchar"/>
+		<column name="bank_branch" nullable="true" xsi:type="text"/>
+		<column name="order" nullable="false" xsi:type="text"/>
+		<column name="note" nullable="true" xsi:type="text"/>
+		<column default="1" name="status" nullable="false" xsi:type="smallint"/>
+		<column name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column name="updated_at" nullable="true" xsi:type="timestamp"/>
+	</table>
+</schema>

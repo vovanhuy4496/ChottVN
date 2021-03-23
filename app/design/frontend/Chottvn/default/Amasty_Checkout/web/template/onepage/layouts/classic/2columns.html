@@ -1,0 +1,322 @@
+<!-- ko foreach: getRegion('authentication') -->
+<!-- ko template: getTemplate() -->
+<!-- /ko -->
+<!--/ko-->
+
+<!-- ko foreach: getRegion('estimation') -->
+<!-- ko template: getTemplate() -->
+<!-- /ko -->
+<!--/ko-->
+
+<!-- ko foreach: getRegion('messages') -->
+<!-- ko template: getTemplate() -->
+<!-- /ko -->
+<!--/ko-->
+<div class="opc-wrapper layout-2-columns am-opc-wrapper" data-bind="css: $data.additionalClasses">
+    <div class="row">
+        <!-- ko if: (getDetectMobile() == null)-->
+        <div class="col-lg-5 col-md-5 col-12">
+            <!-- ko if: getSortedBlock(5) -->
+            <div class="checkout-block">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(5) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(0) -->
+            <div class="checkout-block">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(0) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(1) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(1) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(2) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(2) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(3) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(3) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <div class="vat_invoice_required_ctt">
+                <!-- ko foreach: getRegion('vat-invoice-required-ctt') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!-- ko if: getSortedBlock(6) -->
+            <div class="checkout-block" id="check-vat-invoice-required">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(6) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <div class="field" name="shippingAddress.info_required">
+                <div class="control">
+                    <span class="admin__field-value" data-bind="i18n: 'Required Information'" name="info_required" id="info_required"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 col-md-7 col-12">
+            <!-- ko if: getSortedBlock(4) -->
+            <div class="checkout-block checkout-block-summary" id="items-summary">
+                <!-- ko with: getSortedBlock(4) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: isShowProductPromo() -->
+            <div class="checkout-block checkout-block-summary" id="items-promo">
+                <div class="opc-block-summary amcheckout-summary-container">
+                    <div class="step-content amcheckout-content">
+                        <div class="amcheckout-wrapper">
+                            <div class="block items-in-cart">
+                                <div class="content minicart-items">
+                                    <div class="minicart-items-wrapper overflowed" data-bind="html: getProductPromo()"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ko-->
+            <div class="checkout-block checkout-block-summary hide-ampromo-spent" id="ampromo-spent">
+                <div class="opc-block-summary amcheckout-summary-container">
+                    <div class="step-content amcheckout-content">
+                        <div class="amcheckout-wrapper">
+                            <div class="block items-in-cart">
+                                <div class="content minicart-items">
+                                    <div class="minicart-items-wrapper overflowed"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkout-block checkout-block-summary" id="discount-v3">
+                <div class="amcheckout-wrapper">
+                    <!-- ko foreach: getRegion('discount-v3') -->
+                    <!-- ko template: getTemplate() -->
+                    <!-- /ko -->
+                    <!--/ko-->
+                </div>
+            </div>
+            <div class="checkout-block checkout-block-summary" id="summary-v3">
+                <!-- ko foreach: getRegion('summary-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+                <!-- ko foreach: getRegion('max-delivery-dates-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="checkout-block checkout-block-summary desktop-affiliate-account-code-v3" id="affiliate-account-code-v3">
+                <!-- ko foreach: getRegion('affiliate-account-code-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="checkout-block" id="checkout-block-submit">
+                <div class="actions-toolbar-trigger" id="place-order-trigger-wrapper">
+                    <button type="button" class="button action primary" id="place-order-trigger" value="Complete The Place Order">
+                        <span data-bind="i18n: 'Complete The Place Order'"></span>
+                    </button>
+                </div>
+                <!-- ko foreach: getRegion('after-place-agreements') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+            <div class="opc-help-cms checkout-block" data-bind="html: my_cms_block" />
+        </div>
+        <!--/ko-->
+        <!-- ko if: (getDetectMobile())-->
+        <div class="col-lg-5 col-md-5 col-12 margin-right-25px">
+            <!-- ko if: getSortedBlock(4) -->
+            <div class="checkout-block checkout-block-summary" id="items-summary">
+                <!-- ko with: getSortedBlock(4) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: isShowProductPromo() -->
+            <div class="checkout-block checkout-block-summary" id="items-promo">
+                <div class="opc-block-summary amcheckout-summary-container">
+                    <div class="step-content amcheckout-content">
+                        <div class="amcheckout-wrapper">
+                            <div class="block items-in-cart">
+                                <div class="content minicart-items">
+                                    <div class="minicart-items-wrapper overflowed" data-bind="html: getProductPromo()"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ko-->
+            <div class="checkout-block checkout-block-summary hide-ampromo-spent" id="ampromo-spent">
+                <div class="opc-block-summary amcheckout-summary-container">
+                    <div class="step-content amcheckout-content">
+                        <div class="amcheckout-wrapper">
+                            <div class="block items-in-cart">
+                                <div class="content minicart-items">
+                                    <div class="minicart-items-wrapper overflowed"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkout-block checkout-block-summary" id="discount-v3">
+                <div class="amcheckout-wrapper">
+                    <!-- ko foreach: getRegion('discount-v3') -->
+                    <!-- ko template: getTemplate() -->
+                    <!-- /ko -->
+                    <!--/ko-->
+                </div>
+            </div>
+            <div class="checkout-block checkout-block-summary" id="summary-v3">
+                <!-- ko foreach: getRegion('summary-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+                <!-- ko foreach: getRegion('max-delivery-dates-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="checkout-block checkout-block-summary" id="affiliate-account-code-v3">
+                <!-- ko foreach: getRegion('affiliate-account-code-v3') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+        </div>
+        <div class="col-lg-7 col-md-7 col-12 margin-right-25px">
+            <!-- ko if: getSortedBlock(5) -->
+            <div class="checkout-block">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(5) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(0) -->
+            <div class="checkout-block">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(0) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(1) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(1) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(2) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(2) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <!-- ko if: getSortedBlock(3) -->
+            <div class="checkout-block">
+                <!-- ko with: getSortedBlock(3) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <div class="vat_invoice_required_ctt">
+                <!-- ko foreach: getRegion('vat-invoice-required-ctt') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!-- ko if: getSortedBlock(6) -->
+            <div class="checkout-block" id="check-vat-invoice-required">
+                <!-- ko with: getChild('steps').getChild('shipping-step').getChild('step-config') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+
+                <!-- ko with: getSortedBlock(6) -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <!--/ko-->
+            <div class="field" name="shippingAddress.info_required">
+                <div class="control">
+                    <span class="admin__field-value" data-bind="i18n: 'Required Information'" name="info_required" id="info_required"></span>
+                </div>
+            </div>
+            <div class="checkout-block" id="checkout-block-submit">
+                <div class="actions-toolbar-trigger" id="place-order-trigger-wrapper">
+                    <button type="button" class="button action primary" id="place-order-trigger" value="Complete The Place Order">
+                                <span data-bind="i18n: 'Complete The Place Order'"></span>
+                            </button>
+                </div>
+                <!-- ko foreach: getRegion('after-place-agreements') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+            <div class="opc-help-cms checkout-block" data-bind="html: my_cms_block" />
+        </div>
+        <!--/ko-->
+    </div>
+</div>

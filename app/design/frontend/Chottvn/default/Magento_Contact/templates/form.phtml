@@ -1,0 +1,79 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div class="contact-us-page">
+<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('google-map')->toHtml(); ?>
+<div class="row form-contact">
+<div class="col-lg-4 col-md-4">
+<div class="contact-info">
+<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('contact-store-info')->toHtml(); ?>
+
+</div>
+</div>
+<div class="col-lg-8 col-md-8">
+	<form class="form contact"
+          action="<?php /* @escapeNotVerified */
+		  echo $block->getFormAction(); ?>"
+          id="contact-form"
+          method="post"
+          data-hasrequired="<?php /* @escapeNotVerified */
+		  echo __('* Required Fields') ?>"
+          data-mage-init='{"validation":{}}'>
+		<fieldset class="fieldset">
+			<div class="title-bonus-page">
+				<h2><?php /* @escapeNotVerified */
+					echo __('Send your comments') ?></h2>
+			</div>
+			<div class="field name required">
+			<label class="label"><?php /* @escapeNotVerified */echo __('Name') ?></label>
+				<div class="control">
+					<input placeholder="<?php echo __('Your Name*') ?>" name="name" id="name" title="<?php /* @escapeNotVerified */
+					echo __('Name') ?>" class="input-text height-30-custom" value="<?php echo $block->escapeHtml($this->helper('Magento\Contact\Helper\Data')->getUserName()) ?>"  data-validate="{required:true}" />
+				</div>
+			</div>
+			<div class="field email required">
+			<label class="label"><?php /* @escapeNotVerified */echo __('Email') ?></label>
+				<div class="control">
+					<input placeholder="<?php echo __('Your Email*') ?>" name="email" id="email" title="<?php /* @escapeNotVerified */
+					echo __('Email') ?>" class="input-text height-30-custom" value="<?php echo $block->escapeHtml($this->helper('Magento\Contact\Helper\Data')->getUserEmail()) ?>" data-validate="{required:true,'validate-email':true}" />
+				</div>
+			</div>
+			<div class="field telephone required">
+			<label class="label"><?php /* @escapeNotVerified */echo __('Phone Number') ?></label>
+				<div class="control">
+					<input placeholder="<?php echo __('Your Phone') ?>" name="telephone" id="telephone" title="<?php /* @escapeNotVerified */
+					echo __('Phone Number') ?>" class="input-text height-30-custom"  data-validate="{required:true}" />
+				</div>
+			</div>
+			<div class="field comment required">
+			<label class="label"><?php /* @escapeNotVerified */echo __('Your Message') ?></label>
+				<div class="control">
+					<textarea placeholder="<?php echo __('Your Message*') ?>" name="comment" id="comment" title="<?php /* @escapeNotVerified */
+					echo __('Your Message') ?>" class="input-text" cols="5" rows="3" data-validate="{required:true}"></textarea>
+				</div>
+			</div>
+			<?php echo $block->getChildHtml('form.additional.info'); ?>
+		</fieldset>
+		<p><?=/* @escapeNotVerified */ __('*: Information required to enter')?></p>
+		<div class="actions-toolbar">
+			<div class="primary">
+				<input type="hidden" name="hideit" id="hideit" value=""/>
+				<button type="submit" title="<?php /* @escapeNotVerified */
+				echo __('Send Message') ?>" class="action submit primary">
+					<span><?php /* @escapeNotVerified */
+						echo __('Send Message') ?></span>
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+</div>
+</div>
+
+

@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<root>
+	<blocks>
+		<cms_item>
+			<title>Index 1 - Block Header</title>
+			<identifier>id-1-block-0</identifier>
+			<content>
+				<![CDATA[
+<div class="header-navigation">
+                  <ul>
+                     <li><a target="_blank" href="Hotline: 0902.335.388 - (028) 37 555 337">Hotline: 0902.335.388 - (028) 37 555 337</a></li>
+                     <li><a target="_blank" href="Giá tốt nhất">Giá tốt nhất</a></li>
+                     <li><a target="_blank" href="Giao hàng nhanh">Giao hàng nhanh</a></li>
+                     <li><a target="_blank" href="Thanh toán linh hoạt">Thanh toán linh hoạt</a></li>
+                     <li><a target="_blank" href="7 ngày đổi trả dễ dàng">7 ngày đổi trả dễ dàng</a></li>
+                  </ul>
+               </div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Slidershow - Banner - Services Image</title>
+			<identifier>id-1-block-1</identifier>
+			<content>
+				<![CDATA[
+<div class="item"><a title="title" href="#"><img title="Bosch" src="{{media url=wysiwyg/dcgg-slides/dcgg_slider_bosch.jpg"}}" alt="Bosch" /></a></div>
+<div class="item"><a title="title" href="#"><img title="Makita" src="{{media url=wysiwyg/dcgg-slides/dcgg_slider_makita.jpg"}}" alt="Makita" /></a></div>
+<div class="item"><a title="title" href="#"><img title="Stanley" src="{{media url=wysiwyg/dcgg-slides/dcgg_slider_stanley.jpg"}}" alt="Stanley" /></a></div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Slidershow - Banner - Services Titlle</title>
+			<identifier>id-1-block-2</identifier>
+			<content>
+				<![CDATA[
+<div class="item owl-dot" title="Siêu khuyến mãi tháng 12">Siêu khuyến mãi tháng 12</div>
+<div class="item owl-dot" title="Chương trình ưu đãi">Chương trình ưu đãi</div>
+<div class="item owl-dot" title="Giảm giá Thanh toán trực tuyến">Giảm giá Thanh toán trực tuyến</div>
+<div class="item owl-dot" title="Ưu đãi Độc quyền tại dungcugiagoc.vn">Ưu đãi Độc quyền tại</div>
+<div class="item owl-dot" title="Chương trình toàn hệ thống Dụng cụ giá gốc">Chương trình toàn hệ thống</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Slidershow - Banner - News Title</title>
+			<identifier>id-1-block-3</identifier>
+			<content>
+				<![CDATA[
+<div class="static-recent"><a class="static-recent-title" href="https://google.com" target="_blank">Khuyến mãi HOT</a></div>
+<div class="static-recent">{{widget type="Magefan\Blog\Block\Widget\Recent" title="Khuyen mai" number_of_posts="3" category_id="1" tag_id="0" author_id="0" from="2018-01-30" custom_template="Magefan_Blog::widget/news.phtml"}}</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Slidershow - Banner - News Image</title>
+			<identifier>id-1-block-10</identifier>
+			<content>
+				<![CDATA[
+<div class="static-image">
+<div class="item item-image"><a title="title" href="#"><img src="{{media url="wysiwyg/dcgg-ads/dcgg_ad_makia_201901.jpg"}}" alt="Makita" /></a></div>
+<div class="item item-image"><a title="title" href="#"><img src="{{media url="wysiwyg/dcgg-ads/dcgg_ad_may_khoan_201901.jpg"}}" alt="May khoan" /></a></div>
+</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Products - May khoan</title>
+			<identifier>id-1-block-4</identifier>
+			<content>
+				<![CDATA[
+<div class="list-product-home">{{block class="Sm\ListingTabs\Block\ListingTabs" template="Sm_ListingTabs::default.phtml" title="Máy khoan" type_show="slider" type_listing="all" display_countdown="0" under_price="5" type_filter="categories" field_tabs="" category_select="" category_tabs="267,282,283,284,285" order_by="ordered_qty" order_dir="ASC" limitation="4"}}</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Brands 1</title>
+			<identifier>id-1-block-5</identifier>
+			<content>
+				<![CDATA[
+<div class="list-brand">{{block class="Ves\Brand\Block\BrandList" number_item="10" brand_groups="1" template="Ves_Brand::block/brand_list.phtml"}}</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Products - Máy cưa</title>
+			<identifier>id-1-block-6</identifier>
+			<content>
+				<![CDATA[
+<div class="list-product-home">{{block class="Sm\ListingTabs\Block\ListingTabs" template="Sm_ListingTabs::default.phtml" title="Máy cưa" type_show="slider" type_listing="all" display_countdown="0" under_price="5" type_filter="categories" field_tabs="" category_select="" category_tabs="271,297,298,299,300,301,362" order_by="ordered_qty" order_dir="ASC" limitation="4"}}</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Brands 2</title>
+			<identifier>id-1-block-7</identifier>
+			<content>
+				<![CDATA[
+<div class="list-brand">{{block class="Ves\Brand\Block\BrandList" number_item="10" brand_groups="1" template="Ves_Brand::block/brand_list.phtml"}}</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Footer Category</title>
+			<identifier>id-1-block-8</identifier>
+			<content>
+				<![CDATA[
+                <div class="footer-links-w">
+<div class="label-link">Danh Mục Và Nhãn Hàng Được Yêu Thích</div>
+<ul>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/267"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/282"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/283"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/284"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/285"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/268"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/286"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/287"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/288"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/289"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/290"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/364"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/269"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/291"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/292"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/293}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/294"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/363"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/270"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/295"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/296"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/271"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/297"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/298"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/299"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/300"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/301"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/362"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/274"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/302"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/303"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/304"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/305"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/275"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/306"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/307"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/276"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/308"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/309"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/310"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/277"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/311"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/312"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/313"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/314"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/315"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/316"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/317"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/318"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/319"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/320"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/278"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/321"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/322"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/323"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/324"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/325"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/280"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/326"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/327"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/328"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/329"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/330"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/281"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/331"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/332"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/333"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/334"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/335"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/336"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/337"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/338"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/339"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/340"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/341"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/342"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/343"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/344"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/345"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/346"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/347"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/348"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/349"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/350"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/352"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/353"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/354"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/355"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/356"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/357"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/358"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/351"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/359"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/360"}}</li>
+<li>{{widget type="Magento\Catalog\Block\Category\Widget\Link" template="category/widget/link/link_block.phtml" id_path="category/361"}}</li>
+</ul>
+</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+		<cms_item>
+			<title>Index 1 - Block Footer Info</title>
+			<identifier>id-1-block-9</identifier>
+			<content>
+				<![CDATA[
+<div class="row">
+<div class="col-lg-4">
+<div class="contact-col">
+<div class="footer-block">
+<div class="footer-block-title">
+<h3>Công ty TNHH TM Tuấn Gia Minh</h3>
+</div>
+<div class="footer-block-content">
+<ul class="links-contact">
+<li class="add-icon">Địa chỉ: {{config path="general/store_information/street_line1"}}, {{config path="general/store_information/street_line2"}}, {{config path="general/store_information/city"}}, {{config path="general/store_information/region_id"}}</li>
+<li class="email-icon middle-content">Email: {{config path="trans_email/ident_general/email"}}</li>
+<li class="phone-icon">Phone 1: {{config path="general/store_information/phone"}}<br />Phone 2: {{config path="general/store_information/phone"}}</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-8">
+<div class="row">
+<div class="col-lg-4">
+<div class="footer-block">
+<div class="footer-block-title">
+<h3>Chính sách bán hàng</h3>
+</div>
+<div class="footer-block-content">
+<ul class="links-footer">
+<li><a title="About Us" href="#">Chính Sách Vận Chuyển</a></li>
+<li><a title="Market Reviews" href="#">Chính Sách Bảo Mật Thông Tin</a></li>
+<li><a title="Terms of Use" href="#">Quy Trình Giao Hàng</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="footer-block">
+<div class="footer-block-title">
+<h3>Hỗ Trợ Khách Hàng</h3>
+</div>
+<div class="footer-block-content">
+<ul class="links-footer">
+<li><a title="Shipping Policy" href="#">Hướng Dẫn Mua Hàng</a></li>
+<li><a title="My Account" href="#">Hướng Dẫn Thanh Toán</a></li>
+<li><a title="Return Policy" href="#">Hình Thức Mua Hàng</a></li>
+<li><a title="Contact Us" href="#">Đường Đi</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="footer-block">
+<div class="footer-block-title">
+<h3>Chi Nhánh</h3>
+</div>
+<div class="footer-block-content">
+<ul class="links-footer">
+<li><a title="Terms of Use" href="#">Đà Nẵng</a></li>
+<li><a title="Payment Methods" href="#">Buôn Ma Thuộc</a></li>
+<li><a title="Shipping Guide" href="#">Hà Nội</a></li>
+<li><a title="Locations We Ship To" href="#">Cần Thơ</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+]]>
+			</content>
+			<is_active>1</is_active>
+			<store_id>0</store_id>
+		</cms_item>
+	</blocks>
+</root>

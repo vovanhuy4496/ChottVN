@@ -1,0 +1,27 @@
+--- a/vendor/magento/module-quote/Model/Cart/ShippingMethod.php	2020-07-10 16:19:41.000000000 +0700
++++ b/vendor/magento/module-quote/Model/Cart/ShippingMethod.php	2020-07-10 16:21:01.000000000 +0700
+@@ -15,6 +15,24 @@
+ class ShippingMethod extends \Magento\Framework\Api\AbstractExtensibleObject implements
+     ShippingMethodInterface
+ {
++
++     /**
++     * Returns Get Min Delivery Dates.
++     *
++     * @return int Get Min Delivery Dates.
++     */
++    public function getMinDeliveryDates(){
++        return $this->_get(self::KEY_MIN_DELIVERY_DATES);
++    }
++     /**
++     * Returns Set Min Delivery Dates.
++     *
++     * @return int Set Min Delivery Dates.
++     */
++    public function setMinDeliveryDates($minDeliveryDates)
++    {
++        return $this->setData(self::KEY_MIN_DELIVERY_DATES, $minDeliveryDates);
++    }
+      /**
+      * Returns Get Max Delivery Dates.
+      *

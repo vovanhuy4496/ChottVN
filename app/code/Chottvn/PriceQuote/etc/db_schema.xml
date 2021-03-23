@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table comment="chottvn_pricequote_request Table" engine="innodb" name="chottvn_pricequote_request" resource="default">
+        <column comment="Entity Id" identity="true" name="request_id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+        <constraint referenceId="PRIMARY" xsi:type="primary">
+            <column name="request_id"/>
+        </constraint>
+        <column identity="false" name="quote_id" nullable="true" xsi:type="int"/>
+        <column identity="false" name="order_id" nullable="true" xsi:type="int"/>       
+        <column identity="false" name="customer_id" nullable="true" xsi:type="int"/>
+        <column length="255" name="url_key" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="company_name" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="company_address" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="company_vat_number" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="contact_name" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="contact_phone_number" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="contact_email" nullable="true" xsi:type="varchar"/>
+        <column length="255" name="status" nullable="true" xsi:type="varchar"/>
+        <column identity="false" name="assignee_id" nullable="true" xsi:type="int"/>
+        <column name="email_sent_at" nullable="true" xsi:type="timestamp"/>
+        <column identity="false" name="email_sent_count" nullable="true" xsi:type="int"/>
+        <column name="sms_sent_at" nullable="true" xsi:type="timestamp"/>
+        <column identity="false" name="sms_sent_count" nullable="true" xsi:type="int"/>
+        <column name="created_at" nullable="true" xsi:type="timestamp"/>
+        <column name="updated_at" nullable="true" xsi:type="timestamp"/>
+        <column name="file_path" nullable="true" xsi:type="text"/>
+        <column name="grand_total" xsi:type="decimal" scale="4" precision="20"/>
+        <column name="base_grand_total" xsi:type="decimal" scale="4" precision="20"/>
+        <column name="checkout_method" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="applied_rule_ids" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="coupon_code" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="subtotal" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="base_subtotal" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="savings_amount" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="base_savings_amount" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="original_total" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="shipping_amount" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="flag_shipping" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="street" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="city" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="region" xsi:type="varchar" length="255"  nullable="true" />
+        <column name="region_id" xsi:type="int" padding="10"/>
+        <column name="postcode" xsi:type="varchar" length="20"  nullable="true" />
+        <column name="country_id" xsi:type="varchar" length="30"  nullable="true" />
+        <column name="shipping_method" xsi:type="varchar" length="120"  nullable="true" />
+        <column name="city_id" xsi:type="int" padding="10"  nullable="true" />
+        <column name="township" xsi:type="varchar" length="255" nullable="true" />
+        <column name="township_id" xsi:type="int" padding="10"  nullable="true" /> 
+        <column name="base_shipping_amount" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="discount_amount" xsi:type="decimal"  scale="4" precision="20"/>
+        <column name="base_discount_amount" xsi:type="decimal"  scale="4" precision="20"/>
+    </table>
+	 <table comment="chottvn_pricequote_request_item Table" engine="innodb" name="chottvn_pricequote_request_item" resource="default">
+        <column comment="Id" identity="true" name="id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+        <constraint referenceId="PRIMARY" xsi:type="primary">
+            <column name="id"/>
+        </constraint>
+        <column name="request_id" nullable="true" xsi:type="int"/>
+        <column name="item_id" nullable="true" xsi:type="int"/>
+        <column name="quote_id" nullable="true" xsi:type="int"/>
+        <column name="created_at" nullable="true" xsi:type="timestamp" default="CURRENT_TIMESTAMP"/>
+        <column name="updated_at" nullable="true" xsi:type="timestamp" default="CURRENT_TIMESTAMP"/>
+        <column name="product_id" nullable="true" xsi:type="int" padding="10" />    
+        <column name="store_id" nullable="true" xsi:type="smallint" padding="5" />  
+        <column name="parent_item_id" nullable="true" xsi:type="int" padding="10" />    
+        <column name="is_virtual" nullable="true" xsi:type="smallint" padding="5" />    
+        <column name="sku" nullable="true" xsi:type="varchar" length="255" />   
+        <column name="name" nullable="true" xsi:type="varchar" length="255" />  
+        <column name="description" nullable="true" xsi:type="text"/>    
+        <column name="applied_rule_ids" nullable="true" xsi:type="text"/>   
+        <column name="additional_data" nullable="true" xsi:type="text"/>    
+        <column name="is_qty_decimal" nullable="true" xsi:type="smallint"  padding="5" />   
+        <column name="no_discount" nullable="true" xsi:type="smallint"  padding="5" />  
+        <column name="weight" nullable="true" xsi:type="decimal"  scale="4" precision="12" />    
+        <column name="qty" nullable="true" xsi:type="decimal"  scale="4" precision="12" />   
+        <column name="price" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="base_price" nullable="true" xsi:type="decimal"  scale="4" precision="12" />    
+        <column name="custom_price" nullable="true" xsi:type="decimal"  scale="4" precision="12" />  
+        <column name="discount_percent" nullable="true" xsi:type="decimal"  scale="4" precision="12" />  
+        <column name="discount_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />   
+        <column name="base_discount_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />  
+        <column name="tax_percent" nullable="true" xsi:type="decimal"  scale="4" precision="12" />   
+        <column name="tax_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />    
+        <column name="base_tax_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />   
+        <column name="row_total" nullable="true" xsi:type="decimal"  scale="4" precision="20" /> 
+        <column name="base_row_total" nullable="true" xsi:type="decimal"  scale="4" precision="20" />    
+        <column name="row_total_with_discount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />   
+        <column name="row_weight" nullable="true" xsi:type="decimal"  scale="4" precision="12" />    
+        <column name="product_type" nullable="true" xsi:type="varchar" length="255" />
+        <column name="base_tax_before_discount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />  
+        <column name="tax_before_discount" nullable="true" xsi:type="decimal"  scale="4" precision="20" />   
+        <column name="original_custom_price" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="redirect_url" nullable="true" xsi:type="varchar" length="255" />  
+        <column name="base_cost" nullable="true" xsi:type="decimal"  scale="4" precision="12"  /> 
+        <column name="price_incl_tax" nullable="true" xsi:type="decimal"  scale="4" precision="20"  />    
+        <column name="base_price_incl_tax" nullable="true" xsi:type="decimal"  scale="4" precision="20"  />   
+        <column name="row_total_incl_tax" nullable="true" xsi:type="decimal"  scale="4" precision="20"  />    
+        <column name="base_row_total_incl_tax" nullable="true" xsi:type="decimal"  scale="4" precision="20"  />   
+        <column name="discount_tax_compensation_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20"  />  
+        <column name="base_discount_tax_compensation_amount" nullable="true" xsi:type="decimal"  scale="4" precision="20"  /> 
+        <column name="gift_message_id" nullable="true" xsi:type="int" padding="11" />   
+        <column name="free_shipping" nullable="true" xsi:type="smallint" padding="5" /> 
+        <column name="weee_tax_applied" nullable="true" xsi:type="text" />  
+        <column name="weee_tax_applied_amount" nullable="true" xsi:type="decimal"  scale="4" precision="12" />   
+        <column name="weee_tax_applied_row_amount" nullable="true" xsi:type="decimal"  scale="4" precision="12" />   
+        <column name="weee_tax_disposition" nullable="true" xsi:type="decimal"  scale="4" precision="12" />  
+        <column name="weee_tax_row_disposition" nullable="true" xsi:type="decimal"  scale="4" precision="12" />  
+        <column name="base_weee_tax_applied_amount" nullable="true" xsi:type="decimal"  scale="4" precision="12" />  
+        <column name="base_weee_tax_applied_row_amnt" nullable="true" xsi:type="decimal"  scale="4" precision="12" />    
+        <column name="base_weee_tax_disposition" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="base_weee_tax_row_disposition" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="product_name_short" nullable="true" xsi:type="varchar" length="255" /> 
+        <column name="model" nullable="true" xsi:type="varchar" length="255" /> 
+        <column name="product_unit" nullable="true" xsi:type="varchar" length="255" /> 
+        <column name="product_brand_id" nullable="true" xsi:type="int" padding="10" /> 
+        <column name="product_kind" nullable="true" xsi:type="int" padding="10" /> 
+        <column name="guarantee" nullable="true" xsi:type="varchar" length="255" /> 
+        <column name="original_price" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="base_original_price" nullable="true" xsi:type="decimal"  scale="4" precision="12" /> 
+        <column name="all_rule_ids" nullable="true"  xsi:type="text" />
+        <column name="product_options" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_parent_id" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_item_ids" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_qty" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_parent_item_id" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_option" nullable="true"  xsi:type="text" />
+        <column name="cart_promo_ids" nullable="true"  xsi:type="text" />
+		</table>
+</schema>

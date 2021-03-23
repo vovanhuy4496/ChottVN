@@ -1,0 +1,468 @@
+
+<?php
+// Get Rules
+$cart_rules = array();
+$ruleAmpromoItems = array();
+$price_rules = $block->getPriceRules();
+$display_style = $block->getDisplayStyle();
+$css_class = $block->getCssClass();
+$rule_type = $block->getRuleType() ? explode(',', $block->getRuleType()):array();
+$without_rule_type = $block->getWithoutRuleType() ? explode(',', $block->getWithoutRuleType()):array();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// get model custom
+$salesRuleChottvn = $objectManager->create('Chottvn\SalesRule\Model\SalesRuleRepository');
+
+$is_show_title = $block->getIsShowTitle() ? $block->getIsShowTitle():'show';
+$gift_type = $block->getGiftType() ? $block->getGiftType():'only_image';
+$arrayQty = array();
+$arrayIdRules = array();
+if(!empty($block->getItemProduct())){
+	$product = $block->getItemProduct();
+}else{
+	$product = $block->getProduct();
+}
+
+if(!empty($product)){
+	// Initialize
+	$blockRules = $block->getLayout()->createBlock('Chottvn\Frontend\Block\Rules');
+
+	switch ($price_rules) {
+		case 'catalog':
+			// GET CATALOG PRICE RULES
+			$catalogRulesNames = $blockRules->getCatalogRuleByProduct($product);
+			break;
+
+		case 'cart':
+			// GET CART PRICE RULES
+			$cartRulesNames = $blockRules->getCartRuleByProduct($product,$rule_type,$without_rule_type);
+			break;
+
+		case 'gift':
+			// GET CART PRICE RULES
+			$cartRulesNames = $blockRules->getGiftCartRuleByProduct($product,$rule_type);
+			break;
+
+		case 'all':
+		default:
+			// GET CATALOG PRICE RULES
+			$catalogRulesNames = $blockRules->getCatalogRuleByProduct($product);
+			// $simpleAction = ["ampromo_items"];
+			// $cartRulesNames = $blockRules->getCartRuleByProduct($product,$rule_type,$without_rule_type,$simpleAction);
+			$ruleIdsSimpleActions = array();
+			$ruleAmpromoItems = $blockRules->getCartRuleIdsConditionSimpleActionByProduct($product);
+			break;
+	}
+	
+	// put data into array
+	if(!empty($catalogRulesNames)){
+		foreach ($catalogRulesNames as $catalogRulesName) {
+			$cart_rules[] = $catalogRulesName;
+		}
+	}
+	if(!empty($cartRulesNames)){
+		foreach ($cartRulesNames as $cartRule) {
+			$cart_rules[] = $cartRule;
+		}
+	}
+}
+$helperData = $this->helper('Chottvn\PriceQuote\Helper\Data'); 
+$countRules = 0;
+
+?>
+
+<?php if (!empty($ruleAmpromoItems) || !empty($cart_rules)) { ?>
+<?php
+		switch ($display_style) {
+			case 'name':
+				?>
+					<div class="product-detail-rules <?php echo $css_class; ?>">
+							<?php if($is_show_title == 'show'){ ?>
+								<div class="rules-title"><i class="fas fa-gift"></i><?php echo __("Hot promotions"); ?></div>
+							<?php } ?>
+							<ul class="rules-list">
+								<?php if (!empty($cart_rules)) { ?>
+										<?php foreach ($cart_rules as $cart_rule) {
+											echo '<li><i class="fas fa-gift"></i><span>'.$cart_rule.'</span></li>';
+										} ?>
+								<?php } ?>
+								<?php if (!empty($ruleAmpromoItems)) { ?>
+										<?php foreach($ruleAmpromoItems as $key => $value):?>
+											<?php
+												$simple_action = $value['simple_action'][0];
+												switch ($simple_action) {
+													case 'ampromo_items':
+														?>
+												<?php if($value['type'][0] == 0 ): ?>
+												<?php if(count($value['sku']) <= 1 ): ?>
+													<?php 
+														$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+														$productData = $productRepository->loadByAttribute('sku',$value['sku'][0]);
+														if (!empty($productData)){
+															
+														$productId = $productData->getId();
+														$nameproduct = $productData->getName();
+														$visibility = $helperData->hasProductUrl($productRepository->load($productId));
+														$urlProduct = $productData->getProductUrl();
+													?>
+													<li>
+														<?php echo '<i class="fas fa-gift"></i><span>'?><?php echo $value['name_rule'][0].'</span>';?>
+														<!-- qty,sku -->
+														<ul class="rules-skus-done">
+															<li>
+																<i class="fas fa-check-circle"></i><span class="span-product"> <?= $nameproduct; ?></span>
+																<?php if($visibility){?>
+																	<a class="see-more-rules" href= '<?php echo $urlProduct; ?>' target="_blank" title="<?= $nameproduct ?>">
+																		<span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+																	</a>
+																<?php }?>
+															</li>
+														</ul>
+													</li>
+													<?php }?>
+												<?php else: ?>
+													<li>
+														<?php echo '<i class="fas fa-gift"></i><span>'?><?php echo $value['name_rule'][0].'</span>';?>
+														<ul class="rules-skus-done">
+															<?php foreach($value['sku'] as $item):?>
+																<?php 
+																	$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+																	$productData = $productRepository->loadByAttribute('sku',$item);
+																	if (!empty($productData)){
+																		$productId = $productData->getId();
+																		$nameproduct = $productData->getName();
+																		$visibility = $helperData->hasProductUrl($productRepository->load($productId));
+																		$urlProduct = $productData->getProductUrl();
+																?>
+																<li>
+																	<i class="fas fa-check-circle"></i><span class="span-product"> <?= $nameproduct; ?></span>
+																	<?php if($visibility){?>
+																		<a class="see-more-rules" href= '<?php echo $urlProduct; ?>' target="_blank" title="<?= $nameproduct ?>">
+																			<span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+																		</a>
+																	<?php }?>
+																</li>
+																<?php }?>
+															<?php endforeach;?>
+																		
+														</ul>
+													</li>
+												<?php endif; ?>
+												<?php else: ?>
+												<?php if(count($value['sku']) <= 1 ): ?>
+													<?php 
+														$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+														$productData = $productRepository->loadByAttribute('sku',$value['sku'][0]);
+														if (!empty($productData)){
+															$productId = $productData->getId();
+															$nameproduct = $productData->getName();
+															$visibility = $helperData->hasProductUrl($productRepository->load($productId));
+															$urlProduct = $productData->getProductUrl();
+													?>
+													<li>
+														<?php echo '<i class="fas fa-gift"></i><span class="span-product">'?><?php echo $nameproduct.'</span>';?>
+														<?php if($visibility){?>
+															<a class="see-more-rules" href= '<?php echo $urlProduct; ?>' target="_blank" title="<?= $nameproduct ?>">
+																<span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+															</a>
+														<?php }?>
+													</li>
+													<?php }?>
+												<?php else: ?>
+													<li>
+														<?php $i = 0; ?>
+														<?php echo '<i class="fas fa-gift"></i><span>'?><?php echo $value['name_rule'][0].'</span>';?>
+														<ul class="rules-skus-done-<?= $key; ?> ul-padding-left">
+															<?php array_push($arrayQty, $value['qty'][0]);?>
+															<?php array_push($arrayIdRules, $key);?>
+															<?php 
+																$checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session'); 
+																$quote = $checkoutSession->getQuote();
+																$quoteFactory = $objectManager->create('Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory');
+																$checked = '';
+																$dataOptions = array();
+																if($quote){
+																	// get value de check radio
+																	$quoteId = $quote->getId();
+																	$productIdCurrent = $product->getId(); 
+																	$quoteItem = $quoteFactory->create()->addFieldToFilter('quote_id', $quoteId)
+																	->addFieldToFilter('cart_promo_parent_id', $productIdCurrent)
+																	->addFieldToFilter('cart_promo_qty', $value['qty'][$i])
+																	->addFieldToFilter('cart_promo_ids',$key)
+																	->addFieldToFilter('cart_promo_option', 'ampromo_items');
+																	$dataOptions = $quoteItem->getData();
+																}
+															?>
+															<?php foreach($value['sku'] as $sku):?>
+																<?php 
+																	$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+																	$productData = $productRepository->loadByAttribute('sku', $sku);
+																	$nameproductChecked = '';
+																	$checked = '';
+																	$disabled = '';
+																	if (!empty($productData)) {
+																		$visibility = $helperData->hasProductUrl($productData);
+
+																		$productId = $productData->getId();
+																		$nameproduct = $productData->getName();
+																		$urlProduct = $productData->getProductUrl();
+																		
+																		// huy add so luong ton
+																		$defaultStockCustom = $productData->getDefaultStockCustom();
+																		$sumQtyCurrentInQuoteItem = $productData->sumQtyCurrentInQuoteItem();
+																		$class = $productId.'-'.$key;
+																		$requestQty = 0;
+																		// $requestQty = (int)$value['qty'][$i];
+																		$defaultStock = $defaultStockCustom - ($sumQtyCurrentInQuoteItem + $requestQty);
+																		if ($defaultStock < 0 || $defaultStockCustom == 0 || ($defaultStockCustom - $sumQtyCurrentInQuoteItem == 0)) {
+																			$disabled = 'disabled';
+																		}
+
+																		if (count($dataOptions) > 0) {
+																			foreach ($dataOptions as $_key => $_value) {
+																				if ($_key == $i) {
+																					if ($_value['sku'] == $sku) {
+																						$checked = 'checked';
+																						$nameproductChecked = $_value['name'];
+																						break;
+																					}
+																				}
+																			}
+																		}
+																?>
+																<li >
+																	<!-- qty,sku -->
+																	<label class="label-radio">
+																		<?php if ($disabled == 'disabled'): ?>
+																			<input type="radio" defaultStock-minicart="<?= $defaultStock; ?>" class="<?= $class.'-disabled' ?>" <?php echo $disabled; ?> data-value="<?= $nameproduct; ?>"/><?= $nameproduct; ?>
+																		<?php else: ?>
+																			<input type="hidden" name="qty-gift-<?= $key; ?>" class="cl-qty-gift <?= $class.'-hidden' ?>"  value="<?= $value['qty'][$i]; ?>" />
+																			<input type="radio" defaultStock-minicart="<?= $defaultStock; ?>"	<?php echo $checked; ?> name="sku-gift-<?= $key; ?>" class="cl-sku-radio-<?= $key; ?> <?= $class ?>" data-value="<?= $nameproduct; ?>" value= "<?= $sku; ?>" /><?= $nameproduct; ?>
+																		<?php endif; ?>
+																	</label>
+																	<?php if ($visibility) { ?>
+																		<a class="see-more-rules" target="_blank" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>"><span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span></a>
+																	<?php } ?>
+																</li>
+																<?php } else { ?>
+																	<li >
+																		<!-- qty,sku -->
+																		<label class="label-radio"><input type="radio" disabled name="sku-gift-<?= $key; ?>" class="cl-sku-radio-<?= $key; ?>" /><?= $sku; ?></label>
+																	</li>
+																<?php } ?>
+															<?php endforeach; ?>
+														</ul>
+														<ul class="box-noti-gift gift-<?= $key; ?>">
+															<li>  </li>
+														</ul>
+														<script type="text/javascript">
+															require(['jquery','mage/translate'], function($, $t) {
+																$(document).ready( function() { 
+																	$('.rules-skus-done-<?= $key; ?> .cl-sku-radio-<?= $key; ?>').change(function(e) { 
+																		$(".gift-<?= $key; ?> li").html("Bạn đang chọn quà tặng: "+ $(this).attr('data-value'));
+																	});
+																	var checked = '<?php echo $checked; ?>';
+																	var nameproductChecked  = '<?php echo $nameproductChecked ; ?>';
+																	
+																	if(checked == ''){
+																		$(jQuery.unique(
+																		$('.rules-skus-done-<?= $key; ?> INPUT:radio')
+																				.map(function(i,e){ 
+																					return $(e).attr('name') }
+																				).get()
+																			)).each(function(i,e){
+																				$(".gift-<?= $key; ?> li").html("Bạn đang chọn quà tặng: "+ $('.rules-skus-done-<?= $key; ?> INPUT:radio[name="'+e+'"]:visible:first').attr('data-value'));
+																				$('.rules-skus-done-<?= $key; ?> INPUT:radio[name="'+e+'"]:visible:first')
+																					.attr('checked','checked');
+																		});
+																	}else{
+																		$(".gift-<?= $key; ?> li").html("Bạn đang chọn quà tặng: "+ nameproductChecked);
+																		
+																	}
+																});
+																
+															});
+														</script>
+														<?php $i++; ?>
+														<?php $countRules++; ?>
+													</li>
+												<?php endif; ?>
+											<?php endif; 
+												break;
+												default:
+													$promoUrl = $salesRuleChottvn->getPromoUrlBySalesRuleId($value['rule_id'][0]);
+													$promoUrlHtml = '';
+													if($promoUrl){
+														$promoUrlHtml .= '<a class="promo-url" href="'.$promoUrl.'" target="_blank" title="'.__('Load more details').'">'.__('Load more details').' »</a>';
+													}
+													echo '<li><i class="fas fa-gift"></i><span>'.$value['name_rule'][0].$promoUrlHtml.'</span></li>';
+												}
+											?>
+										<?php endforeach;?>
+								<?php } ?>
+							</ul>
+					</div>
+				<?php
+				break;
+			case 'gift':
+				?>
+					<?php if (!empty($cart_rules)) { ?>
+						<?php if(!empty($cartRulesNames)){ ?>
+							<div class="product-gift <?php echo $css_class; ?>">
+								<?php if($is_show_title == 'show'){ ?>
+									<div class="rules-title"><?php echo __("Gift Product Rules"); ?>
+										<!-- <img src="<?php echo $block->getViewFileUrl('images/gift_bg_prod_detail.png'); ?>" class="img-gift-detail"> -->
+									</div>
+								<?php } ?>
+								<?php
+									// get rule images
+									foreach ($cartRulesNames as $cartRule) {
+										$cartprice_rule = $objectManager->create('Amasty\Promo\Model\Rule');
+										$_current_rule = $cartprice_rule->getCollection()->getItemById($cartRule->getRuleId());
+										// List Skus in cart rule
+										$sku_rules = explode(',', $_current_rule->getSku());
+										$count_sku = count($sku_rules);
+										if (!empty($sku_rules)){
+											if($gift_type == 'only_name'){
+												echo '<span class="product-gift-label"><i class="fas fa-gift"></i>'.__('Gift: ').'</span>';
+											}
+											$i = 1;
+											foreach ($sku_rules as $sku) {
+												$_prod = $objectManager->create('Magento\Catalog\Model\ProductRepository');
+												$product = $_prod->get($sku);
+												//print_r($product->getData());exit;
+												if(isset($product)){
+													$helperImport = $objectManager->get('\Magento\Catalog\Helper\Image');
+
+													$imageUrl = $helperImport->init($product, 'product_page_image_small')
+																	->setImageFile($product->getSmallImage())
+																	->getUrl();
+													$imageBgGift = $block->getViewFileUrl('images/bg-gift.png');
+													$imageCheckPromotion = $block->getViewFileUrl('images/check.png');
+													switch ($gift_type) {
+														case 'only_name':
+															echo '<span class="product-gift-item">';
+																echo $product->getName();if($i < $count_sku) echo ',';
+															echo '</span>';
+															break;
+
+														case 'only_image':
+															echo '<span class="product-gift-item">';
+																echo '<a href="'.$product->getProductUrl().'" target="_blank" title="'.$product->getName().'">';
+																	echo '<img class="product-gift-image-bg" src="'.$imageBgGift.'" width="50" alt="'.$product->getName().'">';
+																	echo '<img class="product-gift-image-photo" src="'.$imageUrl.'" width="50" alt="'.$product->getName().'">';
+																echo '</a>';
+															echo '</span>';
+															break;
+
+														case 'detail':
+															echo '<div class="gift-item">';
+																echo '<span class="product-gift-item">';
+																	echo '<img class="product-gift-image-bg" src="'.$imageBgGift.'" width="50" alt="'.$product->getName().'">';
+																	echo '<img class="product-gift-image-photo" src="'.$imageUrl.'" width="50" alt="'.$product->getName().'">';
+																echo '</span>';
+																echo '<a href="'.$product->getProductUrl().'" target="_blank" title="'.$product->getName().'">';
+																	echo '<span class="product-gift-title">';
+																		echo $product->getName();
+																	echo '</span>';
+																	echo '<span class="product-gift-price">';
+																		echo __('Gift Price: ').$product->getFormatedPrice();
+																	echo '</span>';
+																echo '</a>';
+															echo '</div>';
+															break;
+													}
+												}
+												$i++;
+											}
+										}
+									}
+								?>
+							</div>
+						<?php } ?>
+					<?php } ?>
+				<?php
+				break;
+
+			case 'icon':
+			default:
+				if (!empty($cart_rules)) {
+					if (!empty($catalogRulesNames) || !empty($cartRulesNames)){
+					?>
+						<div class="product-gift <?php echo $css_class; ?>">
+							<i class="fas fa-gift"></i> <?php echo __('Gift'); ?>
+						</div>
+					<?php
+					}
+				}
+				break;
+		}
+	}
+?>
+
+<?php 
+	$stringGift = '';$stringIdRules='';
+	$arrayFinal = $arrayQty;
+	$uniqueArrayQty = array_unique($arrayQty);
+	if(count($uniqueArrayQty) < $countRules){
+		if($arrayQty){
+			foreach($arrayQty as $item){
+				$stringGift .= strval($item).',';
+			}
+		}
+	}else{
+		if($uniqueArrayQty){
+			foreach($uniqueArrayQty as $item){
+				$stringGift .= strval($item).',';
+			}
+		}
+	}
+	if($arrayIdRules){
+		foreach($arrayIdRules as $item){
+			$stringIdRules .= strval($item).',';
+		}
+	}
+	$stringIdRules = substr($stringIdRules, 0, -1);
+	$stringGift = substr($stringGift, 0, -1);
+	
+?>
+<input type="hidden" value="<?= $stringGift; ?>" id="hidden-qty" />
+<input type="hidden" value="<?= $stringIdRules; ?>" id="hidden-rulesid" />
+<script type="text/javascript">
+	require(['jquery','mage/translate'], function($, $t) {
+		var array = []
+		var checkboxes = document.querySelectorAll('input[type=radio]:checked')
+		for (var i = 0; i < checkboxes.length; i++) {
+			array.push(checkboxes[i].value)
+		}
+		var qtyCart = $('.control-qty-cart #qty').val();
+		// $('#input-qty').val(qtyCart);
+		// $('.control-qty-cart #qty').change(function(){
+		// 	qtyCart = $(this).val();
+		// 	$('#input-qty').val(qtyCart);
+		// });
+		
+		var qty = $('#hidden-qty').val();
+		var rulesid = $('#hidden-rulesid').val();
+		$('#sku-gift-cart').val(array);	
+		$('#qty-gift-cart').val(qty);
+		$('#rulesid-gift-cart').val(rulesid);
+		
+		// $('input[type=radio]').click(function() {
+		// 	var array = []
+		// 	var checkboxes = document.querySelectorAll('input[type=radio]:checked')
+		// 	for (var i = 0; i < checkboxes.length; i++) {
+		// 		array.push(checkboxes[i].value)
+		// 	}
+		// 	$('#sku-gift-cart').val(array);
+		// });
+		$(document).on("click", 'input[type=radio]', function () {
+			var array = []
+			var checkboxes = document.querySelectorAll('input[type=radio]:checked')
+			for (var i = 0; i < checkboxes.length; i++) {
+				array.push(checkboxes[i].value)
+			}
+			$('#sku-gift-cart').val(array); 
+		});
+	});
+</script>

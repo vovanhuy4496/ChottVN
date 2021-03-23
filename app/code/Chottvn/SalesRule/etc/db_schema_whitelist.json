@@ -1,0 +1,20 @@
+{
+    "chottvn_log_promo": {
+        "column": {
+            "id": true,
+            "affiliate_account_id": true,
+            "customer_id": true,
+            "salesrule_id": true,
+            "order_id": true,
+            "finance_transaction_id": true,
+            "event": true,
+            "fields": true,
+            "note": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

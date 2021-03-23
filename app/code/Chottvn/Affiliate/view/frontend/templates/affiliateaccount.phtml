@@ -1,0 +1,130 @@
+<div class="affiliate">
+    <!-- <p class="title"><?php echo __('Account Affiliate'); ?></p> -->
+    <div class="infor-affiliate">
+        <?php
+        $marginChangeDate = $block->_helperAccount->getMarginLimitChangedLatestDateStr($block->_customer->getId());
+        $levelChangeDate = $block->_helperAccount->getAffiliateLevelChangedLatestDateStr($block->_customer->getId());
+        ?>
+        <div class="flex-25">
+            <p class="code-ctv"><?php echo __('Affiliate Code Short'); ?>: <span><?= $block->_helperAccount->getAffiliateCode($block->_customer->getId()) ?></span></p>
+            <p class="margin-ctv"><?php echo __('Margin limit'); ?>: <span><?= $block->_helperAccount->getMarginLimit($block->_customer->getId()) ?></span></p>
+            <div class="group-ctv">
+                <div class="left-group"><?php echo __('Affiliate Subgroup'); ?>:<span><?php echo __('affiliate_level_' . $block->_helperAccount->getAffiliateLevel($block->_customer->getId())); ?></span></div>
+                <?php
+                $affiliate_level = $block->_helperAccount->getAffiliateLevel($block->_customer->getId());
+                $percent_level = explode('ctv_', $affiliate_level);
+                if (isset($percent_level[1])) {
+                    $percent_level = (int) $percent_level[1] * 100 / 5;
+                } else {
+                    $percent_level = 0;
+                }
+                // get star reviews
+                echo $this->getLayout()
+                    ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                    ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                    ->setData(['percent_rating' => $percent_level])
+                    ->toHtml();
+                ?>
+            </div>
+        </div>
+        <div class="flex-35">
+            <p><?php echo __('Registration date'); ?>: <span><?= $block->_helperAccount->getRegisteredDateStr($block->_customer->getId()) ?></span></p>
+            <p><?php echo __('Official date to become affiliate'); ?>: <span><?= $block->_helperAccount->getActivatedDateStr($block->_customer->getId()) ?></span></p>
+            <?php if ($marginChangeDate) : ?><p><?php echo __('Date margin'); ?>: <span><?= $marginChangeDate ?></span></p><?php endif; ?>
+        </div>
+        <div class="flex-40">
+            <p><?php echo __('Date of most recent order'); ?>: <span>04/06/2020</span></p>
+            <?php if ($levelChangeDate) : ?><p><?php echo __('Date of most recent subgroup change'); ?>: <span><?= $levelChangeDate ?></span></p><?php endif; ?>
+            <p><?php echo __('Latest login time'); ?>: <span><?= $block->_helperAccount->getLogginLatestDate($block->_customer->getId()) ?></span></p>
+        </div>
+    </div>
+    <div class="affiliate-money" style="display: none;">
+        <div class="row">
+            <div class="col-12 first">
+                <div class="float-left"><?php echo __('The total amount of money in the account'); ?>: </div>
+                <div class="float-right total-account"><span>1.500.000đ</span></div>
+            </div>
+            <div class="col-12">
+                <div class="float-left"><?php echo __('Available balances'); ?>: </div>
+                <div class="float-right available-balances"><span>1.000.000đ</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="row-button" style="display: none;">
+        <button><i class="fas fa-wallet"></i> <?php echo __('Withdraw money'); ?></button>
+    </div>
+    <div class="table-affiliate" style="display: none;">
+        <table>
+            <tr>
+                <th colspan="2"><?php echo __('Items affiliate'); ?></th>
+                <th>Tổng 6 tháng liền kề <i class="fas fa-caret-down"></i></th>
+            </tr>
+            <tr>
+                <td colspan="2" class="cate-table"><?php echo __('Revenue'); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">1</td>
+                <td>Chờ xác nhận</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">2</td>
+                <td>Hợp lệ</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">3</td>
+                <td>Đơn hàng hủy/trả</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="cate-table"><?php echo __('Order number'); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">1</td>
+                <td>Chưa hoàn thành</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">2</td>
+                <td>Thành công</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">3</td>
+                <td>Bị hủy/trả hàng</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="cate-table"><?php echo __('Commission amount'); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">1</td>
+                <td>Trên DT được xác nhận</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">2</td>
+                <td>Trên DT hợp lệ</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="cate-table"><?php echo __('Control down'); ?></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">1</td>
+                <td>Xử lý trách nhiệm</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="stt">2</td>
+                <td>Hoa hồng đã nhận</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</div>

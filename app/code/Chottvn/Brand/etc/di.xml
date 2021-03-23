@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Ves\Brand\Block\BrandList" type="Chottvn\Brand\Block\Ves\Brand\Block\BrandList" />
+  <preference for="Ves\Brand\Block\Brand\View" type="Chottvn\Brand\Block\Ves\Brand\Block\Brand\View" />
+
+  <preference for="Ves\Brand\Block\Adminhtml\Brand\Edit\Tab\Main" type="Chottvn\Brand\Block\Ves\Brand\Block\Adminhtml\Brand\Edit\Tab\Main" />
+</config>

@@ -1,0 +1,24 @@
+<form class="chottvn-admin" id="distributor_categoryorderby_form" name="distributor-export-form" action="<?php echo $block->getRunProcessUrl() ?>" method="post" enctype="multipart/form-data">
+    <div class="no-display">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+    </div>
+    <fieldset class="fieldset admin__fieldset " id="base_fieldset">
+        <legend class="admin__legend legend">
+            <span><?= $block->escapeHtml(__('Category Order By Script')) ?></span>
+        </legend><br>
+
+        <div class="messages">
+        </div>
+
+        <textarea style="width: 100%;" id="orderby" name="orderby" rows="10" cols="50" placeholder='Example: [
+  {"key":"url-key-1","orderby":"[{\"order_name\":\"product_brand\",\"order_type\":\"asc\"},{\"order_name\":\"power_p_sprayer_sort\",\"order_type\":\"asc\"},{\"order_name\":\"plunger_type_filter\",\"order_type\":\"asc\"}]"},
+  {"key":"url-key-2","orderby":"data 2"},
+  {"key":"url-key-3","orderby":"data 3"}
+]'></textarea>
+
+    </fieldset>
+
+    <div class="action-buttons">
+        <button id="distributors-categoryorderby-btn" class="action-scalable" type="submit"><span><?= $block->escapeHtml(__('Run')) ?></span></button>
+    </div>
+</form>

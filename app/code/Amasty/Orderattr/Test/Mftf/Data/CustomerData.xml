@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+
+    <entity name="Simple_US_Customer" type="customer">
+        <data key="group_id">0</data>
+        <data key="default_billing">true</data>
+        <data key="default_shipping">true</data>
+        <data key="email" unique="prefix">John.Doe@example.com</data>
+        <data key="firstname">John</data>
+        <data key="lastname">Doe</data>
+        <data key="password">pwdTest123!</data>
+        <data key="store_id">0</data>
+        <data key="website_id">0</data>
+        <requiredEntity type="address">US_Address_TX</requiredEntity>
+    </entity>
+
+    <entity name="Simple_US_Customer_General" type="customer" extends="Simple_US_Customer">
+        <data key="group_id">1</data>
+    </entity>
+
+    <entity name="Simple_US_Customer_Static_Email" type="customer" extends="Simple_US_Customer">
+        <data key="email">John.Locke@example.com</data>
+    </entity>
+
+    <entity name="US_Address_TX" type="address">
+        <data key="firstname">John</data>
+        <data key="lastname">Doe</data>
+        <data key="company">Magento</data>
+        <array key="street">
+            <item>7700 West Parmer Lane</item>
+        </array>
+        <data key="city">Austin</data>
+        <data key="state">Texas</data>
+        <data key="country_id">US</data>
+        <data key="country">United States</data>
+        <data key="postcode">78729</data>
+        <data key="telephone">512-345-6789</data>
+        <data key="default_billing">Yes</data>
+        <data key="default_shipping">Yes</data>
+        <requiredEntity type="region">RegionTX</requiredEntity>
+    </entity>
+
+    <entity name="RegionTX" type="region">
+        <data key="region">Texas</data>
+        <data key="region_code">TX</data>
+        <data key="region_id">57</data>
+    </entity>
+
+</entities>

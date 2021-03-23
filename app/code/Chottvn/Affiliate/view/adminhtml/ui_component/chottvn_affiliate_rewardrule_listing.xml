@@ -1,0 +1,233 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_affiliate_rewardrule_listing.chottvn_affiliate_rewardrule_listing_data_source</item>
+		</item>
+	</argument>
+	<settings>
+		<spinner>chottvn_affiliate_reward_rule_columns</spinner>
+		<deps>
+			<dep>chottvn_affiliate_rewardrule_listing.chottvn_affiliate_rewardrule_listing_data_source</dep>
+		</deps>
+		<buttons>
+			<button name="push-notify">
+				<url path="chottvn_notification/message/new"/>
+				<class>primary</class>
+				<label translate="true">Push Notification</label>
+			</button>
+			<button name="add">
+				<url path="*/*/new"/>
+				<class>primary</class>
+				<label translate="true">Add new Reward Rule</label>
+			</button>
+		</buttons>
+	</settings>
+	<dataSource component="Magento_Ui/js/grid/provider" name="chottvn_affiliate_rewardrule_listing_data_source">
+		<settings>
+			<updateUrl path="mui/index/render"/>
+		</settings>
+		<aclResource>Chottvn_Affiliate::rewardrule</aclResource>
+		<dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="chottvn_affiliate_rewardrule_listing_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<listingToolbar name="listing_top">
+		<settings>
+			<sticky>true</sticky>
+		</settings>
+		<bookmark name="bookmarks"/>
+		<columnsControls name="columns_controls"/>
+		<filters name="listing_filters"/>
+		<paging name="listing_paging"/>
+	</listingToolbar>
+	<columns name="chottvn_affiliate_reward_rule_columns">
+		<settings>
+			<editorConfig>
+				<param name="selectProvider" xsi:type="string">chottvn_affiliate_rewardrule_listing.chottvn_affiliate_rewardrule_listing.chottvn_affiliate_reward_rule_columns.ids</param>
+				<param name="enabled" xsi:type="boolean">true</param>
+				<param name="indexField" xsi:type="string">id</param>
+				<param name="clientConfig" xsi:type="array">
+					<item name="saveUrl" path="affiliate/RewardRule/inlineEdit" xsi:type="url"/>
+					<item name="validateBeforeSave" xsi:type="boolean">false</item>
+				</param>
+			</editorConfig>
+			<childDefaults>
+				<param name="fieldAction" xsi:type="array">
+					<item name="provider" xsi:type="string">chottvn_affiliate_rewardrule_listing.chottvn_affiliate_rewardrule_listing.chottvn_affiliate_reward_rule_columns_editor</item>
+					<item name="target" xsi:type="string">startEdit</item>
+					<item name="params" xsi:type="array">
+						<item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
+						<item name="1" xsi:type="boolean">true</item>
+					</item>
+				</param>
+			</childDefaults>
+		</settings>
+		<selectionsColumn name="ids">
+			<settings>
+				<indexField>id</indexField>
+			</settings>
+		</selectionsColumn>
+		<column name="id">
+			<settings>
+				<filter>text</filter>
+				<sorting>asc</sorting>
+				<label translate="true">ID</label>
+			</settings>
+		</column>
+		<column name="name">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Name</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="status">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Status</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="start_date">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Start Date</label>
+				<editor>
+					<editorType>date</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="end_date">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">End Date</label>
+				<editor>
+					<editorType>date</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="reward_level">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Reward Level</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="affiliate_level">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Affiliate Level</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="product_brand_id">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Product Brand</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="product_kind">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Product Kind</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="description">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Description</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="priority">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Priority</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="discard_subsequent_rules">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Discard Subsequent Rules</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="notes">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Notes</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<actionsColumn class="Chottvn\Affiliate\Ui\Component\Listing\Column\RewardRuleActions" name="actions" sortOrder="200">
+			<settings>
+				<indexField>id</indexField>
+				<resizeEnabled>false</resizeEnabled>
+				<resizeDefaultWidth>107</resizeDefaultWidth>
+			</settings>
+		</actionsColumn>
+	</columns>
+</listing>

@@ -1,0 +1,274 @@
+<?xml version="1.0" ?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_notification_message_form.chottvn_notification_message_form_data_source</item>
+		</item>
+		<item name="label" translate="true" xsi:type="string">Push Notification Form</item>
+		<item name="template" xsi:type="string">templates/form/collapsible</item>
+	</argument>
+	<settings>
+		<buttons>
+			<button class="Chottvn\Notification\Block\Adminhtml\Message\Edit\BackButton" name="back"/>
+			<button class="Chottvn\Notification\Block\Adminhtml\Message\Edit\DeleteButton" name="delete"/>
+			<button class="Chottvn\Notification\Block\Adminhtml\Message\Edit\SaveButton" name="save"/>
+			<button class="Chottvn\Notification\Block\Adminhtml\Message\Edit\SaveAndContinueButton" name="save_and_continue"/>
+		</buttons>
+		<namespace>chottvn_notification_message_form</namespace>
+		<dataScope>data</dataScope>
+		<deps>
+			<dep>chottvn_notification_message_form.chottvn_notification_message_form_data_source</dep>
+		</deps>
+	</settings>
+	<dataSource name="chottvn_notification_message_form_data_source">
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+		<settings>
+			<submitUrl path="*/*/save"/>
+		</settings>
+		<dataProvider class="Chottvn\Notification\Model\Message\DataProvider" name="chottvn_notification_message_form_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<fieldset name="general">
+		<settings>
+			<label>Information</label>
+		</settings>
+		<field formElement="select" name="messagetype_id" sortOrder="20">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Message</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Message Type</label>
+				<dataScope>messagetype_id</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Notification\Model\MessageType\MessageType"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="input" name="created_by" sortOrder="30">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="class" xsi:type="string">Chottvn\Notification\Ui\Component\Form\Element\ProcessedBy</item>
+					<item name="dataScope" xsi:type="string">created_by</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Processed By</label>
+				<dataScope>created_by</dataScope>
+			</settings>
+		</field>
+		<field formElement="select" name="customer_group_ids" sortOrder="40">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Customer Groups</item>
+					<item name="value" xsi:type="string">4</item>
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="formElement" xsi:type="string">multiselect</item>
+                    <item name="sortOrder" xsi:type="number">40</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                    <item name="dataScope" xsi:type="string">customer_group_ids</item>
+                </item>
+                <item name="options" xsi:type="object">Amasty\SalesRuleWizard\Model\OptionsProvider\CustomerGroup</item>
+            </argument>
+        </field>
+		<field formElement="input" name="title" sortOrder="50">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Message</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Title</label>
+				<dataScope>title</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="wysiwyg" template="ui/form/field" name="description" sortOrder="60">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="wysiwygConfigData" xsi:type="array">
+                        <item name="height" xsi:type="string">100px</item>
+                        <item name="add_variables" xsi:type="boolean">false</item>
+                        <item name="add_widgets" xsi:type="boolean">false</item>
+                        <item name="add_images" xsi:type="boolean">true</item>
+                        <item name="add_directives" xsi:type="boolean">true</item>
+                    </item>
+					<item name="source" xsi:type="string">Message</item>
+                </item>
+            </argument>
+            <settings>
+				<label translate="true">Content</label>
+				<dataScope>description</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+            </settings>
+            <formElements>
+                <wysiwyg class="Magento\Catalog\Ui\Component\Category\Form\Element\Wysiwyg">
+                    <settings>
+                        <rows>8</rows>
+                        <wysiwyg>true</wysiwyg>
+                    </settings>
+                </wysiwyg>
+            </formElements>
+        </field>
+		<field name="is_send_email">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="sortOrder" xsi:type="number">61</item>
+					<item name="dataType" xsi:type="string">boolean</item>
+					<item name="formElement" xsi:type="string">checkbox</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="prefer" xsi:type="string">toggle</item>
+					<item name="label" xsi:type="string" translate="true">Is Send Email</item>
+					<item name="valueMap" xsi:type="array">
+						<item name="true" xsi:type="string">1</item>
+						<item name="false" xsi:type="string">0</item>
+					</item>
+					<item name="default" xsi:type="string">0</item>
+				</item>
+			</argument>
+		</field>
+		<field formElement="textarea" name="content_email" sortOrder="62">
+			<argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="cols" xsi:type="number">15</item>
+                    <item name="rows" xsi:type="number">5</item>
+                    <item name="label" translate="true" xsi:type="string">Content Email</item>
+                    <item name="dataType" translate="true" xsi:type="string">text</item>
+					<item name="source" xsi:type="string">Message</item>
+                </item>
+            </argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Content Email</label>
+				<dataScope>content_email</dataScope>
+			</settings>
+		</field>
+		<field formElement="fileUploader" name="image" sortOrder="70">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="dataType" xsi:type="string">string</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="label" xsi:type="string" translate="true">Image</item>
+					<item name="formElement" xsi:type="string">fileUploader</item>
+					<item name="elementTmpl" xsi:type="string">ui/form/element/uploader/uploader</item>
+					<item name="previewTmpl" xsi:type="string">Chottvn_Notification/image-preview</item>
+					<item name="required" xsi:type="boolean">false</item>
+					<item name="sortOrder" xsi:type="number">70</item>
+					<item name="uploaderConfig" xsi:type="array">
+						<item name="url" xsi:type="url" path="*/*/upload"/>
+					</item>
+				</item>
+			</argument>
+		</field>
+		<field formElement="input" name="taget_url" sortOrder="80">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Message</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Taget Url</label>
+				<dataScope>taget_url</dataScope>
+			</settings>
+		</field>
+		<field formElement="input" name="note" sortOrder="90">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Message</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Note</label>
+				<dataScope>note</dataScope>
+			</settings>
+		</field>
+		<field formElement="date" name="started_at" sortOrder="100">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Message</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Started Date</label>
+				<dataScope>started_at</dataScope>
+			</settings>
+		</field>
+		<!-- <field formElement="date" name="created_at" sortOrder="110">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="class" xsi:type="string">Chottvn\Notification\Ui\Component\Form\Element\DateCurent</item>
+					<item name="dataScope" xsi:type="string">created_at</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Created At</label>
+				<dataScope>created_at</dataScope>
+			</settings>
+		</field>
+		<field formElement="date" name="updated_at" sortOrder="120">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="class" xsi:type="string">Chottvn\Notification\Ui\Component\Form\Element\DateCurent</item>
+					<item name="dataScope" xsi:type="string">updated_at</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Updated At</label>
+				<dataScope>updated_at</dataScope>
+			</settings>
+		</field>
+		<field formElement="date" name="deleted_at" sortOrder="130">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Message</item>
+					<item name="class" xsi:type="string">Chottvn\Notification\Ui\Component\Form\Element\DateCurent</item>
+					<item name="dataScope" xsi:type="string">deleted_at</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Deleted At</label>
+				<dataScope>deleted_at</dataScope>
+			</settings>
+		</field> -->
+	</fieldset>
+</form>

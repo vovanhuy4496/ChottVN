@@ -1,0 +1,49 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko if: (checkPromoItems($parents[1]))-->
+<!-- ko if: (getDetectMobile())-->
+<div class="col-12 get-detect-mobile-summary">
+    <!-- ko if: (getUrlPrd($parents[1]) == null)-->
+    <span class="product-item-name product-item-detail product-item-name-not-link">
+        <div class="" data-bind="html: getNamePrd($parents[1])"></div>
+    </span>
+    <!-- /ko -->
+    <!-- ko if: (getUrlPrd($parents[1]))-->
+    <a target="_blank" class="product-item-name product-item-detail" data-bind="click: redirectDetail($parents[1]), attr: { href: getUrlPrd($parents[1]), 'id': 'redirectDetail_' + $parents[1].item_id }">
+        <div class="" data-bind="html: getNamePrd($parents[1])"></div>
+    </a>
+    <!-- /ko -->
+    <div class="product-item-merge-span">
+        <!-- ko if: (getProductBrand($parents[1]))-->
+        <span class="product-item-detail" data-bind="text: getProductBrand($parents[1])"></span>
+        <!-- /ko -->
+        <!-- ko if: (getModel($parents[1]))-->
+        <span class="product-item-detail" data-bind="text: getModel($parents[1])"></span>
+        <!-- /ko -->
+    </div>
+    <!-- ko if: (getGuarantee($parents[1]))-->
+    <span class="product-item-detail" data-bind="text: getGuarantee($parents[1])"></span>
+    <!-- ko if: (JSON.parse($parents[1].options).length > 0)-->
+    <div class="product-item-detail" data-bind="html: getOptions($parents[1])"></div>
+    <!-- /ko -->
+    <!-- /ko -->
+</div>
+<!-- /ko -->
+<span class="col-xl-3 col-lg-12 col-md-12 col-sm-3 col-4 product-image-container">
+    <!-- ko if: (getUrlPrd($parents[1]))-->
+    <a target="_blank" data-bind="click: redirectImgDetail($parents[1]), attr: { href: getUrlPrd($parents[1]), 'id': 'redirectImgDetail_' + $parents[1].item_id }" class="product-image-wrapper">
+        <img data-bind="attr: {'src': getSrc($parents[1]), 'alt': getAlt($parents[1]), 'title': getAlt($parents[1]) }" />
+    </a>
+    <!-- /ko -->
+    <!-- ko if: (getUrlPrd($parents[1]) == null)-->
+    <span class="product-image-wrapper">
+        <img
+            data-bind="attr: {'src': getSrc($parents[1]), 'alt': getAlt($parents[1]), 'title': getAlt($parents[1]) }"/>
+    </span>
+<!-- /ko -->
+</span>
+<!-- /ko -->

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckShowOnAdminGridOption">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Guest User and Admin"/>
+            <title value="Check Order Attribute by Guest User and Admin"/>
+            <description value="Check Show on Admin Grid Option for Order Attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-24"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckTextFieldOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldShowOnAdminGrid"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+            <!-- Create Yes/No Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsDropdown" stepKey="createYesNonOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOAYesNoShowOnAdminGrid"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsDropdownDefault"/>
+            </actionGroup>
+            <!-- Create Radio Buttons Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsDropdown" stepKey="createRadioButtonsOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsDropdownDefault"/>
+            </actionGroup>
+            <!-- Manage Options for Radio Buttons Order Attribute-->
+            <actionGroup ref="AdminManageOptionsForOrderAttribute" stepKey="manageOptionsForRadioButtons">
+                <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+            </actionGroup>
+            <magentoCLI command="indexer:reindex" stepKey="reindexForMessage"/>
+            <magentoCLI command="cache:flush" stepKey="cleanCacheForMessage"/>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute1">
+                <argument name="adminCreateOASettings" value="SetOATextFieldShowOnAdminGrid"/>
+            </actionGroup>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute2">
+                <argument name="adminCreateOASettings" value="SetOAYesNoShowOnAdminGrid"/>
+            </actionGroup>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute3">
+                <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCart">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check and Fill Text Field Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithFillFieldActionForGuestCustomerCheckoutStepOne" stepKey="checkTextFieldOA">
+            <argument name="customer" value="OneCustomerInfo"/>
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check and Select Yes/No Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithDropdownActionForCustomerCheckoutStepOne" stepKey="checkYesNoOA">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOAYesNoShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check and Fill Radio Buttons Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithCheckOptionActionForCustomerCheckoutStepOne" stepKey="checkRadioButtonsOA">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check Text Field Order Attribute On Admin Grid-->
+        <actionGroup ref="AdminCheckOAOnOrderGrid" stepKey="checkTextFieldOrderAttributeOnAdminGrid">
+            <argument name="adminCreateOASettings" value="SetOATextFieldShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check Yes/No Order Attribute On Admin Grid-->
+        <actionGroup ref="AdminCheckOAOnOrderGrid" stepKey="checkYesNoOrderAttributeOnAdminGrid">
+            <argument name="adminCreateOASettings" value="SetOAYesNoShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check Radio Buttons Order Attribute On Admin Grid-->
+        <actionGroup ref="AdminCheckOAOnOrderGrid" stepKey="checkRadioButtonsOrderAttributeOnAdminGrid">
+            <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check Text Field Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkTextFieldOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOATextFieldShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check Yes/No Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkYesNoOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOAYesNoShowOnAdminGrid"/>
+        </actionGroup>
+        <!-- Check Radio Buttons Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkRadioButtonsOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOARadioButtonsShowOnAdminGrid"/>
+        </actionGroup>
+
+    </test>
+</tests>

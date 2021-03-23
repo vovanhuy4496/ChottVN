@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+
+    <section name="AdminOrdersGridSection">
+        <element name="AddNewOrderButton" type="button" selector="//button[@id='add']" timeout="30"/>
+        <element name="LastOrder" type="button" selector="//tr[@data-repeat-index='0']"/>
+        <element name="PenultimateOrder" type="button" selector="//tr[@data-repeat-index='1']"/>
+    </section>
+
+    <section name="AdminOrderSection">
+        <element name="OALabelInAdditionalInformation" type="block"
+                 selector="//th[contains (text(), '{{adminCreateOASettings.DefaultLabel}}')]" parameterized="true"/>
+        <element name="OAValueInAdditionalInformation" type="block"
+                 selector="//strong[contains (text(), '{{adminCreateOASettings.OAValue}}')]" parameterized="true"/>
+        <element name="OAOnOrderGrid" type="block"
+                 selector="//tr[@data-repeat-index='0']//div[contains (text(), '{{adminCreateOASettings.OAValue}}')]" parameterized="true"/>
+        <element name="FieldInput" type="input"
+                 selector="input[id={{adminCreateOASettings.AttributeCode}}]" parameterized="true"/>
+        <element name="Reorder" type="button" selector="#order_reorder"/>
+        <element name="OALabelInReorder" type="block"
+                 selector="//span[contains (text(), '{{adminCreateOASettings.DefaultLabel}}')]" parameterized="true"/>
+        <element name="CheckboxOAValueInReorder" type="block"
+                 selector="//span[contains (text(), '{{adminCreateOASettings.OAValue}}')]//ancestor::label[@class='admin__field-label']//preceding-sibling::input"
+                 parameterized="true"/>
+        <element name="DateOAValueInReorder" type="block" selector="input[value='{{adminCreateOASettings.OAValue}}']" parameterized="true"/>
+    </section>
+
+</sections>
+

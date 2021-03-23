@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="StorefrontCheckOAWithFillFieldActionForGuestCustomerCheckoutStepOne"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputOrderAttribute1" after="waitForPageLoad4"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad5"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckLengthOAWithFillFieldActionForGuestCustomerStepOne"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValueUp5Symbols}}"
+                   stepKey="inputOrderAttributeFirst" after="waitForPageLoad4"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoadAfterFillFirstOA" after="inputOrderAttributeFirst"/>
+        <seeElement selector="{{StorefrontOASection.Alert5}}"
+                    stepKey="seeElementAlertFirst" after="waitForAjaxLoadAfterFillFirstOA"/>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValueGreaterThan10Symbols}}"
+                   stepKey="inputOrderAttributeSecond" after="seeElementAlertFirst"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoadAfterFillSecondOA" after="inputOrderAttributeSecond"/>
+        <seeElement selector="{{StorefrontOASection.Alert10}}"
+                    stepKey="seeElementAlertSecond" after="waitForAjaxLoadAfterFillSecondOA"/>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputOrderAttributeThird" after="seeElementAlertSecond"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad5"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithFillFieldActionAndDefaultValueForGuestCustomerCheckoutStepOne"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad5"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.DefaultValueInput)}}"
+             userInput="{{adminCreateOASettings.DefaultValueInput}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithFillFieldActionForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputOrderAttribute1" after="waitForPageLoad2"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckManageTooltipCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <remove keyForRemoval="clickNext"/>
+        <remove keyForRemoval="waitForPageLoad3"/>
+        <click selector="{{StorefrontOASection.TooltipForStoreView(adminCreateOASettings)}}"
+               stepKey="clickTooltipForStoreView" after="waitForPageLoad1"/>
+        <seeElement selector="{{StorefrontOASection.TooltipOpen(adminCreateOASettings)}}"
+                    stepKey="seeTooltip" after="clickTooltipForStoreView"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckSortOrderWithTextFieldOAForCustomer"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <seeElement selector="{{StorefrontOASection.OASortOrder1}}" stepKey="seeFirstTextFieldOA" after="waitForPageLoad1"/>
+        <seeElement selector="{{StorefrontOASection.OASortOrder2}}" stepKey="seeSecondTextFieldOA" after="seeFirstTextFieldOA"/>
+        <seeElement selector="{{StorefrontOASection.OASortOrder3}}" stepKey="seeThirdTextFieldOA" after="seeSecondTextFieldOA"/>
+        <fillField selector="{{StorefrontOASection.OASortOrder1}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputSecondOrderAttribute" after="waitForPageLoad2"/>
+        <fillField selector="{{StorefrontOASection.OASortOrder2}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputThirdOrderAttribute" after="inputSecondOrderAttribute"/>
+        <fillField selector="{{StorefrontOASection.OASortOrder3}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputFirstOrderAttribute" after="inputThirdOrderAttribute"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithFillFieldRequiredActionForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <fillField selector="{{StorefrontOASection.FieldInputRequired(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputOrderAttribute1" after="waitForPageLoad2"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithDropdownActionForGuestCustomerCheckoutStepTwo"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{StorefrontOASection.DropdownInput(adminCreateOASettings.AttributeCode)}}"
+                      userInput="{{adminCreateOASettings.OAValue}}" stepKey="selectOption" after="waitForPageLoad5"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithFillFieldActionForCustomerCheckoutStepTwo"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <fillField selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                   userInput="{{adminCreateOASettings.OAValue}}"
+                   stepKey="inputOrderAttribute1" after="waitForPageLoad3"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithDropdownActionForCustomerCheckoutStepTwo"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{StorefrontOASection.DropdownInput(adminCreateOASettings.AttributeCode)}}"
+                      userInput="{{adminCreateOASettings.OAValue}}" stepKey="selectOption" after="waitForPageLoad3"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithMultipleSelectActionForGuestCustomerCheckoutStepTwo"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{StorefrontOASection.MultipleInput(adminCreateOASettings.AttributeCode)}}"
+                      parameterArray="[{{adminCreateOASettings.stateArray}}]"
+                      stepKey="chooseMultipleOption" after="waitForPageLoad5"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithMultipleSelectActionForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{StorefrontOASection.MultipleInput(adminCreateOASettings.AttributeCode)}}"
+                      parameterArray="[{{adminCreateOASettings.stateArray}}]"
+                      stepKey="chooseMultipleOption" after="waitForPageLoad2"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithDropdownActionForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{StorefrontOASection.DropdownInput(adminCreateOASettings.AttributeCode)}}"
+                      userInput="{{adminCreateOASettings.OAValue}}" stepKey="selectOption" after="waitForPageLoad2"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+    <!-- Action Group for Check Attribute Relation with Text Field Dependent Attribute at Checkout Step One-->
+    <actionGroup name="StorefrontCheckDontSeeTextFieldDependentAttributeCheckout">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{CheckoutShippingPage.url}}" stepKey="navigateToCheckoutShippingPage"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterNavigate"/>
+        <dontSeeElement selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                        stepKey="dontSeeAttributeCheckout"/>
+    </actionGroup>
+    <!-- Action Group for Check Attribute Relation with Text Field Dependent Attribute in Order Summary Section-->
+    <actionGroup name="StorefrontCheckDontSeeTextFieldDependentAttributeOrderSummary">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <dontSeeElement selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+                        stepKey="dontSeeAttributeOrderSummary"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOASaveValueWithDropdownActionForCustomerStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithCheckOptionActionForGuestCustomerCheckoutStepOne"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{StorefrontOASection.CheckOption(adminCreateOASettings.OAValue)}}"
+               stepKey="chooseOption" after="waitForPageLoad4"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad5"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithCheckOptionActionForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{StorefrontOASection.CheckOption(adminCreateOASettings.OAValue)}}"
+               stepKey="chooseOption" after="waitForPageLoad2"/>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAWithCheckOptionActionWithSaveEnteredValue"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <see selector="{{StorefrontOASection.OAInOrderSummary(adminCreateOASettings.DefaultLabel)}}"
+             userInput="{{adminCreateOASettings.DefaultLabel}}"
+             stepKey="seeOALabel" after="waitForPageLoad3"/>
+        <see selector="{{StorefrontOASection.OAValueInOrderSummary(adminCreateOASettings.OAValue)}}"
+             userInput="{{adminCreateOASettings.OAValue}}"
+             stepKey="seeOAValue"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAHtmlForCustomerCheckoutStepOne"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <dontSeeElement selector="{{StorefrontOASection.Html(adminCreateOASettings.Title)}}"
+                        stepKey="dontSeeElementHtml" after="waitForPageLoad1"/>
+        <seeElement selector="{{StorefrontOASection.Html(adminCreateOASettings.Title)}}"
+                    stepKey="seeElementHtml" after="waitForPageLoad2"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontCheckOAHtmlForCustomerCheckoutStepTwo"
+                 extends="AmastyCreateOrderAsCustomerOnCheckoutShippingPage">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <remove keyForRemoval="clickNext"/>
+        <remove keyForRemoval="waitForPageLoad3"/>
+        <dontSeeElement selector="{{StorefrontOASection.Html(adminCreateOASettings.Title)}}"
+                        stepKey="dontSeeElementHtml" after="waitForPageLoad1"/>
+        <seeElement selector="{{StorefrontOASection.Html(adminCreateOASettings.Title)}}"
+                    stepKey="seeElementHtml" after="waitForPageLoad2"/>
+        <click selector="{{StorefrontOASection.Html(adminCreateOASettings.Title)}}" stepKey="clickLink"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterClickLink"/>
+        <see userInput="{{adminCreateOASettings.CheckFollowTheLink}}" stepKey="checkFollowTheLink"/>
+    </actionGroup>
+
+    <actionGroup name="StorefrontDontSeeOrderAttributeForGuestCustomerCheckoutStepOne"
+                 extends="StorefrontCheckoutFillShippingAddressAsGuest">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <dontSeeElement selector="{{StorefrontOASection.FieldInput(adminCreateOASettings.AttributeCode)}}"
+                        stepKey="dontSeeOA" after="waitForPageLoad3"/>
+    </actionGroup>
+
+</actionGroups>
+
+
+
+

@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Widget\Telephone $block */
+$blockObj = $block->getLayout()->createBlock('Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Block\Form\Edit');
+$phoneAttribute = $blockObj->getPhoneNumber();
+
+$phoneAttribute = $block->getTelephone() ? $block->getTelephone() : $phoneAttribute;
+?>
+
+<div class="field telephone <?= $block->isRequired() ? 'required' : '' ?>">
+    <label for="telephone" class="label">
+        <span>
+            <?= $block->escapeHtml(__('Phone Number')) ?>
+        </span>
+    </label>
+    <div class="control">
+            <?php
+            $_validationClass = $block->escapeHtmlAttr(
+                $this->helper(\Magento\Customer\Helper\Address::class)
+                     ->getAttributeValidationClass('telephone')
+            );
+            ?>
+        <input type="text"
+               data-validate="{'validate-phone-VN': true, 'required-phone': true}"
+               name="telephone"
+               placeholder="<?= __('Input Phone number') ?>"
+               id="telephone"
+               value="<?= $phoneAttribute ?>"
+               title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>"
+               class="input-width-50 input-text <?= $_validationClass ?: '' ?>"
+        >
+    </div>
+</div>
+<!-- format error when not selected prefix for form register -->
+<script type="text/javascript">
+    require([
+        'jquery'
+    ], function ($) {
+        var telephone = ($('input[name="telephone"]').val());
+
+        if (telephone) {
+            $('input[name="telephone"]').prop('readonly', true);
+        }
+    });
+</script>

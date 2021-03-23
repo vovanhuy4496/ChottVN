@@ -1,0 +1,205 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $customerId = $customerSession->getCustomer()->getId();//get id of customer
+
+    $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+    $customerPhoneNumber = $customerObj->getData('phone_number');
+
+    $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+
+    $priceHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+    $rewardRuleHelper = $this->helper("\Chottvn\Affiliate\Helper\RewardRule");
+    $productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+
+    $financeTransactionHelper = $this->helper("\Chottvn\Finance\Helper\Transaction"); //dung
+
+    // Affiliate Level Info
+    $affiliateCode = $block->_helperAccount->getAffiliateCode($block->_customer->getId());
+    $affiliateLevel =  $block->_helperAccount->getAffiliateLevel($block->_customer->getId());
+    $levelPercent = explode('ctv_', $affiliateLevel);
+    if (isset($levelPercent[1])) {
+        $levelPercent = (int) $levelPercent[1] * 100 / 5;
+    } else {
+        $levelPercent = 0;
+    }
+    $levelStars = $this->getLayout()
+                    ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                    ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                    ->setData(['percent_rating' => $levelPercent])
+                    ->toHtml();
+    $levelChangeDate = $block->_helperAccount->getAffiliateLevelChangedLatestDateStr($block->_customer->getId());
+    $activatedDate = $block->_helperAccount->getActivatedDate($block->_customer->getId())->format("Y-m-d");
+
+    // Affiliate Purchase
+    $latestOrderDate = $rewardRuleHelper->getLatestOrderDateStr($block->_customer->getId());
+
+    // Statistic Last 6 months
+    $staticMonths = 6;
+    $staticLatestMonthsTitle = __('Statistics results for the last '.$staticMonths.' months');
+    $dateRangeOfStaticLatestMonths = $rewardRuleHelper->getStatisticDateRangeForLatestMonth($staticMonths, $activatedDate);
+    $monthRangeStartFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["start_date"]));
+    $monthRangeEndFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["end_date"]));
+    $staticLatestMonthsStr = $rewardRuleHelper->getStaticMonthRangeStr($dateRangeOfStaticLatestMonths);
+
+    // -- Calcaluate Revenue
+    $affiliateRevenueStatistic = $rewardRuleHelper->getStatisticAffiliateRevenue($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateRevenue =  $affiliateRevenueStatistic["affiliate_revenue_amount"];
+    $affiliateReward =  $affiliateRevenueStatistic["affiliate_reward_amount"];
+
+    $affiliateRevenueStatisticByBrand = $rewardRuleHelper->getStatisticAffiliateRevenueByBrand($customerId, $dateRangeOfStaticLatestMonths);
+
+    $affiliateOrderCount = $rewardRuleHelper->getStatisticAffiliateOrderCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypeActiveCount = $rewardRuleHelper->getStatisticAffiliateOrderTypeActiveCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypePassiveCount = $affiliateOrderCount - $affiliateOrderTypeActiveCount;
+
+    // Statistic Last 6 months - Breakdown monthly
+    $statisticMonthlyOptions =  $rewardRuleHelper->getMonthOptionsFromDateRange($dateRangeOfStaticLatestMonths);
+    $statisticMonthly = $rewardRuleHelper->getStatisticAffiliateRevenueByMonth($customerId, $dateRangeOfStaticLatestMonths);
+
+    if(sizeof($statisticMonthlyOptions) > 0){
+        $index = 0;//sizeof($statisticMonthlyOptions) - 1;
+        $currentStatisticMonthlyKey = $statisticMonthlyOptions[$index]["month"];
+    }else{
+          $currentStatisticMonthlyKey = "";
+    }
+
+    if(sizeof($statisticMonthlyOptions) > 1){
+        $staticLatestMonthsTitle = __('Statistics results for the last %1 months',sizeof($statisticMonthlyOptions));
+    }else{
+       $staticLatestMonthsTitle = __('Statistics results for the last month');
+    }
+
+    // Transaction & Finance
+    // -- Affiliate Margin Limit
+    // hạng mức ký quỹ
+    $marginLimitBalance = $financeTransactionHelper->getAccountAmountMarginBalance($block->_customer->getId()); 
+    $marginChangeDate = $block->_helperAccount->getMarginLimitChangedLatestDateStr($block->_customer->getId());
+    // tổng số tiền đã giao dịch
+    $accountAmountTransaction = $financeTransactionHelper->getAccountAmountTransactionAll($block->_customer->getId());  
+    // Tổng số tiền trong tài khoản = Tổng số tiền đã giao dịch + Tổng chiết khấu 2 tháng liền kề
+    $accountAmountBalance = $accountAmountTransaction + $affiliateReward;
+        //$marginLimitAffiliateLevel  = $this->_helperAccount->getAffiliateMarginLimit($block->_customer->getId());
+    // số dư khả dụng = Tổng số tiền trong tài khoản - hạn mức ký quỹ
+    $accountAmountAvailable = $accountAmountBalance - $marginLimitBalance;
+
+
+    $accountAmountWithdrawal = $financeTransactionHelper->getAccountAmountTransactionWithdrawal($block->_customer->getId());
+    $accountAmountDepositCash = $financeTransactionHelper->getAccountAmountTransactionDepositCash($block->_customer->getId()); 
+    $accountAmountHandleResponsibility = $financeTransactionHelper->getAccountAmountTransactionHandleResponsibility($block->_customer->getId());  
+
+    //$accountTransactions = $financeTransactionHelper->getAccountTransactions($block->_customer->getId());  
+    $accountTransactionsByMonth = $financeTransactionHelper->getAccountTransactionsByMonth($block->_customer->getId(), $dateRangeOfStaticLatestMonths);  
+    $accountTransactionsWithdrawal  = $financeTransactionHelper->getAccountTransactionsWithdrawal($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsHandleResponsibility  = $financeTransactionHelper->getAccountTransactionsHandleResponsibility($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsDepositCash  = $financeTransactionHelper->getAccountTransactionsDepositCash($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    //
+    $withdrawalRewardAmountMin = (int) $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('configuration/general/withdrawal_reward_amount_min') ? (int) $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('configuration/general/withdrawal_reward_amount_min'): 0;
+    $transactionTypeHelperData = $this->helper('Chottvn\Finance\Helper\Data');
+    $transactionTypeCollection = $transactionTypeHelperData->getTransactionTypeCollection();
+?>
+<!-- Page Info -->
+<form class="form" method="post" id="form-validate" enctype="multipart/form-data" autocomplete="off">
+    <?= /* @noEscape */ $block->getBlockHtml('formkey'); ?>
+    <div class="container affiliate-container">
+		<div class="row">
+			<div class="col-md-6 col-sm-12 col-12 personal-information">
+				<div class="col-affiliate-height-auto">
+					<fieldset class="fieldset">
+				        <div class="field required">
+				            <label for="withdrawal" class="label"><span><?= $block->escapeHtml(__('Amount')) ?></span></label>
+				            <div class="control">
+                                <input value="<?php echo $accountAmountAvailable; ?>" type="hidden" name="accountamountavailable" />
+								<input value="<?php echo $withdrawalRewardAmountMin; ?>" type="hidden" name="withdrawalrewardamountmin" />
+				                <input type="number" name="withdrawal" id="withdrawal" title="<?= $block->escapeHtml(__('Amount')) ?>" placeholder="<?= $block->escapeHtml(__('Input Amount')) ?>" class="input-text" data-validate="{'required': true}">
+				            </div>
+				        </div>
+                        <div class="field required">
+                            <label class="label" for="transaction_type_id">
+                                <label class="label" for="transaction_type_id"><span><?= $block->escapeHtmlAttr(__('Aff Transaction Type')) ?></span></label>
+                            </label>
+                            <div class="control custom-width-control form-group-required">
+                                <select id="transaction_type_id" name="transaction_type_id"
+                                        title="<?= $block->escapeHtmlAttr(__('Aff Transaction Type')) ?>"
+                                        class="select-width-50 validate-select required-entry"
+                                        autocomplete="off"
+                                        style="pointer-events: none;"
+                                        >
+                                    <option value=""><?= $block->escapeHtml(__('Please select a Transaction Type.')) ?></option>
+                                    
+                                    <?php 
+                                    // Phuoc add 2020-08-12 for load list bank
+                                    foreach ($transactionTypeCollection  as $item) : ?>
+                                        <option value="<?= $item['transactiontype_id']; ?>"> <?= $item['name']; ?> </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <input type="text"
+                                            id="transaction_type_id_form"
+                                            name="transaction_type_id_form"
+                                            value="4"
+                                            style="display: none;"
+                                            autocomplete="off" />
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <?=
+				        $block->getChildHtml('form_additional_info') ?>
+                    <div class="actions-toolbar">
+                        <div class="primary">
+                            <button type="submit" class="action submit primary" id="submit-affiliate" title="<?= $block->escapeHtmlAttr(__('Create')) ?>"><?= $block->escapeHtml(__('Withdrawal')) ?></span></button>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script>
+require(['jquery','mage/translate','mage/validation'], function($,$t){
+    var dataForm = $('#form-validate');
+	dataForm.mage('validation', {});
+	$('button#submit-affiliate').click( function(e) { //can be replaced with any event
+			e.preventDefault();
+            var isValid = true;
+			var status = dataForm.validation('isValid'); //validates form and returns boolean
+			if(status){
+				console.log('form is validated'); //form is valid
+				$.ajax({
+					url: "/affiliate/account_withdrawal/handle",
+					data: $('#form-validate').serialize(),
+					type: 'POST',
+					dataType: 'json',
+					beforeSend: function() {
+						// show some loading icon
+					},
+					success: function(data, status, xhr) {
+						if(data.status == 'error'){
+							$.toaster({ title: $t('Notice'), priority: 'danger', message: data.message });
+						}else{
+							window.location.href = data.redirect_url;
+						}
+					},
+					error: function (xhr, status, errorThrown) {
+						$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Error happens. Try again.'); ?>' });
+					}
+				});
+			}else{
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+			}
+            return isValid;
+    });
+});
+</script>
+<script>
+    require([
+        "jquery"
+    ], function($){
+		$(document).ready(function() {
+			var transaction_type_id = $('#transaction_type_id_form').val();
+			$('#transaction_type_id').val(transaction_type_id);
+		});
+    });
+</script>
+

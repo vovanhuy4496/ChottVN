@@ -1,0 +1,382 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var Magento\Review\Block\Product\View\ListView $block */
+
+$_items = $block->getReviewsCollection()->getItems();
+$format = $block->getDateFormat() ?: \IntlDateFormatter::SHORT;
+?>
+
+<?php
+
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+    $product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+
+    $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+    $currentStoreId = $storeManager->getStore()->getId();
+    $rating = $objectManager->get("Magento\Review\Model\ResourceModel\Review\CollectionFactory");
+
+    $reviewsCollection = $rating->create()->addStoreFilter(
+        $currentStoreId
+    )->addStatusFilter(
+        \Magento\Review\Model\Review::STATUS_APPROVED
+    )->addEntityFilter(
+        'product',
+        $product->getId()
+    )->setDateOrder()
+    ->addRateVotes();
+
+    $result = $items = $starData = [];
+
+    foreach ($reviewsCollection->getItems() as $_review) {
+        foreach ($_review->getRatingVotes() as $_vote) {
+            $rating = [];
+
+            $percent = $_vote->getPercent();
+            $star = ($percent/20);
+            $typeReview = $_vote->getRatingCode();
+
+            $rating['percent']   = $percent;
+            $rating['star']      = $star;
+            $rating['name']      = $typeReview;
+
+            $items[] = $rating;
+            $starData[$star][] = $rating;
+        }
+    }
+
+    if(count($items) > 0) {
+
+        if(isset($starData[1]))
+            $result[1] = count($starData[1]);
+        else
+            $result[1] = 0;
+
+        if(isset($starData[2]))
+            $result[2] = count($starData[2]);
+        else
+            $result[2] = 0;
+
+        if(isset($starData[3]))
+            $result[3] = count($starData[3]);
+        else
+            $result[3] = 0;
+
+        if(isset($starData[4]))
+            $result[4] = count($starData[4]);
+        else
+            $result[4] = 0;
+
+        if(isset($starData[5]))
+            $result[5] = count($starData[5]);
+        else
+            $result[5] = 0;
+
+        $sum = $startSum = 0;
+
+        foreach($result as $number => $count) {
+            $sum += $number * $count;
+            $startSum +=  $count;   
+        }
+        
+        $avg =  $sum/$startSum;
+        $avg = floor($avg * 2) / 2;
+
+        $result['all'] = count($items);
+        $result['avg'] = number_format($avg, 1, '.', ' ');
+        $result['percent'] = round($avg/5*100);
+
+        $biggest_number = max($result[1], $result[2], $result[3], $result[4], $result[5]);
+    }
+?>
+<style>
+    .detail-scroll-product{
+        display: none !important;
+    }
+    #id-review-custom li{
+        display: none;
+    }
+
+    .star-ratings-css {
+        unicode-bidi: bidi-override;
+        color: #e0e0e0;
+        font-size: 25px;
+        margin: 0 auto;
+        position: relative;
+        padding: 0;
+        float: left;
+    }
+    .star-ratings-css-top {
+        color: #ffce00;
+        padding: 0;
+        position: absolute;
+        z-index: 1;
+        display: block;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    .star-ratings-css-bottom {
+        padding: 0;
+        display: block;
+        z-index: 0;
+    }
+
+    .rating-summary {
+        overflow: initial;
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .star-container {
+        position: absolute;
+        text-align: center;
+        left: 50%;
+        margin-left: -60px;
+        margin-top: -45px;
+    }
+
+    .star-label{
+        margin-bottom: 5px;
+        color: #3e3e3e;
+        font-weight: 600;
+        margin-top: 30px;
+        font-size: 20px;
+    }
+
+    .star-avg{
+        color: #3e3e3e;
+        display: inline-flex;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .review-list .container{
+        display: table-cell;
+    }
+
+    .review-list .div-summary-review{
+        text-align: center;
+        padding: 20px 0;
+    }
+    .review-list .div-summary-detail{
+        text-align: center;
+        padding: 20px 0;
+    }
+    .summary-detail-star{
+        width:35px;
+        line-height:1;
+        color: 
+    }
+    .summary-detail-star-detail{
+        height:9px;
+        margin:5px 0;
+        color: #000;
+    }
+    .summary-detail-star-detail span{
+        color: #e0e0e0;
+    }
+    .div-summary-detail .progress{
+        height:9px;
+        margin:8px 0;
+        border-radius: 6px;
+    }
+    .div-summary-detail .progress{
+        height:9px;
+        margin:8px 0;
+        border-radius: 6px;
+    }
+    .div-summary-detail .progress-bar-primary{
+        background-color: #ffce00;
+        border-radius: 6px;
+    }
+    .div-summary-detail .review-count{
+        margin-left:10px;
+    }
+
+    .review-list .review-control-vote:before {
+        color: #e0e0e0;
+    }
+    .review-list .mage-error #review_field-error{
+        display: none;
+    }
+</style>
+<!-- Detail sunmmary -->
+<?php if (count($_items)) { ?>
+    <div class="block review-list" id="customer-reviews">
+        <h2 class="detail-heading"><?= $block->escapeHtml(__('Customer Reviews')) ?> <?php echo __('There is %1 reviewer',$result['all']) ?></h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 col-sm-12 div-summary-review">
+                    <div class="rating-block">
+                        <div class="rating-summary">
+                            <?php //for($i=0; $i<$result['avg']; $i++): ?>
+                                <!-- <span style="color: #ffb400; font-size: 25px;" class="fa fa-star checked"></span> -->
+                            <?php //endfor ?>
+                            <div class="star-container">
+                                <div class="star-ratings-css">
+                                    <div class="star-ratings-css-top" style="width: <?php echo $result['percent']; ?>%">
+                                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                    </div>
+                                    <div class="star-ratings-css-bottom">
+                                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="star-label"><?= $block->escapeHtml(__('AVG Summary Review')) ?></div>
+                        <div class="star-avg"><?php echo $result['avg']; ?></div>
+                    </div>
+                </div>
+                <div class="col-md-7 col-sm-12 div-summary-detail">
+                    <?php for($i=5; $i>0; $i--): ?>
+                        <?php $width = ($result[$i] * 100) / $biggest_number; ?>
+                        <div class="pull-left">
+                            <div class="pull-left summary-detail-star">
+                                <div class="summary-detail-star-detail">
+                                    <?php echo $i; ?>
+                                    <span>★</span>
+                                </div>
+                            </div>
+                            <div class="pull-left width-progress">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="<?php echo $i; ?>" aria-valuemin="0" aria-valuemax="5" style="width: <?php echo $width; ?>%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pull-right review-count">
+                                <p>
+                                    <?php echo __('There is %1 review',$result[$i]) ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endfor ?>
+                </div>			
+            </div>
+        </div>
+        <div id="block-form-custom">
+            <?php
+                echo $this->getLayout()
+                ->createBlock('Magento\Review\Block\Form')
+                ->setTemplate('Magento_Review::form.phtml')
+                ->toHtml();
+            ?>
+        </div>
+        <script>
+            require([
+                'jquery'
+            ], function($){
+                jQuery(document).ready(function(e){
+                    $('#block-form-custom .block.review-add.box.box-primary').show();
+                });
+            });
+        </script>
+        <div class="block-content">
+            <div class="toolbar review-toolbar">
+                <?= $block->getChildHtml('toolbar') ?>
+            </div>
+            <ol class="items review-items" id ="id-review-custom">
+            <?php foreach ($_items as $_review) : ?>
+                <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review">
+                    <div class="img-author-ratings">
+                        <div class="img-author-review">
+                            <?php $rating = 0; ?>
+                            <?php $count_num_rating = count($_review->getRatingVotes()); ?>
+
+                            <?php if (count($_review->getRatingVotes())) : ?>
+                                <?php foreach ($_review->getRatingVotes() as $_vote) : ?>
+                                    <?php $rating = $rating + (int)$_vote->getPercent(); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <?php $rating = @($rating / (($count_num_rating > 0) ? $count_num_rating : 0)); ?>
+
+                            <?php if ($rating > 0 && $rating <= 20) : ?>
+                                <img src="data:image/png;base64,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">
+                                <?php elseif($rating > 20 && $rating <= 40): ?>
+                                    <img src="data:image/png;base64,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">
+                                <?php elseif($rating > 40 && $rating <= 60): ?>
+                                    <img src="data:image/png;base64,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">
+                                <?php elseif($rating > 60 && $rating <= 80): ?>
+                                    <img src="data:image/png;base64,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">
+                                <?php elseif($rating > 80): ?>
+                                    <img src="data:image/png;base64,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">
+                            <?php else: ?>
+                                <img src="data:image/png;base64,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">
+                            <?php endif; ?>
+
+                        </div>
+                        <div class="author-ratings">
+                            <div class="review-author" itemprop="author">
+                                <?= /* @noEscape */ nl2br($block->escapeHtml($_review->getNickname())) ?>
+                            </div>
+                            <?php if (count($_review->getRatingVotes())) : ?>
+                                <div class="review-ratings">
+                                    <?php foreach ($_review->getRatingVotes() as $_vote) : ?>
+                                        <div class="rating-summary item item-ratings" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                                            <span class="label rating-label"><span><?= $block->escapeHtml($_vote->getRatingCode()) ?></span></span>
+                                            <div class="rating-result" title="<?= $block->escapeHtmlAttr($_vote->getPercent()) ?>%">
+                                                <meta itemprop="worstRating" content = "1"/>
+                                                <meta itemprop="bestRating" content = "100"/>
+                                                <span style="width:<?= $block->escapeHtmlAttr($_vote->getPercent()) ?>%">
+                                                    <span itemprop="ratingValue"><?= $block->escapeHtml($_vote->getPercent()) ?>%</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="review-details">
+                        <span class="review-details-title" itemprop="name">           
+                            <?= $block->escapeHtml($_review->getTitle()) ?>             
+                        </span>
+                        <span class="review-content">                        
+                            <p class="review-details-value" itemprop="description"><?= $block->escapeHtml($_review->getDetail()) ?></p>
+                        </span>
+                        <span class="review-date">                        
+                            <time class="review-details-value" itemprop="datePublished" datetime="<?= $block->escapeHtmlAttr($block->formatDate($_review->getCreatedAt(), $format)) ?>"><?= $block->escapeHtml($block->formatDate($_review->getCreatedAt(), $format)) ?></time>
+                        </span>
+                    </div>
+                </li>
+            <?php endforeach; ?>
+            </ol>
+            <div class="box-more-see"><button class="load-more-review"><?php echo __("Load more review"); ?></button></div>
+            <div class="toolbar review-toolbar">
+                <?= $block->getChildHtml('toolbar') ?>
+            </div>
+        </div>
+    </div>
+<?php }else{ ?>
+<div id="block-form-custom">
+    <?php
+        echo $this->getLayout()
+        ->createBlock('Magento\Review\Block\Form')
+        ->setTemplate('Magento_Review::form.phtml')
+        ->toHtml();
+    ?>
+</div>
+<?php } ?>
+<!-- script: product information & desc -->
+<script type="text/javascript">
+        require([ 'jquery', 'jquery/ui'], function($) {
+            if ($('#id-review-custom li').length > 2) {
+                $('#id-review-custom li').slice(0,2).show();
+            	$('.load-more-review').show();
+            }else{
+                $('#id-review-custom li').show();
+            }
+            $('.load-more-review').on('click', function() {
+            	$('#id-review-custom li').show();
+            	$('.load-more-review').hide();
+            });
+        });
+    </script>
+<!-- close -->
+

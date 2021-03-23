@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+	<router id="standard">
+		<route frontName="notification" id="notification">
+			<module name="Chottvn_Notification"/>
+		</route>
+		<route id="customer">
+            <module name="Chottvn_Notification" after="Magento_Customer" />
+        </route>
+	</router>
+</config>

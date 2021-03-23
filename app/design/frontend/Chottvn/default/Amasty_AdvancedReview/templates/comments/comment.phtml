@@ -1,0 +1,47 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_AdvancedReview
+ */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customer = $objectManager->create('Magento\Customer\Model\Customer')->load($block->getComment()->getCustomerId());
+?>
+<?php /** @var $block \Amasty\AdvancedReview\Block\Comment\Comment */ ?>
+<li class="amrev-comment" data-amreview-js="comment">
+	<?php
+        $nickname = nl2br($block->escapeHtml($customer->getFirstname())) != "" ? nl2br($block->escapeHtml($customer->getFirstname())):"Default";
+        $nickname = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", "a", $nickname);
+        $nickname = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", "e", $nickname);
+        $nickname = preg_replace("/(ì|í|ị|ỉ|ĩ)/", "i", $nickname);
+        $nickname = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", "o", $nickname);
+        $nickname = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", "u", $nickname);
+        $nickname = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", "y", $nickname);
+        $nickname = preg_replace("/(đ)/", "d", $nickname);
+        $nickname = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", "A", $nickname);
+        $nickname = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", "E", $nickname);
+        $nickname = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", "I", $nickname);
+        $nickname = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", "O", $nickname);
+        $nickname = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", "U", $nickname);
+        $nickname = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", "Y", $nickname);
+        $nickname = preg_replace("/(Đ)/", "D", $nickname);
+
+        $words = explode(" ", $nickname);
+        $avatarChar = '';
+        if(count($words) > 1){
+           $firstWord = $words[count($words)-1];
+           $secondWord = $words[count($words)-2];
+           $avatarChar = $secondWord[0].$firstWord[0];
+        }else{
+           $firstWord = $words[0];
+           $avatarChar = $firstWord[0];
+        }
+
+        echo '<span class="avatar-comment">'.$avatarChar.'</span>';
+    ?>
+    <p class="amrev-name">
+        <b class="amrev-firstname"><?= $block->escapeHtml($customer->getFirstname()) ?></b>
+    </p>
+    <span class="amrev-date"><?= __('Comment at ').$block->escapeHtml($block->getDateInterval()) ?></span>
+    <span class="amreview-text"><?= $block->escapeHtml($block->getComment()->getMessage()) ?></span>
+</li>

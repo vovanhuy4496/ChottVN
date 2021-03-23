@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2019 ECEPVN (contact@ecepvn.org). All rights reserved.
+ * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ *
+ * 
+ */
+-->
+<page_types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_types.xsd">
+    <type id="vesbrand_brand_view" label="VesBrand Brand Page"/>
+    <type id="vesbrand_group_view" label="VesBrand Group Page"/>
+    <type id="vesbrand_index_index" label="VesBrand Index Page"/>
+    <type id="vesbrand_search_result" label="VesBrand Search Result Page "/>   
+</page_types>

@@ -1,0 +1,10 @@
+--- a/vendor/magento/module-sales/Controller/AbstractController/Reorder.php	2019-09-19 12:30:56.000000000 +0700
++++ b/vendor/magento/module-sales/Controller/AbstractController/Reorder.php	2020-06-08 16:22:55.000000000 +0700
+@@ -80,6 +80,6 @@
+         }
+ 
+         $cart->save();
+-        return $resultRedirect->setPath('checkout/cart');
++        return $resultRedirect->setPath('checkout');
+     }
+ }

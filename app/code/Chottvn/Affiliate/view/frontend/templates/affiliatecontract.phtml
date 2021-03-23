@@ -1,0 +1,16 @@
+<?php
+// echo $block->getAffiliateContractUrl();
+?>
+<!-- <div class="affiliate-contract">
+	<object data="<?php echo $block->getAffiliateContractUrl(); ?>" type="application/pdf" style="width: 100%;min-height: 800px;">
+		<embed src="<?php echo $block->getAffiliateContractUrl(); ?>" type="application/pdf" />
+	</object>
+</div> -->
+<div class="affiliate-register-container">
+	<?php
+		echo $this->getLayout()
+	      ->createBlock('Magento\Cms\Block\Block')
+	      ->setBlockId('affiliate-contract-agreement')
+	      ->toHtml();
+	?>
+</div>

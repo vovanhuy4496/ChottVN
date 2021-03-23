@@ -1,0 +1,32 @@
+<div class="sidebar-mobile-btn d-block d-sm-block d-md-none d-lg-none">
+<i class="fa fa-filter"></i>
+ <?php echo __('Filter products'); ?>
+</div>
+
+<script type="text/javascript">
+	require([
+        'jquery'
+    ], function ($) {
+		$(document).ready(function(){
+		    $('.sidebar-mobile-btn').click(function(event){
+		        //event.stopPropagation();
+		        $('body').toggleClass("sidebar-active");
+		        $(".sidebar-left").toggleClass("active");
+		        if($(".sidebar-left").hasClass("active")) {
+				 	$('.catalog-category-view.sidebar-active .sidebar-left').animate({'left': '0px'}, 200);
+				}else{
+					$('.catalog-category-view .sidebar-left').animate({'left': '-300px'}, 200);
+				}
+		    });
+		    // $(".sidebar-left").on("click", function (event) {
+		    //     event.stopPropagation();
+		    // });
+		});
+
+		// $(document).on("click", function () {
+		// 	if($(".sidebar-left").hasClass("active")) {
+		// 		$(".sidebar-left").toggleClass("active",500);
+		// 	}
+		// });
+	});
+</script>

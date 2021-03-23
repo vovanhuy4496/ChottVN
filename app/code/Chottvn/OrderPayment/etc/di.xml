@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" type="Chottvn\OrderPayment\Model\BankAccountRepository"/>
+	<preference for="Chottvn\OrderPayment\Api\Data\BankAccountInterface" type="Chottvn\OrderPayment\Model\Data\BankAccount"/>
+	<preference for="Chottvn\OrderPayment\Api\Data\BankAccountSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<preference for="Magento\OfflinePayments\Model\Banktransfer" type="Chottvn\OrderPayment\Model\Banktransfer" />
+	<preference for="Magento\Checkout\CustomerData\DefaultItem" type="Chottvn\OrderPayment\CustomerData\DefaultItem" />
+
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="Chottvn_OrderPayment::CustomerData_Cart" type="Chottvn\OrderPayment\Plugin\Model\CustomerData\Cart"/>
+    </type>
+	
+	<virtualType name="Chottvn\OrderPayment\Model\ResourceModel\BankAccount\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_orderpayment_bankaccount</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\OrderPayment\Model\ResourceModel\BankAccount\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_orderpayment_bankaccount_listing_data_source" xsi:type="string">Chottvn\OrderPayment\Model\ResourceModel\BankAccount\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+	<type name="Chottvn\OrderPayment\Model\ImageUploader">
+    <arguments>
+        <argument name="baseTmpPath" xsi:type="string">bank/web/image</argument>
+        <argument name="basePath" xsi:type="string">bank/image</argument>
+        <argument name="allowedExtensions" xsi:type="array">
+            <item name="jpg" xsi:type="string">jpg</item>
+            <item name="jpeg" xsi:type="string">jpeg</item>
+            <item name="gif" xsi:type="string">gif</item>
+            <item name="png" xsi:type="string">png</item>
+        </argument>
+    </arguments>
+	</type>
+	<type name="Magento\Checkout\Block\Checkout\AttributeMerger">
+		<plugin name="Chottvn_OrderPayment_Block_Checkout_AttributeMerger"
+		type="Chottvn\OrderPayment\Plugin\Magento\Checkout\Block\Checkout\AttributeMerger"
+		disabled="false" sortOrder="10"/>
+	</type>
+
+	<preference for="Magento\Payment\Model\MethodList" type="Chottvn\OrderPayment\Rewrite\Magento\Payment\Model\MethodList"/>
+</config>

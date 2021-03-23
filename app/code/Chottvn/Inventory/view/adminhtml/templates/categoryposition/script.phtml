@@ -1,0 +1,18 @@
+<form class="chottvn-admin" id="distributor_categoryposition_form" name="distributor-export-form" action="<?php echo $block->getRunProcessUrl() ?>" method="post" enctype="multipart/form-data">
+    <div class="no-display">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+    </div>
+    <fieldset class="fieldset admin__fieldset " id="base_fieldset">
+        <legend class="admin__legend legend">
+            <span><?= $block->escapeHtml(__('Category Position Script')) ?></span>
+        </legend><br>
+
+        <div class="messages">
+        </div>
+
+    </fieldset>
+
+    <div class="action-buttons">
+        <button id="distributors-categoryposition-btn" class="action-scalable" type="submit"><span><?= $block->escapeHtml(__('Run')) ?></span></button>
+    </div>
+</form>

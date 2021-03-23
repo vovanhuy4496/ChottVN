@@ -1,0 +1,13 @@
+<?php
+// Get SKU
+// {{block class="Magento\Catalog\Block\Product\View\Description" template="Magento_Catalog::product/view/google_remarketing_body.phtml" google_tag_manager_id="xxxx" is_show_google_tag_manager="1"}}
+$google_tag_manager_id = $block->getData('google_tag_manager_id') ? $block->getData('google_tag_manager_id') : '';
+$is_show_google_tag_manager = $block->getData('is_show_google_tag_manager') ? $block->getData('is_show_google_tag_manager') : '1';
+?>
+
+<?php if($google_tag_manager_id && $is_show_google_tag_manager) { ?>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $google_tag_manager_id ?>"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<?php } ?>

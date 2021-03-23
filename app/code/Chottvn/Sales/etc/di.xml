@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Magento\Sales\Model\ResourceModel\Order">
+	    <plugin name="chottvn_sales_plugin_magento_sales_model_resourcemodel_order" type="Chottvn\Sales\Plugin\Magento\Sales\Model\ResourceModel\Order"
+	    	sortOrder="10" disabled="false"/>
+	</type>
+	<type name="Magento\Quote\Model\Quote\Item">
+	    <plugin name="chottvn_sales_plugin_magento_quote_model_quote_item" type="Chottvn\Sales\Plugin\Magento\Quote\Model\Quote\Item"
+	    	sortOrder="10" disabled="false"/>
+	</type>
+
+	<preference for="Magento\Sales\Model\Order\Item" type="Chottvn\Sales\Rewrite\Magento\Sales\Model\Order\Item" />
+	<preference for="Magento\Sales\Model\Order\Email\Sender\OrderSender" type="Chottvn\Sales\Rewrite\Magento\Sales\Model\Order\Email\Sender\OrderSender" />
+	<preference for="Magento\Sales\Helper\Guest" type="Chottvn\Sales\Rewrite\Magento\Sales\Helper\Guest" />
+	<preference for="Magento\Sales\Block\Order\Totals" type="Chottvn\Sales\Rewrite\Magento\Sales\Block\Order\Totals" />
+	<preference for="Magento\Sales\Block\Order\History" type="Chottvn\Sales\Rewrite\Magento\Sales\Block\Order\History" />
+
+	<preference for="Magento\Quote\Model\ShippingMethodManagement" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\ShippingMethodManagement" />	
+	<preference for="Magento\Quote\Model\ShippingMethodManagementInterface" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\ShippingMethodManagement" />
+	<preference for="Magento\Quote\Model\QuoteAddressValidator" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\QuoteAddressValidator" />
+	<preference for="Magento\Quote\Model\Quote\Address" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\Quote\Address" />
+	<preference for="Magento\Quote\Model\Quote\Address\Total\Shipping" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\Quote\Address\Total\Shipping" />
+	<preference for="Magento\Quote\Model\Quote\Address\Total\Grand" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\Quote\Address\Total\Grand" />
+	<preference for="Magento\Quote\Model\Webapi\ParamOverriderCartId" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\Webapi\ParamOverriderCartId" />
+	<preference for="Magento\Quote\Api\ShippingMethodManagementInterface" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\ShippingMethodManagement" />
+	<preference for="Magento\Quote\Api\ShipmentEstimationInterface" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\ShippingMethodManagement" />
+
+
+	<preference for="Amasty\Orderattr\Model\Entity\Adapter\Order\Adapter" type="Chottvn\Sales\Rewrite\Amasty\Orderattr\Model\Entity\Adapter\Order\Adapter" />
+	<preference for="Amasty\Checkout\Plugin\LayoutProcessor" type="Chottvn\Sales\Rewrite\Amasty\Checkout\Plugin\LayoutProcessor" />
+	
+	<preference for="Magento\Checkout\Model\ShippingInformationManagement" type="Chottvn\Sales\Rewrite\Magento\Checkout\Model\ShippingInformationManagement" />
+	<type name="Magento\Checkout\Block\Cart\Item\Renderer">
+	    <plugin name="item_renderer" type="Chottvn\Sales\Rewrite\Magento\Checkout\Block\Cart\Item\Renderer"
+	    	sortOrder="10" disabled="false"/>
+	</type>
+	<type name="Magento\Checkout\Block\Onepage\Link">
+	    <plugin name="onepage_link" type="Chottvn\Sales\Rewrite\Magento\Checkout\Block\Onepage\Link"
+	    	sortOrder="10" disabled="false"/>
+	</type>
+	<type name="Magento\Checkout\Block\Cart">
+	    <plugin name="block_cart" type="Chottvn\Sales\Rewrite\Magento\Checkout\Block\Cart"
+	    	sortOrder="10" disabled="false"/>
+	</type>
+	<preference for="Magento\Checkout\Block\Cart\Grid" type="Chottvn\Sales\Rewrite\Magento\Checkout\Block\Cart\Grid" />
+	<preference for="Magento\Checkout\Controller\Cart\UpdatePost" type="Chottvn\Sales\Rewrite\Magento\Checkout\Controller\Cart\UpdatePost" />
+    <preference for="Magento\Catalog\Block\Product\View" type="Chottvn\Sales\Rewrite\Magento\Catalog\Block\Product\View" />
+	<preference for="Amasty\Checkout\Plugin\CartLayoutProcessor" type="Chottvn\Sales\Rewrite\Amasty\Checkout\Plugin\CartLayoutProcessor"/>
+	<preference for="Magento\Checkout\Controller\Cart\CouponPost" type="Chottvn\Sales\Rewrite\Magento\Checkout\Controller\Cart\CouponPost" />
+	<preference for="Sm\CartQuickPro\Controller\Cart\Add" type="Chottvn\Sales\Rewrite\Sm\CartQuickPro\Controller\Cart\Add" />
+	<preference for="Sm\CartQuickPro\Controller\Sidebar\RemoveItem" type="Chottvn\Sales\Rewrite\Sm\CartQuickPro\Controller\Sidebar\RemoveItem" />
+	<preference for="Sm\CartQuickPro\Controller\Sidebar\UpdateItemQty" type="Chottvn\Sales\Rewrite\Sm\CartQuickPro\Controller\Sidebar\UpdateItemQty" />
+
+	<!-- Huy override #1301 -->
+	<preference for="Magento\InventorySales\Model\IsProductSalableForRequestedQtyCondition\IsSalableWithReservationsCondition" type="Chottvn\Sales\Rewrite\Magento\InventorySales\Model\IsProductSalableForRequestedQtyCondition\IsSalableWithReservationsCondition" />
+	<preference for="Magento\InventorySales\Model\IsProductSalableForRequestedQtyCondition\IsAnySourceItemInStockCondition" type="Chottvn\Sales\Rewrite\Magento\InventorySales\Model\IsProductSalableForRequestedQtyCondition\IsAnySourceItemInStockCondition" />
+	<preference for="Magento\CatalogInventory\Model\Quote\Item\QuantityValidator" type="Chottvn\Sales\Rewrite\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator" />
+
+	<!-- Huy override promo -->
+	<preference for="Magento\Quote\Model\Quote" type="Chottvn\Sales\Rewrite\Magento\Quote\Model\Quote" />
+	<preference for="Magento\Checkout\Model\Cart" type="Chottvn\Sales\Rewrite\Magento\Checkout\Model\Cart" />
+
+	<!-- Huy override xu ly count qty tren minicart -->
+	<preference for="Magento\Checkout\CustomerData\Cart" type="Chottvn\Sales\Rewrite\Magento\Checkout\CustomerData\Cart" />
+
+	<!-- Huy override xu ly update qty/delete item tren checkout -->
+	<preference for="Amasty\Checkout\Model\ItemManagement" type="Chottvn\Sales\Rewrite\Amasty\Checkout\Model\ItemManagement" />
+
+	<preference for="Amasty\Promo\Model\Registry" type="Chottvn\Sales\Rewrite\Amasty\Promo\Model\Registry" />
+
+	<preference for="Amasty\Promo\Helper\Cart" type="Chottvn\Sales\Rewrite\Amasty\Promo\Helper\Cart" />
+
+	<preference for="Amasty\Promo\Observer\QuoteRemoveItemObserver" type="Chottvn\Sales\Rewrite\Amasty\Promo\Observer\QuoteRemoveItemObserver" />
+</config>

@@ -1,0 +1,229 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $product = $block->getProduct(); ?>
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $defaultStockQty = 0;
+    $currentDefaultStockQty = 0;
+    // detect mobile
+    $isMobile = false;
+
+    $parentProduct = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+    $simpleProducts = $parentProduct->getTypeInstance()->getChildrenIds($product->getId());
+    if (empty($simpleProducts) || count($simpleProducts) == 0) {
+        $defaultStockQty = $product->getDefaultStockCustom() - $product->sumQtyCurrentInQuoteItem();
+        $currentDefaultStockQty = $product->getDefaultStockCustom();
+    }
+
+    $detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+    if ($detectMobile->isMobile() > 0 && $detectMobile->isTablet() == 0) {
+        $isMobile = true;
+    }
+?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php $buttonTitlehere = __('Order here'); ?>
+<input type="hidden" name="sku-gift" id="sku-gift-cart" value='' />
+<input type="hidden" name="qty-gift" id="qty-gift-cart" value='' />
+<input type="hidden" name="rulesid-gift" id="rulesid-gift-cart" value='' />
+<!-- <input type="hidden" name="input-qty" id="input-qty" value='' /> -->
+<!-- <input type="hidden" name="product-parent" id="product-parent" value='<?php echo $product->getId(); ?>' /> -->
+<?php if ($product->isSaleable() && ($product->getTypeId() != 'simple' || $product->getFinalPrice() > 0  )): ?>
+    <div class="box-tocart">
+    <div class="fieldset">
+        <?php if ($block->shouldRenderQuantity()): ?>
+            <div class="field qty">
+            <label class="label" for="qty"><span><?php /* @escapeNotVerified */
+					echo __('Qty') ?></span></label>
+            <div class="control control-qty-cart">
+                <!-- <input type="number"
+                       name="qty"
+                       id="qty"
+                       maxlength="12"
+                       value="<?php
+					   echo $block->getProductDefaultQty() * 1 ?>"
+                       title="<?php
+					   echo __('Qty') ?>" class="qty-default input-text qty"
+                       data-validate="<?php echo $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
+                /> -->
+					   
+				<div class="control-qty">
+					<!-- <span class="quantity-controls quantity-plus"></span>
+                    <span class="quantity-controls quantity-minus"></span> -->
+                    
+					<span class="quantity-controls quantity-minus">-</span>
+                    <input type="number"
+                       name="qty"
+                       default-stock="<?= $defaultStockQty; ?>"
+                       current-default-stock="<?= $currentDefaultStockQty; ?>"
+                       id="qty"
+                       maxlength="12"
+                       value="<?php echo $block->getProductDefaultQty() * 1 ?>"
+                       title="<?php echo __('Qty') ?>"
+                       class="qty-default input-text qty productId-<?= $product->getId(); ?>"
+                    />
+                    <span class="quantity-controls quantity-plus">+</span>
+                    <!-- <?php if (!$isMobile): ?>
+                        <span class="hide-mess-error" id="flag-mess-over-qty">
+                            <?= __('Only %1 item left', $defaultStockQty) ?>
+                        </span>
+            		<?php endif; ?> -->
+                    <?php if (!$isMobile): ?>
+                        <span class="hide-mess-error" id="show-mess-over-qty"></span>
+                        <span class="hide-mess-error" id="show-mess-contact-qty"></span>
+            		<?php endif; ?>
+					<script type="text/javascript">
+						require([
+                            'jquery'
+                        ], function ($) {
+                  
+                            // $(document).on('click','#product-addtocart-button',function(){
+                            //     var default_stock = $('input[name="qty"]').attr("default-stock");
+                            //     var currentQty = $('input[name="qty"]').val();
+                            //     if(Number(default_stock) < Number(currentQty)){
+                                   
+                            //         $('#flag-mess-over-qty').show();
+                            //         return false;
+                            //     }
+                            //     return false;
+                            // });
+                            $('.quantity-plus').click(function () {
+                                $('.qty-default').val(Number($('.qty-default').val()) + 1);
+                            });
+                            var minus = $(".quantity-minus");
+                            minus.mouseover(function(){
+                                var value = Number($(".qty-default").val());
+                                if(value == 1){
+                                    minus.addClass("notallowed");
+                                }
+                            });
+                            minus.mouseout(function(){
+                                if(minus.hasClass("notallowed")){
+                                    minus.removeClass("notallowed");
+                                }
+                            });
+                            minus.click(function () {
+                                var value = Number($('.qty-default').val()) - 1;
+                                var check = Number($('.qty-default').val());
+                                if(check === 1){
+                                    minus.addClass("notallowed");
+                                }else{
+                                    if(minus.hasClass("notallowed")){
+                                        minus.removeClass("notallowed");
+                                    }
+                                    $('.qty-default').val(value);
+                                }
+                            });
+
+                            // when enter input qty = 0 => will set to old qty
+                            $(document).on('keypress', 'input[name="qty"]', function(e) {
+                                var keycode = (e.keyCode ? e.keyCode : e.which);
+                                var currentQty = $(this).val();
+                                var default_stock = $(this).attr("default-stock");
+                                var intRegex = /^\d+$/;
+                                // if(Number(default_stock) < Number(currentQty)){
+                                //     // console.log(default_stock);
+                                //     // console.log(currentQty);
+                                //     $('#flag-mess-over-qty').show();
+                                //     return false;
+                                // }
+                                if(keycode == '13' && ((Number(currentQty) < 1) || intRegex.test(currentQty) == false)){
+                                    $(this).val(1);
+                                    return false;
+                                }
+                            });
+                        });
+					</script>
+                </div>
+            </div>
+            <!-- <style>
+                #flag-mess-over-qty{
+                    margin-left: 20px;
+                    align-items: center;
+                    color: #ff6000;
+                }
+            </style> -->
+            <!-- <?php if ($isMobile): ?>
+                <span class="hide-mess-error show-mess-error-mobile" id="flag-mess-over-qty">
+                    <?= __('Only %1 item left', $defaultStockQty) ?>
+                </span>
+            <?php endif; ?> -->
+            <?php if ($isMobile): ?>
+                <span class="hide-mess-error" id="show-mess-over-qty"></span>
+                <span class="hide-mess-error" id="show-mess-contact-qty"></span>
+            <?php endif; ?>
+        </div>
+		<?php endif; ?>
+        <div class="actions">
+            <!-- <button type="submit"
+                    class="action btn btn-danger tocart orderhere"
+                    id="product-orderhere-button-display" 
+                    style="display:none"
+                    >
+            </button> -->
+            <button type="button"
+                    title="<?php /* @escapeNotVerified */
+					echo $buttonTitlehere ?>"
+                    class="action tocart btn btn-danger orderhere"
+                    id="product-orderhere-button"
+                    data-action="shopnow">
+                <span><?php /* @escapeNotVerified */
+					echo $buttonTitlehere ?></span>
+            </button>
+            <button type="submit"
+                    title="<?php /* @escapeNotVerified */
+					echo $buttonTitle ?>"
+                    class="action tocart btn btn-danger"
+                    id="product-addtocart-button"
+                    data-action="addtocart">
+                <span><?php /* @escapeNotVerified */
+					echo $buttonTitle ?></span>
+            </button>
+			<?php echo $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<?php if (!$block->isRedirectToCartEnabled()) : ?>
+<script>
+    require([
+        'jquery',
+        'mage/mage',
+        'Magento_Catalog/product/view/validation',
+        'Magento_Catalog/js/catalog-add-to-cart'
+    ], function ($) {
+        'use strict';
+
+        $('#product_addtocart_form').mage('validation', {
+            radioCheckboxClosest: '.nested',    
+            submitHandler: function (form) {
+               
+                var widget = $(form).catalogAddToCart({
+                    bindSubmit: false
+                });
+                widget.catalogAddToCart('submitForm', $(form));
+
+                return false;
+            }
+        });
+
+    });
+</script>
+<?php else : ?>
+    <script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/product/view/validation": {
+                "radioCheckboxClosest": ".nested"
+            }
+        }
+    }
+</script>
+<?php endif; ?>

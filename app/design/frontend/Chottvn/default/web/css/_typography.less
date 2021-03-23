@@ -1,0 +1,39 @@
+.row:before, .row:after{
+	display: inline-block !important;
+}
+
+.radio, .checkbox {
+    position: initial;
+}
+
+.box {
+	border: 1px solid #d6d8db;
+    border-radius: 4px;
+    background-color: #f0f1f2;
+    width: 100%;
+    display: inline-block;
+    padding: 5px;
+    &.box-dash{
+    	border-style: dashed;
+    }
+    &.box-primary{
+        border-color: @color_primary_border;
+        background-color: @color_primary_background;
+    }
+    &.box-warning{
+        border-color: @color_warning_border;
+        background-color: @color_warning_background;
+    }
+    &.box-danger{
+    	border-color: @color_danger_border;
+        background-color: @color_danger_border;
+    }
+    &.box-success{
+    	border-color: @color_success_border;
+        background-color: @color_success_background;
+    }
+    &.box-info{
+    	border-color: @color_info_border;
+        background-color: @color_info_background;
+    }
+}

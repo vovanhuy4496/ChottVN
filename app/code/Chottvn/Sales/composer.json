@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-sales",
+    "description": "ChottVN-eCommerce Sales",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "email": "ecommerce@chottvn.org",
+            "name": "ChottVN eCommerce"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\Sales\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

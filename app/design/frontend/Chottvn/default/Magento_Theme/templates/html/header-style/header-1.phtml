@@ -1,0 +1,105 @@
+<?php
+// create info
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// detect mobile
+$detectMobile = $_objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+
+?>
+<div class="header-container header-style-1">
+	<div class="container">
+		<div class="row">
+			<div class="header-left-logo">
+				<a href="<?php echo $block->getUrl(''); ?>" title="<?php echo $block->getThemeName(); ?>">
+					<img class="logo-short" src="<?= $this->getViewFileUrl('images/logo-cho-truc-tuyen-short.png');  ?>" alt="Chợ Trưc Tuyến"/>
+				</a>
+			</div>
+			<!-- HEADER LEFT -->
+			<div class="header-left">
+				<!-- HEADER LOGO -->
+				<div class="logo-header header-left-top">
+					<?php echo $block->getChildHtml('logo_theme'); ?>
+				</div>
+				<!-- HEADER LOGO -->
+
+				<!-- HEADER CATEGORY -->
+				<div class="sidebar-megamenu header-left-bottom">
+					<div class="megamenu-content-sidebar">
+						<div class="btn-megamenu">
+							<a href="javascript:void(0)" title="<?php echo __('All Categories') ?>"><?php echo __('All Categories') ?></a>
+						</div>
+
+						<div class="menu-ver-content">
+							<?php
+							if ($_config->getGeneral('menu_style') == 'megamenu') {
+								echo $block->getChildHtml('navigation-header-megamenu');
+							} else {
+								echo $block->getChildHtml('navigation-header');
+							}
+							?>
+						</div>
+					</div>
+
+					<div class="navigation-mobile-container">
+						<?php echo $block->getChildHtml('navigation.mobile'); ?>
+						<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('megamenu-horizontal')->toHtml(); ?>
+					</div>
+				</div>
+			</div>
+			<!-- HEADER LEFT -->
+
+			<!-- HEADER MIDDLE -->
+			<div class="header-middle">
+				<div class="info-middle-header header-middle-top">
+        					<?php if($detectMobile->isMobile() == true && $detectMobile->isTablet() == false){ ?>
+        						<?php echo $block->getChildHtml('account-menu-wrapper', 1); ?>
+        						<div class="minicart-header">
+        							<div class="minicart-content">
+        								<?php echo $block->getChildHtml('cart-header'); ?>
+        							</div>
+        						</div>
+        					<?php } ?>
+					<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('info-middle-header-top')->toHtml(); ?>
+
+				</div>
+				<div class="searchbox-header header-middle-bottom">
+					<?php echo $block->getChildHtml('search-header-pro'); ?>
+				</div>
+			</div>
+			<!-- HEADER MIDDLE -->
+
+			<!-- HEADER RIGHT -->
+			<?php if($detectMobile->isMobile() != true){ ?>
+			<div class="header-right">
+				<div class="info-header-cart header-right-top">
+					<div class="header-right-container">
+						<?php echo $block->getChildHtml('account-menu-wrapper', 1); ?>
+						<div class="minicart-header">
+							<div class="minicart-content">
+								<?php echo $block->getChildHtml('cart-header'); ?>
+							</div>
+						</div>
+						<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('header-phone-number-hidden')->toHtml(); ?>
+					</div>
+				</div>
+				<div class="info-header-links header-right-bottom">
+					<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('info-header-links')->toHtml(); ?>
+				</div>
+			</div>
+			<?php } ?>
+			<!-- HEADER RIGHT -->
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	require([
+        'jquery'
+    ], function ($) {
+        $(".header-style-1 .header-top .header-top-links .toplinks-wrapper .header.links li").not(".myaccount-link").mouseover(function () {
+            $(".header-style-1 .header-top .header-top-links .toplinks-wrapper .header.links").addClass('toplinks_hover');
+        }).mouseout(function () {
+            $(".header-style-1 .header-top .header-top-links .toplinks-wrapper .header.links").removeClass('toplinks_hover');
+        });
+    });
+</script>

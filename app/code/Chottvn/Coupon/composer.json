@@ -1,0 +1,26 @@
+{
+    "name": "chottvn/module-coupon",
+    "description": "Mage2 Coupon Module",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "authors": [
+        {
+            "email": "dataman@ecepvn.org",
+            "name": "Ecepvn Dev"
+        },
+        {
+            "email": "dan.phan@ecepvn.org",
+            "name": "Dan Phan"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Chottvn\\Coupon\\": ""
+        }
+    }
+}

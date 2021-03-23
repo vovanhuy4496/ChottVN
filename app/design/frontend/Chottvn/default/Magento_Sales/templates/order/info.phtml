@@ -1,0 +1,233 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block \Magento\Sales\Block\Order\Info */ ?>
+<?php
+    $_order = $block->getOrder();
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+    $orderattr = $objectManager->create('Amasty\Orderattr\Block\Order\PrintOrder');
+    // $isStatusComplete = in_array($_order->getStatus(), ["complete"]);
+    // $isStatusProcessing = in_array($_order->getStatus(), ["processing"]);
+    // $isStatusPackaging = in_array($_order->getStatus(), ["packaging"]);
+    // $isStatusInDelivery = in_array($_order->getStatus(), ["delivery"]);
+
+    $payment = $_order->getPayment();
+    // mã giảm giá
+    $couponcode = $_order->getCouponCode();
+    // mã CTV
+    $codeAffiliate = $_order->getAffiliateAccountCode();
+    // giá giảm
+    $discountAmount = $_order->getDiscountAmount();
+    $paymentMethod = $payment->getMethodInstance();
+    // $paymentMethodCode = $paymentMethod->getCode();
+    $paymentMethodTitle = $paymentMethod->getTitle();
+    $shippingAddress = $_order->getShippingAddress();
+    $billingAddress = $_order->getBillingAddress();
+    $orderResource = $objectManager->create('\Magento\Sales\Model\OrderRepository')->get($_order->getId());
+    $bankTransferNote = $orderResource->getBankTransferNote();
+    $quote = $objectManager->create('Magento\Quote\Model\Quote')->load($_order->getQuoteId());
+    $flagShipping = $quote->getFlagShipping();
+    $shipping_amount = $checkoutHelper->formatPrice($_order->getShippingAmount());;
+    $grandTotal = __('Grand Total');
+    if ($flagShipping === 'freeshipping') {
+        $shipping_amount = __('Free Shipping');
+    }
+    if ($flagShipping === 'over') {
+        $grandTotal = __('Grand Total(temp)');
+        $shipping_amount = __('Price Contact');
+    }
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $grCustomer = $customerSession->getCustomerGroupId();
+    // id CTV
+    $idAffiliate = $_order->getAffiliateAccountId() ? $_order->getAffiliateAccountId(): -1;
+    // customerId
+    $customerId = $_order->getCustomerId() ? $_order->getCustomerId(): -2;
+?>
+<div class="col-sm-12 order-detail collapse show">
+   <div class="row">
+        <div class="col-md-4 order-totals">
+            <p class="order-total-title"><?= $block->escapeHtml(__('Order summary')) ?></p>
+            <div class="card">
+                <div class="card-body">
+                    <p><?= $block->escapeHtml(__('Original Total')) ?>: <span class="float-right"><?= $checkoutHelper->formatPrice($_order->getOriginalTotal()); ?></span></p>
+                    <?php if((int)$_order->getSavingsAmount() > 0): ?>
+                        <p><?= $block->escapeHtml(__('Saving amount')) ?>: <span class="float-right"  style="color: #ff6000;"><?= $checkoutHelper->formatPrice($_order->getSavingsAmount()); ?></span></p>
+                    <?php endif ?>
+                    <?php if($discountAmount < 0): ?>
+                        <?php
+                            if(is_numeric($discountAmount)){
+                                $discountAmount = $checkoutHelper->formatPrice(ltrim(strval($discountAmount), '-'));
+                            }
+                        ?>
+                        <p><?= __('Discount Amount') ?>:
+                            <span class="float-right">
+                                <?php  echo $discountAmount; ?>
+                            </span>
+                        </p>
+                     <?php endif; ?>
+                    <p>
+                        <?= $block->escapeHtml(__('Shipping & Handling')) ?>:
+                        <span class="float-right"><?= $shipping_amount ?></span>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <p class="clearfix">
+                        <span class="grand-total"><?= $block->escapeHtml($grandTotal) ?>:</span>
+                        <span class="float-right text-right">
+                            <?= $checkoutHelper->formatPrice($_order->getGrandTotal()); ?>
+                            <span class="include-vat"><?php echo __('Include VAT') ?></span>
+                        </span>
+                    </p>
+                    <?php if($couponcode): ?>
+                        <p class="remove-border-top"><?= __('Discount code'); ?>:
+                        <span class="float-right text-right">
+                            <?php
+                                echo $couponcode;
+                            ?>
+                        </span>
+                        </p>
+                    <?php endif; ?>
+                    <?php
+                        $name_billing = $billingAddress->getFirstName();
+                        $tele_billing = $billingAddress->getTelephone();
+                        $email_billing = $billingAddress->getEmail();
+                        $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($_order->getAffiliateAccountId());
+                        $phone_number_aff = $customerObj->getData('phone_number');
+                    ?>
+                    <?php if($codeAffiliate): ?>
+                        <p class="remove-border-top">
+                            <?php if($idAffiliate == $customerId): ?>
+                                <?= __('Affiliate Code To Order');?>:
+                            <?php else: ?>
+                                <?= __('Affiliate Code Order');?>:
+                            <?php endif; ?>
+                            <span class="float-right text-right">
+                                <?php
+                                    echo $codeAffiliate;
+                                ?>
+                            </span>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+                   <!-- xử lý xuất hóa đơn -->
+                        <?php
+                            $saleHelper = $this->helper('Chottvn\Sales\Helper\Data');
+                            $orderAttributeList = $saleHelper->getOrderAttributesData($_order->getId());
+                            $arr_vat_invoice_required = [];
+                            $arr_note_shipping = [];
+                            foreach($orderAttributeList as $key => $value){
+                                if($key == 'vat_company'  || $key == 'vat_address' || $key == 'vat_number' || $key == 'vat_contact_name' || $key == 'vat_contact_phone_number' || $key == 'vat_contact_email'){
+                                    $arr_vat_invoice_required += [$key => $value];
+                                }
+                                if($key == 'note_shipping'){
+                                    $arr_note_shipping += [$key => $value];
+                                }
+                            }
+                        ?>
+                        <div class="col-md-4 order-totals">
+                            <p class="order-total-title"><?= $block->escapeHtml(__('Payment method customize')) ?></p>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p><?= $paymentMethodTitle; ?> <?= nl2br($bankTransferNote) ?></p>
+                                <?php if(sizeof($arr_vat_invoice_required) > 0){ ?>
+                                        <p class="order-total-title-request"><?php echo __("Invoice Information"); ?></p>
+                                        <?php if(isset($arr_vat_invoice_required['vat_company'])): ?>
+                                            <p></span><?= /** @noEscape */ $arr_vat_invoice_required['vat_company']; ?></p>
+                                        <?php endif; ?>
+                                        <?php if(isset($arr_vat_invoice_required['vat_address'])): ?>
+                                            <p><span><?= /** @noEscape */ __('Address VAT'); ?>: </span><?= /** @noEscape */ $arr_vat_invoice_required['vat_address']; ?></p>
+                                        <?php endif; ?>
+                                        <?php if(isset($arr_vat_invoice_required['vat_number'])): ?>
+                                            <p><span><?= /** @noEscape */ __('MST'); ?>: </span><?= /** @noEscape */ $arr_vat_invoice_required['vat_number']; ?></p>
+                                        <?php endif; ?>
+                                        <?php if(isset($arr_vat_invoice_required['vat_contact_name'])): ?>
+                                            <p>
+                                                <span><?= /** @noEscape */$arr_vat_invoice_required['vat_contact_name']; ?></span> 
+                                                <?php if(isset($arr_vat_invoice_required['vat_contact_phone_number']) && $arr_vat_invoice_required['vat_contact_phone_number']): ?>
+                                                - <?= /** @noEscape */ $arr_vat_invoice_required['vat_contact_phone_number']; ?>
+                                                <?php endif; ?>
+                                            </p>
+                                        <?php endif; ?>
+                                        <?php if(isset($arr_vat_invoice_required['vat_contact_email'])): ?>
+                                            <p><span><?= /** @noEscape */ ('Email'); ?>: </span><?= /** @noEscape */ $arr_vat_invoice_required['vat_contact_email']; ?></p>
+                                        <?php endif; ?>
+                                    <?php }else{ ?>
+                                        <p class="order-total-title-request"><?php echo __("Invoice Information"); ?></p>
+                                        <p>
+                                        <?= $billingAddress->getFirstName(); ?>
+                                        </p>
+                                        <p><?= $block->escapeHtml(__('Phone number')) ?>: <span class=""><?= $billingAddress->getTelephone();  ?></span></p>
+                                        <p><span><?= __('Address VAT'); ?>: </span>
+                                            <span class="">
+                                                <?php
+                                                    echo $billingAddress->getStreet()[0];
+                                                    echo $billingAddress->getTownship() ? ", ".$billingAddress->getTownship() : "";
+                                                    echo $billingAddress->getCity() ? ", ".$billingAddress->getCity() : "";
+                                                    echo $billingAddress->getRegion() ? ", ".$billingAddress->getRegion() : "";
+                                                ?>
+                                            </span>
+                                        </p>
+                                        <?php if($billingAddress->getEmail()){ ?>
+                                            <p><?= $block->escapeHtml(__('Email')) ?>: <span class=""><?= $billingAddress->getEmail();  ?></span></p>
+                                        <?php }?>
+                                    <?php }?>
+                                </div>
+                            </div>
+                        </div><!-- ./order-payment -->
+        <div class="col-md-4 order-totals">
+            <p class="order-total-title"><?= $block->escapeHtml(__('Customer Information')) ?></p>
+            <div class="card">
+                <div class="card-body">
+                    <?php if($name_billing && $tele_billing && (($name_billing != $shippingAddress->getFirstName()) || ($tele_billing != $shippingAddress->getTelephone()))): ?>
+                        <p class="title-infor-cus"><?= $block->escapeHtml(__('Billing Information')) ?>:</p>
+                        <p>
+                            <?= $name_billing; ?> - <?= $tele_billing; ?>
+                        </p>
+                        <?php if($email_billing): ?>
+                            <p>
+                                <?php echo __('Email') ?>: <?= $email_billing; ?>
+                            </p>
+                        <?php endif; ?>
+                        <p class="title-infor-cus"><?= $block->escapeHtml(__('Shipping Information'))?>:</p>
+                        <p>
+                            <?= $shippingAddress->getFirstName(); ?> - <?= $shippingAddress->getTelephone(); ?>
+                        </p>
+                    <?php else: ?>
+                        <p>
+                            <?= $shippingAddress->getFirstName(); ?>
+                        </p>
+                        <p><?= $block->escapeHtml(__('Phone number')) ?>: <span class=""><?= $shippingAddress->getTelephone(); ?></span></p>
+                        <?php if($email_billing): ?>
+                            <p>
+                                <?php echo __('Email') ?>: <?= $email_billing; ?>
+                            </p>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                   
+                    <p><?= $block->escapeHtml(__('Address')) ?>:
+                         <span class="">
+                            <?php
+                                echo $shippingAddress->getStreet()[0];
+                                echo $shippingAddress->getTownship() ? ", ".$shippingAddress->getTownship() : "";
+                                echo $shippingAddress->getCity() ? ", ".$shippingAddress->getCity() : "";
+                                echo $shippingAddress->getRegion() ? ", ".$shippingAddress->getRegion() : "";
+                            ?>
+                        </span>
+                    </p>
+                    <!-- note shipping -->
+                    <?php if(isset($arr_note_shipping['note_shipping']) && $arr_note_shipping['note_shipping']): ?>
+                        <p><span><?= /** @noEscape */ __('Notes'); ?>: </span><?= /** @noEscape */ $arr_note_shipping['note_shipping']; ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <!-- ./order-shipping -->
+   </div>
+</div>

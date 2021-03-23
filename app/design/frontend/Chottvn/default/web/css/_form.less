@@ -1,0 +1,293 @@
+// Phuoc add css for all account form with main class is chottvn-ui-v2
+// Updated at: 2020-07-17
+.main-bg {
+    border: 0px !important;
+}
+
+.login-container {
+    width: 585px;
+    margin: auto;
+    max-width: 100%;
+
+    .chottvn-ui-v2 {
+        .block-form {
+            max-width: 100%;
+            border: 0px;
+            background-color: transparent;
+        }
+    }
+}
+
+.column:not(.sidebar-main),
+.column:not(.sidebar-additional) {
+    .chottvn-ui-v2 {
+        .block-form {
+            width: 585px;
+            margin: auto;
+            padding: 30px;
+            text-align: center;
+            max-width: 100%;
+
+            h1 {
+                text-align: left;
+                color: @darkblue;
+                font-size: 18px !important;
+                font-weight: 700;
+                margin-bottom: 15px;
+                padding-bottom: 0px;
+                border-bottom: 1px solid #e8e8e8;
+                line-height: 30px;
+
+                i {
+                    font-size: 20px !important;
+                }
+            }
+
+            .block-title {
+                border: 0px !important;
+            }
+
+            fieldset {
+                width: 100%;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            form {
+                &.flex {
+                    display: flex;
+
+                    fieldset {
+                        background-color: transparent;
+                        border: 0px;
+
+                        &.create.info .field-name-firstname {
+                            float: none;
+                            width: 100%;
+                        }
+                    }
+                }
+
+                p.remind-text {
+                    text-align: left;
+                    margin-top: 10px;
+                }
+
+                p.remind-link {
+                    text-align: left;
+                    text-decoration: underline;
+                }
+
+                .field {
+                    margin: 0 0 15px !important;
+                    text-align: left;
+
+                    &.mb-0 {
+                        margin-bottom: 0px !important;
+                    }
+
+                    &:last-child {
+                        margin: 0px !important;
+                    }
+
+                    &.required>.label:after {
+                        content: '*';
+                        color: #e02b27;
+                        font-size: 1.2rem;
+                        margin: 0 0 0 5px;
+                    }
+
+                    label {
+                        margin-bottom: 0px;
+                    }
+
+                    input {
+                        font-size: 14px;
+                        color: @color_theme_text;
+                        border-radius: 4px;
+
+                        &::placeholder {
+                            /* Chrome, Firefox, Opera, Safari 10.1+ */
+                            color: @color_theme_text_muted  !important;
+                            opacity: 1;
+                            /* Firefox */
+                        }
+
+                        &:-ms-input-placeholder {
+                            /* Internet Explorer 10-11 */
+                            color: @color_theme_text_muted  !important;
+                        }
+
+                        &::-ms-input-placeholder {
+                            /* Microsoft Edge */
+                            color: @color_theme_text_muted  !important;
+                        }
+
+                        &.mage-error {
+                            border-color: @color_theme_secondary  !important;
+                        }
+                    }
+
+                    div.mage-error {
+                        display: none !important;
+                    }
+
+                    .group-controls {
+                        input {
+                            border-radius: 4px 0px 0px 4px;
+                        }
+
+                        .btn-inline {
+                            border-radius: 0px 4px 4px 0px;
+                            background: #aaa;
+                            color: #000 !important;
+                        }
+                    }
+                }
+
+                .actions-toolbar {
+                    margin-top: 15px !important;
+                    padding: 0px;
+                    border: 0px;
+
+                    .primary {
+                        float: none !important;
+                        width: 100% !important;
+                        text-transform: unset;
+                        border-radius: 8px;
+                        background: @darkblue;
+                        border: none !important;
+                    }
+
+                    /* Link lightbox  */
+                    .primary.lightbox {
+                        background-color: transparent;
+
+                        .primary {
+                            text-align: center;
+                            text-transform: none;
+                            font-size: 14px !important;
+                            border-radius: 8px;
+                            border: 1px solid @darkblue  !important;
+                            background-color: transparent;
+                            color: @darkblue  !important;
+                            height: 35px;
+                            width: 100%;
+
+                            &:hover {
+                                border: 0px !important;
+                                background-color: @darkblue;
+                                color: #fff !important;
+                            }
+                        }
+                    }
+
+                    .secondary {
+                        text-align: left;
+                        margin: 0px;
+
+                        a.action.remind {
+                            text-decoration: underline;
+                            margin: 0px;
+                        }
+
+                        &.back {
+                            text-align: right;
+                        }
+                    }
+                }
+
+                .send-announcement,
+                .resend-announcement {
+                    text-align: left;
+                    margin-bottom: 20px;
+                }
+
+                a#send_otp .resend-icon,
+                a#resend_otp .resend-icon,
+                #count_down .resend-icon {
+                    font-size: 30px;
+                    background-color: #288ad3;
+                    color: #fff;
+                    padding: 12px;
+                    border-radius: 50%;
+                    width: 70px;
+                    height: 70px;
+                    display: inline-block;
+                }
+
+                a#send_otp .resend-icon,
+                a#resend_otp .resend-icon {
+                    background-color: #288ad3;
+                }
+
+                #count_down .resend-icon {
+                    font-size: 24px;
+                    line-height: 47px;
+                }
+
+                span.resend-text {
+                    color: #288ad3;
+                    font-size: 14px;
+                    white-space: nowrap;
+                    display: block;
+                    margin-top: 10px;
+                }
+
+                a span.resend-text {
+                    color: #288ad3;
+                    margin-top: 10px;
+                }
+
+                p:last-child {
+                    margin-top: 15px;
+                    text-align: left;
+                }
+
+                label.label.greeting {
+                    color: #288ad3;
+                }
+            }
+        }
+
+        .page-title-wrapper {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+
+            .form.password.reset,
+            .form.send.confirmation,
+            .form.password.forget,
+            .form.create.account,
+            .form.search.advanced,
+            .form.form-orders-search {
+                min-width: 100% !important;
+            }
+        }
+    }
+}
+
+strong {
+    font-weight: 600;
+}
+
+.affiliate-account-createaffiliatepassword {
+    form {
+
+        label.label.greeting,
+        label.label.announcement-message {
+            margin-bottom: 10px !important;
+        }
+
+        .resend-section {
+            margin-bottom: 10px;
+        }
+
+        .fieldset>.field:not(.choice)>.control.group-controls {
+            display: inline-flex;
+            justify-content: space-between;
+            width: 100% !important;
+        }
+    }
+}

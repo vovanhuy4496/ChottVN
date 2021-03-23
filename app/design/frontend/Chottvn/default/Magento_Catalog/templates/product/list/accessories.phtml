@@ -1,0 +1,42 @@
+<?php
+
+// Get current product && get list categories id
+$currentProduct = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Registry')->registry('current_product');
+$categories = $currentProduct->getCategoryIds();
+$lastSubCates = array();
+$withoutProductIds = array($currentProduct->getId());
+
+// get last item in array
+$categorySubId = $categories[count($categories)-1];
+
+// {{block class="Sm\ListingTabs\Block\Ajax" template="Sm_ListingTabs::ajax.phtml" title="Phụ kiện mua kèm" type_show="slider" type_listing="all" display_countdown="0" type_filter="accessories" field_tabs="" type_product="accessories" category_select="" category_tabs="2" order_by="created_at" order_dir="DESC" css_class="ltabs-accessories ltabs-line-clamping-2" view_all_url="accessories_url" config_heading="h2" responsive_items="1,1,2,2,2" is_show_product_action_bar="0" is_show_shopping_cart_button="0" is_show_shop_now="0" slideby_matched_items="2" show_product_kind_list="product"}}
+// current_product_id
+
+$listingBlock = $this->getLayout()
+          ->createBlock('Sm\ListingTabs\Block\Ajax')
+          ->setTemplate('Sm_ListingTabs::ajax.phtml');
+$listingBlock->setData([
+     'title' => __("Accessories can be purchased with the main product"),
+     'type_show' => 'slider',
+     'type_listing' => 'all',
+     'display_countdown' => 0,
+     'type_filter' => 'accessories',
+     'field_tabs' => '',
+     'type_product' => 'accessories',
+     'category_select' => '',
+     'category_tabs' => 2,
+     'order_by' => 'created_at',
+     'order_dir' => 'DESC',
+     'css_class' => 'ltabs-accessories ltabs-line-clamping-2',
+     'view_all_url' => 'accessories_url',
+     'config_heading' => 'h2',
+     'responsive_items' => '1,1,2,2,2',
+     'is_show_product_action_bar' => 0,
+     'is_show_shop_now' => 0,
+     'slideby_matched_items' => 2,
+     'show_product_kind_list' => 'product',
+     'current_product_id' => $currentProduct->getId()
+]);
+
+echo $listingBlock->toHtml();
+?>

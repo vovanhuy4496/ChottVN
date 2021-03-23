@@ -1,0 +1,14 @@
+<?php $helper = $this->helper(\Chottvn\Address\Helper\Data::class) ?>
+<script>
+    window.locale = "<?= $helper->getLocale() ?>";
+</script>
+<script type="text/x-magento-init">
+    {
+        "body": {
+            "addressData": {
+                "ajaxUrl": "<?= $block->escapeHtml($block->getUrl('address/data/index')) ?>",
+                "updateFlag": "<?= $helper->getConfigValue('chottvn/township/updateflag') ?>"
+            }
+        }
+    }
+</script>

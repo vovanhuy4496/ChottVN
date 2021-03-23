@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <chottvn_sales>
+            <finish_order_cron>
+                <schedule>* * * * *</schedule>
+                <data_config>[]</data_config>
+            </finish_order_cron>
+        </chottvn_sales>
+    </default>
+</config>

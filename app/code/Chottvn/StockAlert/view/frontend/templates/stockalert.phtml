@@ -1,0 +1,168 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+//product
+$product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');//get current product
+$product_id = $product->getId();
+$product_sku = $product->getSku();
+$product_url = $product->getProductUrl();
+$product_name = $product->getName();
+// customer
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');  
+$customerData = $customerSession->getCustomer(); //get all data of customerData
+$email_customer = $customerData->getData('email');
+$name_customer = $customerData->getData('firstname');
+$phone_customer = $customerData->getData('phone_number');
+$id_customer = $customerData->getData('entity_id');
+$timezone = $objectManager->get('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+$createdate = $timezone->date()->format('Y-m-d H:i:s');
+$updatedate = $timezone->date()->format('Y-m-d H:i:s');
+$isLoggedIn = true;
+$isLoggedIn = $customerSession->isLoggedIn();
+$messager = $block->getMySession();
+?>
+<?php
+    $title = $block->getData('title');
+    $messager_success = $block->getData('messager_success');
+    $title_fieldset = $block->getData('title_fieldset');
+    $flag = $block->getData('flag');
+?>
+<div class="form-contact-0" id="stockalert">
+<!-- title -->
+<p class="title-stock-custom"><?php echo $title; ?></p>
+<!-- messager success -->
+<div class="messager-product-note-success" style="display:none"> 
+    <p><?php echo $messager_success; ?></p> 
+</div>
+<div class="messager-product-note-error" style="display:none"> 
+    <p><?php echo __('The system is currently failing, please resend later'); ?></p>
+</div>
+<div class="product alert <?= $block->getHtmlClass() ?>">
+<form class="form send-info-stock"
+    id="form-submit-stock"
+    action="/stockalert"
+    method="post"
+    data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>"
+    data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset">
+        <!-- titlefieldset -->
+        <div class="field note no-label"><?= $block->escapeHtml($title_fieldset) ?></div>
+        <div class="field name required">
+            <label class="label" for="contact_name"><span><?= $block->escapeHtml(__('Label name customer')) ?></span></label>
+            <div class="control">
+                <input name="contact_name" id="name" placeholder ="<?= $block->escapeHtmlAttr(__('Input Name customer')) ?>" title="<?= $block->escapeHtmlAttr(__('Label name customer')) ?>"  value="<?= $block->escapeHtmlAttr($name_customer ?: $name_customer) ?>" class="input-text" type="text" data-validate="{required:true}"/>
+            </div>
+        </div>
+        <div class="field telephone required">
+            <label class="label" for="contact_phone_number"><span><?= $block->escapeHtml(__('Phone Number')) ?></span></label>
+            <div class="control">
+                <input name="contact_phone_number" id="telephone" placeholder ="<?= $block->escapeHtmlAttr(__('Input Phone Number')) ?>" title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>" value="<?= $block->escapeHtmlAttr($phone_customer ?: $phone_customer) ?>" class="input-text" type="text" data-validate="{'validate-phone-VN': true, required: true}"/>
+            </div>
+        </div>
+        <input type="hidden" name="customer_id" id="customer_id" value="<?= $block->escapeHtmlAttr($id_customer ?: $id_customer) ?>" />
+        <input type="hidden" name="product_id" id="product_id" value="<?= $block->escapeHtmlAttr( $product_id ?: $product_id) ?>" />
+        <input type="hidden" name="contact_email" id="contact_email" value="<?= $block->escapeHtmlAttr($email_customer ?: $email_customer) ?>" />
+        <input type="hidden" name="url_product" id="url_product" value="<?= $block->escapeHtmlAttr($product_url ?: $product_url) ?>" />
+        <input type="hidden" name="sku_product" id="sku_product" value="<?= $block->escapeHtmlAttr($product_sku ?: $product_sku) ?>" />
+        <input type="hidden" name="name_product" id="name_product" value="<?= $block->escapeHtmlAttr($product_name ?: $product_name ) ?>" />
+        <input type="hidden" name="created_at" id="created_at" value="<?= $block->escapeHtmlAttr($createdate ?: $createdate ) ?>" />
+        <input type="hidden" name="updated_at" id="updated_at" value="<?= $block->escapeHtmlAttr($updatedate ?: $updatedate ) ?>" />
+        <input type="hidden" name="selectedOptions" id="selectedOptions" value="" />
+        <!-- gắn flag -->
+        <input type="hidden" name="flag_form" id="flag_form" value="<?php echo $flag; ?>" />
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" title="<?= $block->escapeHtmlAttr(__('Submit')) ?>" class="action submit primary">
+                <span><?= $block->escapeHtml(__('Submit')) ?></span>
+            </button>
+        </div>
+    </div>
+</form>
+</div>
+</div>
+<?php  if($messager == 'Success'):?>
+<script type="text/javascript">
+   require([ 'jquery', 'jquery/ui'], function($) {
+       $('.product.alert').hide();
+       $('.messager-product-note-error').hide();
+       $('.messager-product-note-success').show();
+   });
+<?php $block->unMySession(); ?>
+</script>
+<?php  elseif($messager == 'Error'):?>
+ <script type="text/javascript">
+   require([ 'jquery', 'jquery/ui'], function($) {
+       $('.product.alert').show();
+       $('.messager-product-note-success').hide();
+       $('.messager-product-note-error').show();
+   });
+</script>
+<?php $block->unMySession(); ?>
+<?php  endif;?>
+<style>
+   #name-error{
+      display: none !important;
+   }
+   #telephone-error{
+      display: none !important;
+   }
+</style>
+<script type="text/javascript">
+   require(['jquery',
+            'mage/translate'
+           ], function($, $t) {
+      var phone =  $("#telephone");
+      var name =  $("input[name='contact_name']");
+      phone.on("keyup", function(){
+         if(!validatePhone(phone.val())){
+               phone.css('border-color', '#ff6000');
+               phone.focus();
+         }else{
+               phone.css('border-color', '#e0e0e0');
+         }
+      });
+      name.keyup(function(){
+            if(!validateTextbox(name.val())){
+               name.css('border-color', '#ff6000');
+               name.focus();
+            }else{
+               name.css('border-color', '#e0e0e0');
+            }
+      });
+      function validatePhone(value){
+         return value.length > 9 && /^(0)\d{9}$|^(84)\d{9}$/.test(value);
+      }
+      function validateTextbox(value){
+         return value.length > 0;
+      }
+
+      $('#form-submit-stock').submit(function () {
+         var name_check = $.trim(name.val());
+         var phone_check = $.trim(phone.val());
+         if (name_check  === '' &&  phone_check ==='') {
+            name.show();
+            name.css('border-color', '#ff6000');
+            phone.show();
+            phone.css('border-color', '#ff6000');
+            $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case') ?>' });
+            $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case') ?>' });
+            return false;
+         }else if(phone_check ===''){
+            phone.show();
+            phone.css('border-color', '#ff6000');
+            $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case') ?>' });
+            return false;
+         }else if(name_check  === ''){
+            name.show();
+            name.css('border-color', '#ff6000');
+            $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case') ?>' });
+            return false;
+         }
+      });
+   });
+</script>
+

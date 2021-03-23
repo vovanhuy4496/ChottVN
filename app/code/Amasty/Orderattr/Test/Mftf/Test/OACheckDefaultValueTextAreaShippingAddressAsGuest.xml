@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckDefaultValueTextAreaShippingAddressAsGuest">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Guest User and Admin"/>
+            <title value="Check Order Attribute by Guest User and Admin"/>
+            <description value="Check Default Value for Text Area Order Attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-20"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckTextAreaOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Text Area Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createTextAreaOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextAreaShippingAddress"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextAreaWithDefaultValue"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextAreaShippingAddress"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCart">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check Default Value for Text Area Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithFillFieldActionAndDefaultValueForGuestCustomerCheckoutStepOne"
+                     stepKey="checkOAForGuestFirst">
+            <argument name="customer" value="OneCustomerInfo"/>
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextAreaShippingAddress"/>
+        </actionGroup>
+        <!-- Check and Fill Text Area Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithFillFieldActionForGuestCustomerCheckoutStepOne" stepKey="checkOAForGuestSecond">
+            <argument name="customer" value="OneCustomerInfo"/>
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextAreaShippingAddress"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check Text Area Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOATextAreaShippingAddress"/>
+        </actionGroup>
+
+    </test>
+</tests>

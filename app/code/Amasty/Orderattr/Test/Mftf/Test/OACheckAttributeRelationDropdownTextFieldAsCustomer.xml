@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckAttributeRelationDropdownTextFieldAsCustomer">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute Relation by Guest User and Admin"/>
+            <title value="Check Order Attribute Relation by Guest User and Admin"/>
+            <description value="Check Order Attribute Relation with Dropdown Parent and Text Field Dependent Attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-29"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckDropdownOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create Dropdown Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsDropdown" stepKey="createDropdownOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOADropdownDefault"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsDropdownDefault"/>
+            </actionGroup>
+            <!-- Manage Options for Dropdown Order Attribute-->
+            <actionGroup ref="AdminManageOptionsForOrderAttribute" stepKey="manageOptionsForDropdown">
+                <argument name="adminCreateOASettings" value="SetOADropdownDefault"/>
+            </actionGroup>
+            <!-- Create Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+            <!-- Create Order Attribute Relation-->
+            <actionGroup ref="AdminCreateOrderAttributeRelationBase" stepKey="createRelation">
+                <argument name="adminCreateOARelation" value="SetOARelationDropdownTextField"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute Relation-->
+            <actionGroup ref="AdminDeleteOrderAttributeRelation" stepKey="deleteRelation">
+                <argument name="adminCreateOASettings" value="SetOADropdownDefault"/>
+            </actionGroup>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttributeDropdown">
+                <argument name="adminCreateOASettings" value="SetOADropdownDefault"/>
+            </actionGroup>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttributeTextField">
+                <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+            </actionGroup>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Login as Simple US Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="login">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCart">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check Dependent Text Field Order Attribute on Frontend Checkout Step One-->
+        <actionGroup ref="StorefrontCheckDontSeeTextFieldDependentAttributeCheckout"
+                     stepKey="checkDontSeeDependentAttribute">
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+        </actionGroup>
+        <!-- Choose and Check Parent Attribute without Dependent Text Field Attribute-->
+        <actionGroup ref="StorefrontCheckOAWithDropdownActionForCustomerCheckoutStepOne"
+                     stepKey="chooseAndCheckParentAttribute">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOADropdownDefault"/>
+        </actionGroup>
+        <!-- Check Dependent Text Field Order Attribute on Frontend in Order Summary Section-->
+        <actionGroup ref="StorefrontCheckDontSeeTextFieldDependentAttributeOrderSummary"
+                     stepKey="checkDontSeeDependentAttributeOrderSummary">
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+        </actionGroup>
+        <!-- Choose and Check Parent Attribute with Dependent Text Field Attribute-->
+        <actionGroup ref="StorefrontCheckOAWithDropdownActionForCustomerCheckoutStepOne"
+                     stepKey="chooseAndCheckParentAttributeWithDependentAttribute">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOADropdownRelation"/>
+        </actionGroup>
+        <!-- Check and Fill Dependent Text Field Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithFillFieldActionForCustomerCheckoutStepOne" stepKey="checkDependentOA">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check Parent Dropdown Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkParentAttributeViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOADropdownRelation"/>
+        </actionGroup>
+        <!-- Check Dependent Text Field Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkDependentAttributeViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+        </actionGroup>
+
+    </test>
+</tests>

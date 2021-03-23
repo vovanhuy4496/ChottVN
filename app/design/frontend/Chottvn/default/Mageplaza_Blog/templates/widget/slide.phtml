@@ -1,0 +1,76 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Blog\Block\Widget\Posts $block */
+
+?>
+
+
+<?php
+    $posts = $block->getCollection();
+?>
+<?php if ($posts->getSize()): ?>
+    <div id="carousel-top" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <?php foreach ($posts as $post) :?>
+                <div class="item">
+                    <img class="d-block w-100" src="<?php echo $block->resizeImage($post->getImage()); ?>" alt="<?php echo $post->getName(); ?>">
+                    <div class="carousel-caption d-md-block slider-caption clearfix">
+                        <h5 class="text-title float-left card-title">
+                            <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom c-title-no-bg-big block-with-text-title" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?>
+                            </a>
+                        </h5>
+                        <p style="display:none;" class="text-content float-left block-with-text-desc" title="<?php echo $post->getShortDescription(); ?>">
+                            <?php 
+                                echo $post->getShortDescription();
+                            ?> 
+                        </p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>
+<script type="text/javascript" xml="space">
+    require([
+        'jquery',
+        'owlcarousel'
+    ], function($){
+        $(document).ready(function() {
+            var owl = $('.carousel-inner');
+            $('.carousel-inner').owlCarousel({
+            loop: true,
+            items: 1, // Select Item Number
+            autoplay: true,
+            dots: true,
+            nav: true,
+            slideSpeed : 500,
+            paginationSpeed : 800,
+            rewindSpeed : 1000,
+            autoHeight:true,
+            autoplayHoverPause: true,
+            // navText: ["<i class='fa fa-long-arrow-left'></i>","<i class='fa fa-long-arrow-right'></i>"],
+            });
+          
+        });
+    });
+</script>
+

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * A Magento 2 module named Chottvn/Sms
+ * Copyright (C) 2020 Chottvn
+ *
+ * This file included in Chottvn/SigninWithPhoneNumber is licensed under OSL 3.0
+ *
+ * http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * Please see LICENSE.txt for the full text of the OSL 3.0 license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="chottvn_sms" showInDefault="1">
+            <tab>customer</tab>
+            <label>Send SMS</label>
+            <resource>Chottvn_Sms::config</resource>
+            <group id="sms_brandname" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label">
+                <label>SMS Brandname</label>
+                <field id="provider" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Provider</label>
+                    <source_model>Chottvn\Sms\Model\Config\Source\SMSBrandname</source_model>
+                </field>
+                <field id="api_key" translate="label" type="obscure" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <depends>
+                        <field id="*/*/provider">1</field>
+                    </depends>
+                    <label>API Key</label>
+                    <comment>API Key for send SMS with eSMS</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="secret_key" translate="label" type="obscure" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <depends>
+                        <field id="*/*/provider">1</field>
+                    </depends>
+                    <label>Secret Key</label>
+                    <comment>Secret Key for send SMS with eSMS</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="token" translate="label" type="obscure" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <depends>
+                        <field id="*/*/provider">2</field>
+                    </depends>
+                    <label>Token</label>
+                    <comment>Token for send SMS with VMG</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="brandname" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Brandname</label>
+                    <comment>Name display for sender</comment>
+                </field>
+                <field id="message_template" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Message Template</label>
+                    <comment>Template of SMS Message Content (use $AUTHCODE$ to put otp code in to content). Ex: "Your OTP code is $AUTHCODE$" will be "Your OTP code is 123456"</comment>
+                </field>
+                <field id="effective_time" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Effective Time</label>
+                    <comment>Time of auth code have effective (second)</comment>
+                </field>
+                <field id="max_request_limit" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max Request Limit</label>
+                    <comment>Max request send auth code in 24 hours for 1 phone number</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

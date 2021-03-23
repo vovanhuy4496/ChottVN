@@ -1,0 +1,16 @@
+<div id="vat-invoice-required" class="checkout-shipping-address amcheckout-shipping-address" data-bind="fadeVisible: visible()">
+    <div class="step-title">
+        <i class="fas fa-user"></i>
+        <span class="amcheckout-title" data-amcheckout-js="step-title" data-bind="i18n: getNameVatInvoiceRequired()" data-role="title"></span>
+    </div>
+    <div id="checkout-vat-invoice-required" class="step-content amcheckout-content" data-amcheckout-js="step-content" data-role="content" data-bind="mageInit: {'checkoutCollapsibleSteps': {}}">
+        <div class="amcheckout-wrapper">
+            <div class="fieldset address">
+                <!-- ko foreach: getRegion('vat-invoice-required') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+</div>

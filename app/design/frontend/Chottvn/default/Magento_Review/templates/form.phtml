@@ -1,0 +1,163 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Review\Block\Form $block */
+?>
+
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $current_product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+    $verified_buyer = false;
+
+    // customer login action
+    if ($customerSession->isLoggedIn()) {
+        // get id user dang login
+        $customerId = $customerSession->getCustomerId();
+        $customerObj = $objectManager->create('Magento\Customer\Model\Customer')
+            ->load($customerId);
+        $customerfullName = $customerObj->getFirstname();
+        $customerPhoneNumber = $customerSession->getCustomerData()->getCustomAttribute('phone_number')->getValue();
+
+        // get all orders cua user dang login (chi get nhung order co status = complete)
+        // - Sản phẩm thuôc các đơn hàng có trang thái: complete, finished, returned_and_finished
+        // - Khách đang đăng nhâp có số điện thoại đky tài khoản trùng với số điện thoại khách hàng của đơn hàng
+        $orders = $objectManager->create('Magento\Sales\Model\Order')->getCollection()
+                ->addFieldToFilter("chott_customer_phone_number", $customerPhoneNumber)
+                ->addFieldToFilter('status', ['complete', 'finished', 'returned_and_finished']);
+
+        $products = array();
+        foreach ($orders as $order) {
+            foreach ($order->getAllVisibleItems() as $item) {
+                // - Số lượng thực tế mua > 0: qty_ordered - qty_returned > 0
+                if($item->getQtyOrdered() > $item->getQtyRefunded()){
+                    $products[] = $item->getProductId();
+                }
+            }
+        }
+        $product_list = array_unique($products);
+        
+        if (in_array($current_product->getId(), $product_list)) {
+            $verified_buyer = true;
+        }
+    }
+?>
+
+<div class="block review-add box box-primary">
+    <div class="block-title"><strong><?= $block->escapeHtml(__('Write Your Own Review')) ?></strong></div>
+    <div class="block-content">
+        <?php if ($block->getAllowWriteReviewFlag()) : ?>
+            <?php if ($verified_buyer): ?>
+                <form action="<?= $block->escapeUrl($block->getAction()) ?>" class="review-form" method="post" id="review-form" data-role="product-review-form" data-bind="scope: 'review-form'">
+                    <?= $block->getBlockHtml('formkey') ?>
+                    <?= $block->getChildHtml('form_fields_before') ?>
+                    <fieldset class="fieldset review-fieldset" data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>">
+                        <div class="row">        
+                            <div class="col-lg-12 col-md-12 col-sm-12 group-rating">
+                                <?php if ($block->getRatings() && $block->getRatings()->getSize()) : ?>
+                                    <span id="input-message-box"></span>       
+                                    <fieldset class="field required review-field-ratings">
+                                        <div class="control">
+                                            <div class="nested" id="product-review-table">
+                                                <?php foreach ($block->getRatings() as $_rating) : ?>
+                                                    <div class="field choice review-field-rating required">
+                                                        <label class="label" id="<?= $block->escapeHtml($_rating->getRatingCode()) ?>_rating_label"><span><?php echo __("Comment of you") ?></span></label>
+                                                        <div class="control review-control-vote">
+                                                        <?php $options = $_rating->getOptions();?>
+                                                        <?php $iterator = 1; foreach ($options as $_option) : ?>
+                                                            <input
+                                                                type="radio"
+                                                                name="ratings[<?= $block->escapeHtmlAttr($_rating->getId()) ?>]"
+                                                                id="<?= $block->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $block->escapeHtmlAttr($_option->getValue()) ?>"
+                                                                value="<?= $block->escapeHtmlAttr($_option->getId()) ?>"
+                                                                class="radio"
+                                                                data-validate="{'rating-required':true}"
+                                                                aria-labelledby="<?= $block->escapeHtmlAttr($_rating->getRatingCode()) ?>_rating_label <?= $block->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $block->escapeHtmlAttr($_option->getValue()) ?>_label" />
+                                                            <label
+                                                                class="rating-<?= $block->escapeHtmlAttr($iterator) ?>"
+                                                                for="<?= $block->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $block->escapeHtmlAttr($_option->getValue()) ?>"
+                                                                title="<?= $block->escapeHtmlAttr(__('%1 %2', $iterator, $iterator > 1 ? __('stars') : __('star'))) ?>"
+                                                                id="<?= $block->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $block->escapeHtmlAttr($_option->getValue()) ?>_label">
+                                                                <span><?= $block->escapeHtml(__('%1 %2', $iterator, $iterator > 1 ? __('stars') : __('star'))) ?></span>
+                                                            </label>
+                                                            <?php $iterator++; ?>
+                                                        <?php endforeach; ?>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <input type="hidden" name="validate_rating" class="validate-rating" value="" />
+                                        </div>
+                                    </fieldset>
+                                <?php endif ?>
+                            </div> <!-- /.col-sm-5 -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 group-review">
+                                <div class="field review-field-nickname required">
+                                    <label for="nickname_field" class="label"><span><?= $block->escapeHtml(__('Nickname')) ?></span></label>
+                                    <div class="control">
+                                        <?php //if($customerfullName){?>
+                                        <!-- <input type="text" name="nickname" id="nickname_field" class="input-text" data-validate="{required:true}" data-bind="value: nickname()" placeholder="Nhập tên của bạn" /> -->
+                                        <input type="hidden" name="nickname" id="nickname_field" value = "<?php echo htmlentities($customerfullName); ?>" class="input-text" data-validate="{required:true}" data-bind="value: nickname()" placeholder="<?= $block->escapeHtml(__('Nickname')) ?>" />
+                                        <?php //} ?>
+                                    </div>
+                                </div>
+                                <div class="field review-field-summary required">
+                                    <label for="summary_field" class="label"><span><?= $block->escapeHtml(__('Summary Review')) ?></span></label>
+                                    <div class="control">
+                                        <?php //if($current_product->getName()){?>
+                                        <input type="hidden" name="title" id="summary_field" class="input-text" value="<?php echo htmlentities($current_product->getName()); ?>" data-validate="{required:true}" data-bind="value: review().title" placeholder="<?= $block->escapeHtml(__('Summary Review')) ?>" />
+                                        <?php //} ?>
+                                    </div>
+                                </div>
+                                <div class="field review-field-text required">
+                                    <div class="control">
+                                        <!-- <textarea name="detail" id="review_field" cols="5" rows="3" data-validate="{required:true}" data-bind="value: review().detail" placeholder="Nhập câu hỏi, bình luận, nhận xét tại đây"></textarea> -->
+                                        <textarea name="detail" id="review_field" cols="5" rows="3" data-validate="{required:true}" data-bind="value: review().detail" placeholder="<?= $block->escapeHtml(__('Your Review')) ?>"></textarea>
+                                    </div>
+                                </div>
+                            </div> <!-- /.col-sm-7 -->
+                        </div> <!-- /.row -->
+                    </fieldset>
+                    <div class="actions-toolbar review-form-actions">
+                        <div class="primary actions-primary">
+                            <button type="submit" class="action submitbtn btn-warning"><span><?= $block->escapeHtml(__('Submit Review')) ?></span></button>
+                        </div>
+                    </div>
+                </form>
+            <?php else: ?>
+                <div class="review-notification">
+                    <span><strong><?= $block->escapeHtml(__('Review Products:')) ?></strong></span><br>
+                    <span class="verified_buyer_false"><?= __('Only members who have purchased product %1 can evaluate this product.', $current_product->getName()) ?></span>
+                </div>
+                
+            <?php endif ?>
+            <script type="text/x-magento-init">
+            {
+                "[data-role=product-review-form]": {
+                    "Magento_Ui/js/core/app": <?= /* @noEscape */ $block->getJsLayout() ?>
+                },
+                "#review-form": {
+                    "Magento_Review/js/error-placement": {},
+                    "Magento_Review/js/validate-review": {}
+                }
+            }
+            </script>
+        <?php else : ?>
+            <div class="actions-toolbar account-menus review-form-actions" id="review-form">
+                <div class="primary account actions-primary">
+                    <button type="button" class="action submitbtn" id="review-login"><span><?php echo __('PLS Login for review!') ?></span></button>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<script type="text/javascript">
+   require([ 'jquery', 'jquery/ui'], function($) {
+      $('#review-login').click(function (){
+         $('.account-menus .account span.sign-in-label a.social-login-btn').click();
+      });
+   });
+</script>

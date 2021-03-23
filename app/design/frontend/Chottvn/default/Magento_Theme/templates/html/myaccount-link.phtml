@@ -1,0 +1,19 @@
+<li class="myaccount-link" data-bind="scope: 'customer'">
+  <!-- ko if: customer().firstname  -->
+	<a href="<?php echo $this->getUrl('customer/account') ?>" title="<?php echo __('My Account') ?>"><span class="text" data-bind="text: customer().fullname "></span></a>
+  <!-- /ko -->
+</li>
+
+<script type="text/x-magento-init">
+  {
+    "*": {
+      "Magento_Ui/js/core/app": {
+        "components": {
+          "customer": {
+            "component": "Magento_Customer/js/view/customer"
+          }
+        }
+      }
+    }
+  }
+</script>

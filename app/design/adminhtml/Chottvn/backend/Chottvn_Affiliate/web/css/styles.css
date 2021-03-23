@@ -1,0 +1,21 @@
+.custom-action-bar {
+	display: flex;
+}
+
+.custom-action-bar form {
+    margin-right: 10px;
+}
+
+/* CSS for block payment info */
+.payment-info {
+    width: 33%;
+}
+
+.payment-info .card {
+    padding: 15px;
+    border: 1px solid #ccc;
+}
+
+.payment-info .card p span.float-right {
+    float: right;
+}

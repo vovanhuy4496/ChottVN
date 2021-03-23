@@ -1,0 +1,120 @@
+<?php
+	$coupons = $this->getCoupons();
+?>
+<?php
+	if(empty($coupons)){
+?>
+  <div class="coupon-empty">
+    <div class="coupon-empty-notes">
+        <p>
+            <i class="fas fa-percent coupon-icon"></i>
+        </p>
+        <p>
+            <?= $block->escapeHtml(__("You don't have any coupons yet.")) ?>
+        </p>
+    </div>
+  </div>
+<?php
+	}else{
+?>
+  <?php foreach ($coupons as $coupon) {
+  ?>
+	<div class="row coupon-list">
+		<div class="col-12">
+			<?php if (empty($coupon["html_item"]) ){
+        $couponType = $this->couponHelper->getCouponType($coupon);
+        $couponExpirationDate = $this->couponHelper->getCouponExpirationDateStr($coupon);
+        $couponStatusCode = $this->couponHelper->getCouponStatusCode($coupon);
+        $couponStatusLabel = $this->couponHelper->getCouponStatusLabel($coupon);
+        $couponAmountStr = $this->couponHelper->getCouponAmountString($coupon);
+        $isCouponUsed = $this->couponHelper->isCouponUsed($coupon);
+        $isCouponExpired = $this->couponHelper->isCouponExpired($coupon);
+        $inactive = $isCouponUsed || $isCouponExpired;
+        $couponPromoConditionDescription = $coupon["promo_condition_description"];
+        $couponPromoConditionImage = $coupon["promo_condition_image"];
+      ?>
+      <div class="coupon-item-wrapper">
+        <div class="coupon-item">
+          <div class="coupon-thumb orange-thumb">
+            <?php if(empty($couponPromoConditionImage)){ ?>
+            <div class="coupon-content-wrapper">
+              <p class="rule-type"><?= $couponType ?></p>
+              <p class="discount-amount"><?= $couponAmountStr ?></p>
+            </div>
+            <?php }else { ?>
+              <img src="<?= $couponPromoConditionImage ?>" alt="<?= $coupon["rule_name"] ?>" />
+            <?php } ?>
+          </div>
+          <div class="coupon-content">
+            <div class="coupon-content-wrapper">
+              <p class="rule-name"><?= $coupon["rule_name"] ?></p>
+              <div class="code-status">
+                <div class="coupon-code <?= $inactive ? 'inactive' : 'active' ?>">
+                  <span class="title"><?= __("Code") ?>: </span><span class="value"><?= $coupon["coupon_code"] ?></span>
+                </div>
+                <div class="copy-action <?= $inactive ? 'inactive' : 'active' ?>" onclick="copyCouponCodeToClipboard(this, '<?= $coupon["coupon_code"] ?>', <?= $inactive ? 1 : 0 ?>);">
+                  <span>Copy</span>
+                </div>
+                <div class="coupon-status <?= $couponStatusCode ?>">
+                  <span><?= $couponStatusLabel ?></span>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <p class="exp-date"><?= __("Expired date") ?>: <span><?= $couponExpirationDate ?></span></p>
+              <div class="rule-desc">
+                <div class="html-content">
+                  <?php
+                  if(!empty($couponPromoConditionDescription) ){
+                    echo $couponPromoConditionDescription;
+                  }
+                  ?>
+                </div>
+              </div>
+              <div class="coupon-status-bottom <?= $couponStatusCode ?>">
+                <span><?= $couponStatusLabel ?></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+			<?php }else{ ?>
+				<?= $coupon["html_item"] ?>
+			<?php } ?>
+		</div>
+	</div> <!-- /.row -->
+  <?php
+  }?>
+<?php
+	}
+?>
+
+<script type="text/javascript">
+    require([ 'jquery', 'jquery/ui'], function($) {
+      $(document).ready(function(){
+          $('.rule-desc .html-content').readmore({
+              speed: 75,
+              collapsedHeight: 40,
+              moreLink: '<div class="moreless"><a href="#"><?php  echo __('Show more'); ?> <i class="fa fa-caret-down" aria-hidden="true"></i></a></div>',
+              lessLink: '<div class="moreless"><a href="#"><?php  echo __('Show less'); ?> <i class="fa fa-caret-up" aria-hidden="true"></i></a></div>',
+              afterToggle: function(trigger, element, expanded) {
+                  if(! expanded) { // The "Close" link was clicked
+                      $('html, body').animate( { scrollTop: element.offset().top - 191 }, {duration: 100 } );
+                  }
+              }
+          });
+
+      });
+    });
+
+    function copyCouponCodeToClipboard(elm, text, isExpired) {
+      if(isExpired) return;
+      var inputTmp = document.createElement("input");
+      inputTmp.value = text;
+      document.body.appendChild(inputTmp);
+      inputTmp.select();
+      document.execCommand("copy");
+      inputTmp.remove();
+      elm.classList.remove("active");
+      elm.classList.add("inactive");
+    }
+</script>

@@ -1,0 +1,73 @@
+form.chottvn-admin {
+    max-width: 500px;
+    width: auto;
+    margin: 50px auto;
+    padding: 15px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+form.chottvn-admin .admin-field {
+    display: flex;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+
+form.chottvn-admin label.label {
+    margin-right: 10px;
+    line-height: 30px;
+}
+
+form.chottvn-admin .control {
+    width: 100%;
+}
+
+form.chottvn-admin .control select {
+    width: 100%;
+    padding: 3px;
+    height: 30px;
+}
+
+form.chottvn-admin .action-buttons {
+    margin-top: 20px;
+}
+
+form.chottvn-admin .action-buttons button[type="submit"] {
+    border-radius: 10px;
+    color: #fff;
+    background-color: #007bdb;
+    border: 0px;
+    padding: 8px 30px;
+}
+
+form.chottvn-admin .custom-file-input {
+    width: 100%;
+}
+
+form.chottvn-admin .custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+form.chottvn-admin .custom-file-input::before {
+    content: 'Chọn tập tin';
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 3px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 700;
+    font-size: 10pt;
+}
+
+form.chottvn-admin .custom-file-input:hover::before {
+    border-color: black;
+}
+
+form.chottvn-admin .custom-file-input:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}

@@ -1,0 +1,108 @@
+{
+    "name": "magento/project-community-edition",
+    "description": "eCommerce Platform for Growth (Community Edition)",
+    "type": "project",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "require": {
+        "cweagans/composer-patches": "^1.6",
+        "dompdf/dompdf": "^0.8.5",
+        "hybridauth/hybridauth": "2.14.0",
+        "magento/product-community-edition": "2.3.3",
+        "mageplaza/magento-2-vietnamese-language-pack": "dev-master",
+        "oyejorge/less.php": "v1.7.0.14",
+        "pavelleonidov/module-tinymce4": "^2.0",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "require-dev": {
+        "allure-framework/allure-phpunit": "~1.2.0",
+        "friendsofphp/php-cs-fixer": "~2.14.0",
+        "lusitanian/oauth": "~0.8.10",
+        "magento/magento-coding-standard": "~3.0.0",
+        "magento/magento2-functional-testing-framework": "2.4.5",
+        "pdepend/pdepend": "2.5.2",
+        "phpmd/phpmd": "@stable",
+        "phpunit/phpunit": "~6.5.0",
+        "sebastian/phpcpd": "~3.0.0",
+        "pelago/emogrifier": "2.0.0 as 1.2.0"
+    },
+    "conflict": {
+        "gene/bluefoot": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Magento\\Framework\\": "lib/internal/Magento/Framework/",
+            "Magento\\Setup\\": "setup/src/Magento/Setup/",
+            "Magento\\": "app/code/Magento/",
+            "Zend\\Mvc\\Controller\\": "setup/src/Zend/Mvc/Controller/"
+        },
+        "psr-0": {
+            "": [
+                "app/code/",
+                "generated/code/"
+            ]
+        },
+        "files": [
+            "app/etc/NonComposerComponentRegistration.php"
+        ],
+        "exclude-from-classmap": [
+            "**/dev/**",
+            "**/update/**",
+            "**/Test/**"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Magento\\Sniffs\\": "dev/tests/static/framework/Magento/Sniffs/",
+            "Magento\\Tools\\": "dev/tools/Magento/Tools/",
+            "Magento\\Tools\\Sanity\\": "dev/build/publication/sanity/Magento/Tools/Sanity/",
+            "Magento\\TestFramework\\Inspection\\": "dev/tests/static/framework/Magento/TestFramework/Inspection/",
+            "Magento\\TestFramework\\Utility\\": "dev/tests/static/framework/Magento/TestFramework/Utility/"
+        }
+    },
+    "version": "2.3.3",
+    "minimum-stability": "stable",
+    "repositories": [{
+        "type": "composer",
+        "url": "https://repo.magento.com/"
+    }],
+    "extra": {
+        "magento-force": "override",
+        "patches": {
+            "magento/framework": {
+                "EmailMessage: Encoding": "patches/EmailMessage_2.3.3_encoding_20200316.patch",
+                "FileUpload: Tmp Name": "patches/FileUpload_2.3.3_tmp_name.patch"
+            },
+            "magento/module-customer": {
+                "Admin Address Form: Countries": "patches/customer_address_form_2.3.3_countries_20200404.patch"
+            },
+            "magento/module-sales": {
+                "Redirect Checkout: Reorder": "patches/reorder_2.3.3_reorder_20200608.patch"
+            },
+            "magento/module-quote": {
+                "Shipping Method: Model": "patches/shippingmethod_2.3.3_20200702.patch",
+                "Shipping Method Interface: Interface": "patches/shippingmethodInterface_2.3.3_20200702.patch",
+                "Shipping Method Interface Min: Interface": "patches/shippingmethodInterface_2.3.3_20200710.patch",
+                "Shipping Method Min: Model": "patches/shippingmethodmodel_2.3.3_202007010.patch",
+                "Shipping Method Interface Flag: Interface": "patches/shippingmethodinterface.php_2.3.3_20200801.patch",
+                "Shipping Method Flag: Model": "patches/shippingmethod_2.3.3_20200801.patch",
+                "Shipping Method Interface Flag Shipping: Interface": "patches/shippingmethodinterface_2.3.3_20200813.patch",
+                "Shipping Method Flag Shipping: Model ": "patches/shippingmethod_2.3.3_20200813.patch"
+            },
+            "magento/module-offline-shipping": {
+                "Column Resolver: Model": "patches/columnResolvertablerates_2.3.3_20200703.patch",
+                "Column Resolver Min: Model": "patches/columnResolvertablerates_2.3.3_20200710.patch"
+            },
+            "zendframework/zend-captcha": {
+                "Captcha: Fontsize, Dots and Line Noises": "patches/CaptchaImage_2.3.3_20200707.patch"
+            }
+        },
+        "enable-patching": true
+    }
+}

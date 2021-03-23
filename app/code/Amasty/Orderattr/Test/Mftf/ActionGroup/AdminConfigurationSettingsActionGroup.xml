@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminConfigurationCheckoutSettingsDefault">
+        <arguments>
+            <argument name="adminCheckoutSettings"/>
+        </arguments>
+        <amOnPage url="{{AdminOrderAttrConfigurationPage.url}}" stepKey="navigateAdminOrderAttrConfiguration"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openCheckoutSettingsTab"
+                          selector="{{AdminConfigurationsOASection.CheckoutSettingsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.CheckoutSettingsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.DisplayAttributeInOrderSummary}}"
+                               stepKey="waitForCheckoutSettingsTabIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayAttributeInOrderSummary}}"
+                      userInput="{{adminCheckoutSettings.DisplayAttributeInOrderSummary}}"
+                      stepKey="SelectOptionDisplay"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DateFormat}}"
+                      userInput="{{adminCheckoutSettings.DateFormat}}"
+                      stepKey="SelectOptionDateFormat"/>
+        <selectOption selector="{{AdminConfigurationsOASection.TimeFormat}}"
+                      userInput="{{adminCheckoutSettings.TimeFormat}}"
+                      stepKey="SelectOptionTimeFormat"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoEmails}}"
+                      userInput="{{adminCheckoutSettings.IncludeOrderAttributesIntoEmails}}"
+                      stepKey="SelectOptionIncludeOrderAttributesIntoEmails"/>
+        <selectOption selector="{{AdminConfigurationsOASection.SendAttributes}}"
+                      userInput="{{adminCheckoutSettings.SendAttributes}}"
+                      stepKey="SelectOptionSendAttributes"/>
+        <click selector="{{AdminConfigurationsOASection.Save}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+    <actionGroup name="AdminConfigurationSettingsPDFDocumentsDefault">
+        <arguments>
+            <argument name="adminPDFDocuments"/>
+        </arguments>
+        <amOnPage url="{{AdminOrderAttrConfigurationPage.url}}" stepKey="navigateAdminOrderAttrConfiguration"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openPDFDocumentsTab"
+                          selector="{{AdminConfigurationsOASection.PDFDocumentsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.PDFDocumentsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoShipment}}"
+                               stepKey="waitForPDFDocumentsTabOpenIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoShipment}}"
+                      userInput="{{adminPDFDocuments.IncludeOrderAttributesIntoShipment}}"
+                      stepKey="SelectOptionIntoShipment"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoInvoice}}"
+                      userInput="{{adminPDFDocuments.IncludeOrderAttributesIntoInvoice}}"
+                      stepKey="SelectOptionIntoInvoice"/>
+        <click selector="{{AdminConfigurationsOASection.Save}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+    <actionGroup name="AdminConfigurationSettingsInvoicesAndShipmentsDefault">
+        <arguments>
+            <argument name="adminInvoicesAndShipments"/>
+        </arguments>
+        <amOnPage url="{{AdminOrderAttrConfigurationPage.url}}" stepKey="navigateAdminOrderAttrConfiguration"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterNavigate"/>
+        <scrollTo selector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTab}}" stepKey="scrollToInvoicesAndShipmentsTab" />
+        <conditionalClick stepKey="openInvoicesAndShipmentsTab"
+                          selector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.DisplayOAOnInvoiceGrid}}"
+                               stepKey="waitForInvoicesAndShipmentsTabIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAOnInvoiceGrid}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAOnInvoiceGrid}}"
+                      stepKey="SelectOptionDisplayOAOnInvoiceGrid"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenCreatingInvoice}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAWhenCreatingInvoice}}"
+                      stepKey="SelectOptionDisplayOAWhenCreatingInvoice"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenViewingInvoice}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAWhenViewingInvoice}}"
+                      stepKey="SelectOptionDisplayOAWhenViewingInvoice"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAOnShipmentsGrid}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAOnShipmentsGrid}}"
+                      stepKey="SelectOptionDisplayOAOnShipmentsGrid"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenCreatingShipment}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAWhenCreatingShipment}}"
+                      stepKey="SelectOptionDisplayOAWhenCreatingShipment"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenViewingShipment}}"
+                      userInput="{{adminInvoicesAndShipments.DisplayOAWhenViewingShipment}}"
+                      stepKey="SelectOptionDisplayOAWhenViewingShipment"/>
+        <click selector="{{AdminConfigurationsOASection.Save}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+    <actionGroup name="AdminDefaultConfigurationSettings">
+        <amOnPage url="{{AdminOrderAttrConfigurationPage.url}}" stepKey="navigateAdminOrderAttrConfiguration"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openCheckoutSettingsTab"
+                          selector="{{AdminConfigurationsOASection.CheckoutSettingsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.CheckoutSettingsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.DisplayAttributeInOrderSummary}}"
+                               stepKey="waitForCheckoutSettingsTabIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayAttributeInOrderSummary}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplay"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DateFormat}}"
+                      userInput="yyyy-MM-dd"
+                      stepKey="SelectDefaultDateFormat"/>
+        <selectOption selector="{{AdminConfigurationsOASection.TimeFormat}}"
+                      userInput="0"
+                      stepKey="SelectDefaultTimeFormat"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoEmails}}"
+                      userInput="1"
+                      stepKey="SelectDefaultIncludeOrderAttributesIntoEmails"/>
+        <selectOption selector="{{AdminConfigurationsOASection.SendAttributes}}"
+                      userInput="1"
+                      stepKey="SelectDefaultSendAttributes"/>
+        <conditionalClick stepKey="openPDFDocumentsTab"
+                          selector="{{AdminConfigurationsOASection.PDFDocumentsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.PDFDocumentsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoShipment}}"
+                               stepKey="waitForPDFDocumentsTabOpenIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoShipment}}"
+                      userInput="1"
+                      stepKey="SelectDefaultIntoShipment"/>
+        <selectOption selector="{{AdminConfigurationsOASection.IncludeOrderAttributesIntoInvoice}}"
+                      userInput="1"
+                      stepKey="SelectDefaultIntoInvoice"/>
+        <scrollTo selector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTab}}" stepKey="scrollToInvoicesAndShipmentsTab" />
+        <conditionalClick stepKey="openInvoicesAndShipmentsTab"
+                          selector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTab}}"
+                          dependentSelector="{{AdminConfigurationsOASection.InvoicesAndShipmentsTabOpen}}"
+                          visible="false"/>
+        <waitForElementVisible selector="{{AdminConfigurationsOASection.DisplayOAOnInvoiceGrid}}"
+                               stepKey="waitForInvoicesAndShipmentsTabIsOpened"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAOnInvoiceGrid}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAOnInvoiceGrid"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenCreatingInvoice}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAWhenCreatingInvoice"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenViewingInvoice}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAWhenViewingInvoice"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAOnShipmentsGrid}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAOnShipmentsGrid"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenCreatingShipment}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAWhenCreatingShipment"/>
+        <selectOption selector="{{AdminConfigurationsOASection.DisplayOAWhenViewingShipment}}"
+                      userInput="1"
+                      stepKey="SelectDefaultDisplayOAWhenViewingShipment"/>
+        <click selector="{{AdminConfigurationsOASection.Save}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+</actionGroups>

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Chottvn\Inventory\Api\LogRepositoryInterface" type="Chottvn\Inventory\Model\LogRepository"/>
+	<preference for="Chottvn\Inventory\Api\TempImportRepositoryInterface" type="Chottvn\Inventory\Model\TempImportRepository"/>
+	<preference for="Chottvn\Inventory\Api\Data\LogInterface" type="Chottvn\Inventory\Model\Data\Log"/>
+	<preference for="Chottvn\Inventory\Api\Data\LogSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Inventory\Model\ResourceModel\Log\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_inventory_log</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Inventory\Model\ResourceModel\Log\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_inventory_log_listing_data_source" xsi:type="string">Chottvn\Inventory\Model\ResourceModel\Log\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+</config>

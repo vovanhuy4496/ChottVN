@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_BetterPopup
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="email_affiliate_active_affiliate_template"
+              label="Active Affiliate Account"
+              file="active_account.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_active_affiliate_be_template"
+              label="BE Active Affiliate Account"
+              file="be_active_account.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_active_affiliate_customer_template"
+              label="Customer Active Affiliate Account"
+              file="customer_active_account.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_new_affiliate_template"
+              label="New Affiliate Template"
+              file="new_affiliate.html"
+              type="html"
+              module="Chottvn_Affiliate"     
+              area="frontend"
+    />
+    <template id="email_affiliate_re_register_affiliate_template"
+              label="Re-register Affiliate Account"
+              file="re_register_account.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_reject_account_affiliate_template"
+              label="Reject Affiliate Account"
+              file="reject_account.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_request_identity_card_affiliate_template"
+              label="Request Identity Card Affiliate Account"
+              file="request_identity_card.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_active_affiliate_success_template"
+              label="Active Affiliate Account Success"
+              file="active_success.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+     <template id="email_affiliate_withdrawal_affiliate_template"
+              label="Verify Withdrawal Affiliate Account Success"
+              file="withdrawal_success.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_freezed_unfreezed_affiliate_template_freezed_affiliate"
+              label="Freezed Affiliate"
+              file="freezed_affiliate.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_freezed_unfreezed_affiliate_template_unfreezed_affiliate"
+              label="Unfreezed Affiliate"
+              file="unfreezed_affiliate.html"
+              type="html"
+              module="Chottvn_Affiliate"
+              area="frontend"
+    />
+    <template id="email_affiliate_locked_unlocked_customer_template_locked_customer"
+            label="Locked Customer"
+            file="locked_customer.html"
+            type="html"
+            module="Chottvn_Affiliate"
+            area="frontend"
+    />
+    <template id="email_affiliate_locked_unlocked_customer_template_unlocked_customer"
+        label="UnLocked Customer"
+        file="unlocked_customer.html"
+        type="html"
+        module="Chottvn_Affiliate"
+        area="frontend"
+    />
+</config>

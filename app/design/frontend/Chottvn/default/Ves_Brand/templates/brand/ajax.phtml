@@ -1,0 +1,27 @@
+<?php
+$page = $block->getData('page');
+$brands = $block->getCustomBrandCollection('',$page);
+$show_brand_name = $this->getConfig('brand_list_page/show_brand_name');
+if ( $brands->count() ){
+?>
+
+<?php foreach ($brands as $brand) { ?>
+<div class="brand-item brand-mark">
+  <div class="brand-image">
+    <a href="<?php echo $brand->getUrl(); ?>" title="<?php echo $brand->getName(); ?>">
+      <img src="<?php echo $brand->getImageUrl(); ?>" alt="<?php echo $brand->getName(); ?>"/>
+    </a>
+  </div>
+  <?php if($show_brand_name){ ?>
+    <div class="brand-description">
+      <a class="brand-name" href="<?php echo $brand->getUrl(); ?>" title="<?php echo $brand->getName(); ?>"><?php echo __('Brand').' '.$brand->getName() ?></a>
+      <?php if($brand->getDescription()){ ?>
+        <div class="brand-short-description"><?php echo $brand->getDescription(); ?></div>
+      <?php } ?>
+    </div>
+  <?php } ?>
+  <div class="clearfix"></div>
+</div>
+<?php } ?>
+
+<?php } ?>

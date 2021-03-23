@@ -1,0 +1,36 @@
+﻿<?php
+/**
+ * @var $block \Chottvn\Frontend\Block\AccountMenu
+ */
+?>
+
+<div class="account-menus">
+  <a class="account-menu-item tracking-order" href="/sales/guest/form/"> 
+    <span class="icon"><i class="fa fa-truck"></i></span>
+    <span class="text"> <?= __("Tracking"); ?><br/><?= __("Order"); ?></span> 
+  </a>
+  <div class="account-menu-item account dropdown">
+    <div class="dropdown-toggle" type="" id="dropdown-account-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="icon">
+        <i class="fa fa-user" aria-hidden="true"></i>
+      </span>
+      <span class="text">
+        <?php echo $block->getAccountLabel(); ?>
+        <br/> <?= __("Account"); ?>
+      </span>
+    </div>
+    <div class="dropdown-menu" aria-labelledby="dropdown-account-menu">
+      <?php if (! $block->isLoggedIn()){ ?>
+        <a class="dropdown-item" href="/customer/account/login"><?= __("Sign in"); ?></a>
+        <a class="dropdown-item" href="/customer/account/create"><?= __("Sign up"); ?></a>
+      <?php } else { ?>
+        <a class="dropdown-item" href="/sales/order/history/"><?= __("My Orders"); ?></a>
+        <a class="dropdown-item" href="/customer/account/"><?= __("My Account"); ?></a>
+        <a class="dropdown-item" href="/wishlist/"><?= __("My Wishlists"); ?></a>
+        <a class="dropdown-item" href="/review/customer/"><?= __("My Product Reviews"); ?></a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/customer/account/logout"><?= __("Sign out"); ?></a>
+      <?php }  ?>
+    </div>
+  </div>
+</div>

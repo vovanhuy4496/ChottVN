@@ -1,0 +1,102 @@
+<?php
+/**
+ *
+ * SM Listing Tabs - Version 2.5.0
+ * Copyright (c) iOMZone . All Rights Reserved.
+ * @license
+ * Author: iOMZone
+ * Websites:
+ */
+
+$list     = $this->_getList();
+$tag_id   = $this->_tagId();
+$cmsBlock = $this->_getConfig('cmsblock');
+$isHideHeader = $this->_getConfig('is_hide_header');
+$isHideTitle = $this->_getConfig('is_hide_title');
+$viewAllUrl = $this->_getConfig('view_all_url') ?? "";
+if (!empty($list)) {
+	?>
+    <div id="<?php echo $tag_id; ?>" class="sm-listing-tabs ltabs-loading-first <?php echo $this->_getConfig('type_show') . 'type'; ?>">
+		<div class="ltabs-loading-css">
+			<div class="loading-content">
+
+			</div>
+		</div>
+
+		<?php if (! $isHideHeader) { ?>
+		<div class="ltabs-head">
+			<?php if (! $isHideTitle) { ?>
+			<div class="title-home-page">
+				<span><?php echo $this->_getConfig('title', 'Tab Listing'); ?></span>
+			</div>
+			<?php } ?>
+			<!--Begin Tabs-->
+			<div class="ltabs-tabs-container">
+				<?php echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData('list', $list)->setTemplate("Sm_ListingTabs::default_tabs.phtml")->toHtml();
+				?>
+			</div>
+            <!-- End Tabs-->
+            <?php
+				if (! empty($viewAllUrl) ) {
+			?>
+				<div class="ltabs-view-all">
+					<a href="<?php echo $viewAllUrl; ?>"><span class="label"><?php echo __('All') ?></span> <i class="fas fa-chevron-right"></i></a>
+				</div>
+			<?php } ?>
+		</div>
+		<?php } ?>
+
+		<div class="ltabs-wrap">
+			<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($cmsBlock)->toHtml(); ?>
+            <!--Begin Items-->
+			<div class="ltabs-items-container ">
+				<?php foreach ($list as $items) {
+					$products = isset($items['products_list']) ? $items['products_list'] : '';
+					$cls      = (isset($items['sel'])) ? ' ltabs-items-selected ltabs-items-loaded ' : '';
+					?>
+                    <div class="ltabs-items <?php echo $cls; ?> <?php echo 'ltabs-items-' . $items['id_tab']; ?>">
+						<div class="ltabs-items-inner">
+							<?php if (!empty($products)) {
+								echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['products' => $products, 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::deal_items.phtml")->toHtml();
+							} else {
+								?>
+                                <div class="ltabs-loading">
+									<div class="loading-content">
+
+									</div>
+								</div>
+							<?php } ?>
+						</div>
+
+						<?php if ($this->_getConfig('type_show') == 'loadmore') { ?>
+							<?php $classloaded = ($this->_getConfig('limitation', 2) >= $items['count'] || $this->_getConfig('limitation', 2) == 0) ? 'loaded' : ''; ?>
+							<?php if (!$classloaded) { ?>
+                            <div class="ltabs-loadmore"
+                                 data-tab-id="<?php echo $items['id_tab']; ?>"
+                                 data-catids="<?php echo $items['cat_children'] ?>"
+                                 data-rl_start="<?php echo $this->_getConfig('limitation', 2) ?>"
+                                 data-rl_total="<?php echo $items['count'] ?>"
+                                 data-rl_allready="<?php echo __('All ready'); ?>"
+                                 data-rl_load="<?php echo $this->_getConfig('limitation', 2) ?>">
+									<div class="ltabs-loadmore-btn <?php echo $classloaded ?>"
+                                         data-label=" <?php echo ($classloaded) ? __('All ready') : __('Load more'); ?>">
+									<span class="ltabs-image-loading"></span>
+								</div>
+							</div>
+							<?php }else{ ?>
+								<div class="ltabs-loadmore"></div>
+							<?php } ?>
+						<?php } ?>
+					</div>
+				<?php } ?>
+			</div>
+            <!--End Items-->
+		</div>
+	</div>
+	<?php echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['tagid' => $this->_tagId(), 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::default_js.phtml")->toHtml(); ?>
+	<?php
+} else { ?>
+    <!-- <div class="message info empty"><div><?php /* @escapeNotVerified */
+			echo __('We can\'t find products matching the selection.') ?></div></div> -->
+	<?php
+} ?>

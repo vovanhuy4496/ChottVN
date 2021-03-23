@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-paymentaccount",
+    "description": "Chottvn PaymentAccount module",
+    "type": "magento2-module",
+    "license": "",
+    "authors": [        
+        {
+            "name": "Chottvn Dev",
+            "email": "dataman@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\PaymentAccount\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

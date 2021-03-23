@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceContainer name="content">
+        <block class="Chottvn\Affiliate\Block\Affiliate\Register" name="affiliate_register_index" template="Chottvn_Affiliate::register.phtml">
+        	<container name="div.category.affiliate.program" htmlTag="div" label="Catalog Affiliate Program Container" htmlClass="box-div-category-affiliate-program">
+                
+            </container>
+        </block>
+    </referenceContainer>
+</page>

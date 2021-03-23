@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckManageTooltipForStoreView">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Customer and Admin"/>
+            <title value="Check Order Attribute by Customer and Admin"/>
+            <description value="Check Manage Tooltip Order Attribute for Store View"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-26"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckTextFieldOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create Custom Store View-->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="CreateCustomStoreView">
+                <argument name="customStore" value="staticStore"/>
+            </actionGroup>
+            <!-- Create Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+            <!-- Manage Tooltip for Dropdown Order Attribute-->
+            <actionGroup ref="AdminManageTooltipForOrderAttribute" stepKey="manageTooltipForTextField">
+                <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!--Delete Custom Store View-->
+            <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="DeleteCustomStoreView">
+                <argument name="customStore" value="staticStore"/>
+            </actionGroup>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Login as Simple US Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="login">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheFirstTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Switch Store View to Custom Store View-->
+        <actionGroup ref="StorefrontSwitchStoreViewActionGroup" stepKey="switchToCustomStoreView">
+            <argument name="storeView" value="staticStore"/>
+        </actionGroup>
+        <!-- Check Tooltip for Order Attribute on Frontend Custom Store View-->
+        <actionGroup ref="StorefrontCheckManageTooltipCheckoutStepOne" stepKey="checkOAForCustomStoreView">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip.TooltipForCustomStoreView"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheSecondTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Switch Store View to Default Store View-->
+        <actionGroup ref="StorefrontSwitchDefaultStoreViewActionGroup" stepKey="switchToDefaultStoreView"/>
+        <!-- Check Tooltip for Order Attribute on Frontend Default Store View-->
+        <actionGroup ref="StorefrontCheckManageTooltipCheckoutStepOne" stepKey="checkOAForDefaultStoreView">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip.TooltipForDefaultStoreView"/>
+        </actionGroup>
+        <!-- Check and Fill Text Field Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithFillFieldActionForCustomerCheckoutStepOne" stepKey="checkOAForCustomer">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check Text Field Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOATextFieldManageTooltip"/>
+        </actionGroup>
+
+    </test>
+</tests>

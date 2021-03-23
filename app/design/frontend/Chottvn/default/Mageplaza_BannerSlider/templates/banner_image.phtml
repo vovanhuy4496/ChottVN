@@ -1,0 +1,67 @@
+<?php
+// create info
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// get customer data
+$customerSession = $_objectManager->create('Magento\Customer\Model\Session');  
+$customerData = $customerSession->getCustomer(); //get all data of customerData
+
+// banner helper
+// get banner desktop and banner mobile
+$banner_desktop_id = $this->getData('banner_desktop_id') ? (int)$this->getData('banner_desktop_id') : 0;
+$banner_mobile_id = $this->getData('banner_mobile_id') ? (int)$this->getData('banner_mobile_id') : 0;
+$css_class = $this->getData('css_class') ? ' ' . $this->getData('css_class')  : '';
+// get banner for desktop and banner for mobile
+$banner_desktop = array(); $banner_mobile = array();
+$banner_helper = $this->helper('Mageplaza\BannerSlider\Helper\Data');
+
+if($banner_desktop_id){
+    $banner_desktop = $banner_helper->getBannerById($banner_desktop_id);
+}
+if($banner_mobile_id){
+    $banner_mobile = $banner_helper->getBannerById($banner_mobile_id);
+}
+
+// detect mobile
+$detectMobile = $_objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+
+// get customer_group_ids
+$customer_group_ids = $this->getData('customer_group_ids') != "" ? explode(',', $this->getData('customer_group_ids')) : array();
+
+$current_group = 0;
+if($customerSession->isLoggedIn()){
+    $current_group = $customerData->getGroupId();
+}
+$is_allow_show = true;
+
+if($customer_group_ids){
+    if(in_array($current_group, $customer_group_ids)){
+        $is_allow_show = true;
+    }else{
+        $is_allow_show = false;
+    }
+}
+// get display_mode
+$display_mode = $this->getData('display_mode') ? $this->getData('display_mode') : 'default';
+
+?>
+
+<?php if ($banner_mobile && $detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+    <!-- Banner Image Mobile -->
+    <?php
+        $page = 'banner-image-mobile';
+        echo $banner_helper->getDataBannerImageHtml($banner_mobile,$display_mode,$is_allow_show,$css_class,$page);
+    ?>
+    <!-- Banner Image Mobile -->
+<?php } ?>
+
+<?php if ($banner_desktop
+            && (($detectMobile->isMobile() != true && $detectMobile->isTablet() == false)
+            || ($detectMobile->isMobile() == true && $detectMobile->isTablet() == true))) { ?>
+    <!-- Banner Image Desktop | Tablet -->
+    <?php
+        $page = 'banner-image-desktop';
+        echo $banner_helper->getDataBannerImageHtml($banner_desktop,$display_mode,$is_allow_show,$css_class,$page);
+    ?>
+    <!-- Banner Image Desktop -->
+<?php } ?>

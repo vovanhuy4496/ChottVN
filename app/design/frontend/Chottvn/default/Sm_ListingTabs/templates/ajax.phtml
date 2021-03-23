@@ -1,0 +1,58 @@
+<?php
+$ajaxurl = $block->getAjaxUrl();
+$block_data = json_encode($block->getData());
+$block_name = $block->generateBlockName(5,time());
+// page load
+// - windown_event: waiting completed loading page
+// - document_ready: waiting when script is ready
+$page_load = $block->getPageLoad() ? $block->getPageLoad():'document_ready';
+
+// default 1s
+$page_load_timing = $block->getPageLoadTiming() ? $block->getPageLoadTiming():'1000';
+
+// load default.phtml or viewed.phtml
+$page_layout = $block->getPageLayout() ? $block->getPageLayout():'default';
+?>
+<div id="ajax_content_<?php echo $block_name; ?>">
+	<div class="ltabs-loading-css"><div class="loading-content"></div></div>
+</div>
+<script>
+require([
+    'jquery'
+], function ($) {
+    $(function () { // to ensure that code evaluates on page load
+        var ajax_url = '<?php echo $ajaxurl; ?>';
+        var block_data = '<?php echo addslashes($block_data); ?>';
+        var block_name = '#ajax_content_<?php echo $block_name; ?>';
+        var page_layout = '<?php echo $page_layout; ?>';
+        
+        <?php
+        	switch ($page_load) {
+        		case 'window_event':
+        			echo "window.addEventListener('load', function() {";
+        			break;
+
+        		case 'window_load':
+        			echo "$(window).on('load', function() {";
+        			break;
+
+        		case 'document_ready':
+        			echo "$(document).ready(function(){";
+        			break;
+        	}
+        ?>
+            setTimeout(function(){
+                $.ajax({
+                    context: block_name,
+                    url: ajax_url,
+                    type: "POST",
+                    data: {ajax_listingtab_data:block_data,page_layout:page_layout},
+                }).done(function (data) {
+                    $(block_name).html(data.output);
+                    return true;
+                });
+            }, <?php echo (int)$page_load_timing; ?>);
+        <?php echo "});" ?>
+    });
+});
+</script>

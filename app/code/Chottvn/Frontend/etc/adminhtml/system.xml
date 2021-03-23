@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * A Magento 2 module named Chottvn/Frontend
+ * Copyright (C) 2020 Chottvn
+ *
+ * This file included in Chottvn/Frontend is licensed under OSL 3.0
+ *
+ * http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * Please see LICENSE.txt for the full text of the OSL 3.0 license
+ * author: Tuan Nguyen (tuan.nguyen@ecepvn.org)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="market" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="product_price" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Price Config</label>
+                <field id="round_product_price" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Round Price</label>
+                    <comment>Round number price by VNĐ currency: 0=null, 1=10đ, 2=100đ, 3=1.000đ, 4=10.000đ, ....</comment>
+                    <validate>required-entry validate-digits validate-not-negative-number validate-length minimum-length-1 maximum-length-3</validate>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

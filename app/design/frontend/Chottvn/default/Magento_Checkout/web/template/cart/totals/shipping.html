@@ -1,0 +1,46 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko ifnot: isCalculated() -->
+<tr class="totals shipping excl">
+    <th class="mark" colspan="1" scope="row" data-bind="text: title"></th>
+    <td class="amount">        
+        <!-- ko if: (getValueRaw() == 0) -->
+            <span class="price"
+                data-bind="i18n: 'Not included yet', attr: {'data-th': title}"></span>
+        <!--/ko-->                 
+    </td>
+</tr>
+<!-- /ko -->
+<!-- ko if: isCalculated() -->
+<tr class="totals shipping excl">
+    <th class="mark" colspan="1" scope="row" data-bind="text: title"></th>
+    <td class="amount">              
+    	<!-- ko if: getChottvnShippingMethodCode() == "flatrate" -->
+            <span class="price" data-bind="text: 'Liên hệ sau'"></span>
+        <!--/ko-->
+        <!-- ko if: getChottvnShippingMethodCode() == "storepickupshipping" -->
+        	<span class="price" data-bind="text: 'Miễn phí'"></span>
+        <!--/ko-->
+        <!-- ko ifnot: (getChottvnShippingMethodCode() == "flatrate" || getChottvnShippingMethodCode() == "storepickupshipping") -->             
+            <!-- ko if: (getBooleanChottvnHandlingOverWeight() == "over") -->
+                <span class="price"
+                    data-bind="text: 'Liên hệ', attr: {'data-th': title}"></span>
+            <!--/ko-->
+            <!-- ko if: (getBooleanChottvnHandlingOverWeight() == "accept") -->
+                <!-- ko ifnot: (getValueRaw() == 0) -->
+                    <span class="price"
+                    data-bind="text: getValue(), attr: {'data-th': title}"></span>
+                <!--/ko--> 
+                <!-- ko if: (getValueRaw() == 0) -->
+                    <span class="price"
+                    data-bind="i18n: 'Not included yet', attr: {'data-th': title}"></span>
+                <!--/ko--> 
+            <!--/ko-->                                  
+        <!--/ko-->
+    </td>
+</tr>
+<!-- /ko -->

@@ -1,0 +1,24 @@
+{
+    "name": "chottvn/module-address",
+    "description": "Mage 2 - Region (Tinh/TPTW), City (TP/Quan/Huyen), Township (Phuong/Xa) dropdwon",
+    "version": "0.1.0",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "require": {},
+    "authors":[
+        {
+            "name": "DanPhan",
+            "email": "dan.phan@ecepvn.org",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Chottvn\\Address\\": ""
+        }
+    }
+}

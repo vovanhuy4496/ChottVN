@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>		
+		<add action="chottvn_pricequote/request/index" 
+			id="Chottvn_PriceQuote::chottvn_pricequote_request" 
+			module="Chottvn_PriceQuote" 
+			parent="Magento_Sales::sales" 
+			resource="Chottvn_PriceQuote::request_view" 
+			sortOrder="9999" 
+			title="Price Quote Requests"/>		
+	</menu>
+</config>

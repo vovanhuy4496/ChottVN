@@ -1,0 +1,125 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Blog\Block\Widget\Posts $block */
+
+?>
+<?php
+    $posts = $block->getCollection();
+    $getDataCategory = $block->getDataCategory();
+
+    $nameCategory = $getDataCategory->getName();
+    $urlCategory = $getDataCategory->getUrlKey();
+
+    $urlCategory = $block->getCategoryUrl($urlCategory);
+    $first_ob_post = $posts->getFirstItem();
+    $first_ob_post_id = $posts->getFirstItem()->getId();
+?>
+
+<?php if ($posts->getSize() > 0 ): ?>
+    <div class="post-list-news" id="mpblog-list-container">
+        <div class="content-header-wrapper clearfix">
+            <div class="title-wrapper float-left">
+                <span class="title">
+                    <?php echo $nameCategory; ?>
+                </span>
+            </div>
+
+            <div class="link-wrapper float-right">
+                <a href="<?php echo $urlCategory; ?>">
+                <span class="text-view-all"><?php echo __('See All'); ?></span>
+                <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="content-main-wrapper">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="card card-news card-news-wrapper">
+                            <div class="post-thumb post-thumb-title">
+                                <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom" title="<?php echo $first_ob_post->getName() ?>">
+                                    <?php
+                                        $url_image = $block->resizeImage($first_ob_post->getImage());
+                                    ?>
+                                    <img title="<?php echo $first_ob_post->getName() ?>" alt="<?php echo $first_ob_post->getName() ?>" class="card-img-top border-big-image" src="<?php echo $url_image; ?>">
+                                    <?php if($first_ob_post->getIsVideo()== 1): ?>
+                                        <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-big" style="width: 69.6px;">
+                                    <?php endif;?>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title card-title-news">
+                                    <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom c-title-no-bg-big block-with-text-title" title="<?php echo $first_ob_post->getName() ?>"><?php echo $first_ob_post->getName() ?>
+                                    </a>
+                                </h5>
+                                <h6 class="card-subtitle text-muted">
+                                    <?php echo $first_ob_post->getPublishDate() ? $block->getDateFormat($first_ob_post->getPublishDate()) : ''; ?>
+                                </h6>
+                                <p class="card-text block-with-text-desc" title="<?php echo $first_ob_post->getShortDescription(); ?>">
+                                    <?php
+                                        echo $first_ob_post->getShortDescription();
+                                    ?>
+                                </p>
+                                <!-- <a href="<?php echo $first_ob_post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <!-- BEGIN: News item -->
+                        <?php foreach ($posts as $key => $post): ?>
+                            <?php if ($post->getId() != $first_ob_post_id): ?>
+                                <div class="row">
+                                    <div class="card-horizontal">
+                                        <div class="c-display-flex">
+                                            <div class="col-5 flex-left">
+                                                <div class="post-thumb">
+                                                    <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                                        <?php
+                                                            $url_image = $block->resizeImage($post->getImage());
+                                                        ?>
+                                                        <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top card-img-top-resize border-small-image" src="<?php echo $url_image; ?>">
+                                                        <?php if($post->getIsVideo()== 1): ?>
+                                                            <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-small" style="width: 30.6px;">
+                                                        <?php endif;?>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-7 flex-right">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <a class="c-post-title-resize block-with-text-title" href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?></a></h5>
+                                                    <h6 class="card-subtitle text-muted">
+                                                        <?php echo $post->getPublishDate() ? $block->getDateFormat($post->getPublishDate()) : ''; ?>
+                                                    </h6>
+                                                    <!-- <a href="<?php echo $post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <!-- END: News item -->
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

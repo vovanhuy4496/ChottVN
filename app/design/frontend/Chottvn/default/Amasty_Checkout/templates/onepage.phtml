@@ -1,0 +1,294 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2019 Amasty (https://www.amasty.com)
+ * @package Amasty_Checkout
+ */
+?>
+<?php
+/** @var \Magento\Checkout\Block\Onepage $block */
+
+/** @var \Amasty\Checkout\Helper\Onepage $helper */
+$helper = $block->getData('amcheckout_helper');
+$design = $helper->isModernCheckoutDesign() ? 'modern' : 'classic';
+$layout = $helper->getDesignLayout();
+$orderPaymentHelper = $this->helper('Chottvn\OrderPayment\Helper\Data');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$shippingNotification = $block->getLayout()->createBlock(\Magento\Cms\Block\Block::class)->setBlockId('checkout-shipping-notification')->toHtml();
+
+// get config over
+$handling_over_weight_fee = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('carriers/tablerate/handling_over_weight_fee');
+$image_height = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('market/checkout/thumbs_height_checkout');
+$image_width = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('market/checkout/thumbs_width_checkout');
+
+$messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+
+// detect mobile
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+
+// get html product is promo with type cart/spent
+$helperPromo = $objectManager->get('Chottvn\Sales\Controller\Promo\QuoteItem');
+?>
+<style>
+    .checkout-index-index .opc-block-summary .not-calculated {
+        font-style: unset !important;
+    }
+    .show-ampromo-spent {
+        display: block;
+    }
+    .hide-ampromo-spent {
+        display: none;
+    }
+    .selected-gift-products-show {
+        background-color: #fff7e3;
+        display: block;
+        padding-left: 15px; 
+    }
+    .selected-gift-products-show span {
+        /* padding: 5px; */
+        display: block;
+    }
+    .checkout-index-index .promotion-info .rules-list .fas.fa-gift {
+        padding-right: 5px;
+    }
+    .checkout-index-index .promotion-info .rules-list a.product-item-name.product-item-detail {
+        padding-left: 10px;
+    }
+    .checkout-index-index .promotion-info .rules-list .rule-name-promo {
+        font-weight: 600;
+    }
+    .selected-gift-products-show {
+        margin-top: 5px;
+        padding-left: 0;
+        padding: 6px;
+    }
+    .checkout-index-index .opc-block-summary .items-in-cart {
+        margin-bottom: 15px;
+    }
+    #items-promo a {
+        color: unset;
+    }
+    #items-promo .rule-name-promo {
+        font-weight: 600;
+    }
+    #items-promo a.product-item-name.product-item-detail:hover {
+        color: #ff6000 !important;
+    }
+    #ampromo-spent a {
+        color: unset;
+    }
+    #ampromo-spent .rule-name-promo {
+        font-weight: 600;
+    }
+    #ampromo-spent a.product-item-name.product-item-detail:hover {
+        color: #ff6000 !important;
+    }
+    .checkout-index-index .checkout-block-summary .product-item-merge-span {
+        margin-bottom: 0 !important;
+    }
+    .checkout-index-index .checkout-block-summary .get-detect-mobile-summary {
+        margin: 10px 0 !important;
+    }
+    .checkout-index-index .opc-block-summary .minicart-items .product-item-details {
+        padding-bottom: 10px;
+    }
+    .checkout-index-index ul.rules-list {
+        padding-top: 5px;
+    }
+</style>
+<div id="checkout"
+     data-bind="scope:'checkout'"
+     class="checkout-container am-checkout -<?= /* @noEscape */ $design?> -layout-<?= /* @noEscape */ $layout?>"
+     data-amcheckout-js="checkout">
+    <div class="checkout-header">
+        <h1 class="title"><?= $block->escapeHtml($helper->getTitle()); ?></h1>
+        <div class="description"><?= /* @escapeNotVerified */ $helper->getDescription(); ?></div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 onepage-checkout-login">
+        <!-- <div class="col-lg-8 col-md-6 col-12 onepage-checkout-login"> -->
+            <?php if (!$customerSession->isLoggedIn()) : ?>
+                <!-- <p>Bạn đã là thành viên? Vui lòng 
+                    <a href="#social-login-popup" class="social-login-btn" data-effect="mfp-move-from-top">Đăng nhập!</a>
+                </p> -->
+                <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('onepage-checkout-login')->toHtml(); ?>
+            <?php endif ?>
+        </div>
+        <!-- <div class="col-lg-4 col-md-6 col-12 onepage-checkout-continue-shopping">
+            <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('onepage-checkout-continue-shopping')->toHtml(); ?>
+        </div> -->
+    </div>
+
+    <div id="checkout-loader" data-role="checkout-loader" class="loading-mask" data-mage-init='{"checkoutLoader": {}}'>
+        <div class="loader">
+            <img src="<?=
+            /* @noEscape */ $block->getViewFileUrl('images/loader-1.gif'); ?>"
+                 alt="<?= $block->escapeHtml(__('Loading...')); ?>"
+                 style="position: absolute;">
+        </div>
+    </div>
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+        {
+            "#checkout": {
+                "Magento_Ui/js/core/app": <?= /* @escapeNotVerified */ $block->getJsLayout();?>
+            }
+        }
+    </script>
+    <script>
+        window.checkoutConfig = <?= /* @escapeNotVerified */ \Zend_Json::encode($block->getCheckoutConfig()); ?>;
+        window.bankAccountInstructions = <?= /* @escapeNotVerified */ \Zend_Json::encode($orderPaymentHelper->getBankAccountInstructions()); ?>;
+        window.shippingNotification = <?= /* @escapeNotVerified */ \Zend_Json::encode($shippingNotification); ?>;
+        window.bankAccountDict = <?= $orderPaymentHelper->getBankAccountDict() ?>;
+        // Create aliases for customer.js model from customer module
+        window.isCustomerLoggedIn = window.checkoutConfig.isCustomerLoggedIn;
+        window.customerData = window.checkoutConfig.customerData;
+        window.checkoutDesign = "<?= $helper->isModernCheckoutDesign() ? 'modern' : 'classic'?>";
+        window.checkoutLayout = "<?= $helper->getLayoutTemplate()?>";
+        window.detectMobile = "<?= $detectMobile->isMobile() ?>";
+        window.detectTablet = "<?= $detectMobile->isTablet() ?>";
+        window.getProductPromo = <?= /* @escapeNotVerified */ \Zend_Json::encode($helperPromo->getProductPromo()); ?>;
+
+        // xu ly checkout 
+        window.overWeightValue = <?php echo $handling_over_weight_fee; ?>;
+        window.title_grand_total = "<?php echo __('Grand Total'); ?>";
+        window.title_grand_total_temp = "<?php echo __('Grand Total Temp'); ?>";
+        window.max_delivery_dates = "<?php echo __('Date'); ?>";
+        window.max_delivery_dates_contact = "<?php echo __('Max Delivery Dates Contact'); ?>";
+        window.getOriginalTotalTitle = "<?php echo __('Original Total'); ?>";
+        var image_height = "<?php echo $image_height; ?>";
+        var image_width = "<?php echo $image_width; ?>";
+        window.imageDataCTT = {
+                        height: image_height,
+                        width: image_width
+                    };
+        window.messages_prefix = <?php echo '"'.$messages_prefix.'"'; ?>;
+    </script>
+    <?php $myCmsBlock = $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('support-phone-number')->toHtml() ?>
+
+    <script type="text/javascript">
+        var my_cms_block = <?php echo json_encode($myCmsBlock)?>;
+    </script>
+    <script>
+        require([
+            'mage/url',
+            'Magento_Ui/js/block-loader'
+        ], function(url, blockLoader) {
+            blockLoader("<?=
+                /* @noEscape */ $block->getViewFileUrl('images/loader-1.gif'); ?>");
+            return url.setBaseUrl('<?= /* @noEscape */ $block->getBaseUrl();?>');
+        });
+    </script>
+
+    <script>
+        require([
+            'jquery'
+        ], function($) {
+            $(document).on('click','.opc-payment .bank-account-list li',function(){
+                var bankId = $(this).data("id");
+                $("#radio_" + bankId).prop("checked", true);
+                chottvnBankAccountSelect(bankId);
+            });
+
+            function chottvnBankAccountSelect(bankId){
+                $(".opc-payment .bank-account-list li").removeClass("selected");
+                $(".opc-payment .bank-account-list li[data-id='"+bankId+"']").addClass("selected");
+                $.cookie("checkoutBankId", bankId);
+                var fieldBankTransferNote = jQuery("textarea[name='bank_transfer_note']");
+                if (fieldBankTransferNote){
+                    fieldBankTransferNote.text(window.bankAccountDict[bankId]["instruction"]).trigger('change');
+                }
+            }
+        });
+
+    </script>
+
+    <!-- <script>
+        require([
+            'jquery'
+        ], function($) {
+            $(document).on('click','.promotion-info .rules-list li input.radio',function() {
+                var productSku = $(this).attr("productSku");
+                var cartPromoOption = $(this).attr("cartPromoOption");
+                var cartPromoQty = $(this).attr("cartPromoQty");
+                var cartPromoPrdName = $(this).attr("cartPromoPrdName");
+                var cartPromoParentId = $(this).attr("cartPromoParentId");
+                var cartPromoIds = $(this).attr("cartPromoIds");
+                var name = $(this).attr("name");
+                var itemId = $(this).attr("itemId");
+                var cartPromoPrdId = $(this).attr("cartPromoPrdId");
+                var oldCartPromoItemIds = $(this).attr("oldCartPromoItemIds");
+                var qtyPrdParent = $(this).attr("qtyPrdParent");
+                qtyPrdParent = $('#'+qtyPrdParent+'').val();
+                var idSelected = '#' + itemId + '_' + cartPromoIds;
+                var selectedGiftProductsDisable = $(idSelected);
+                var selectedGiftProductsHtml = $(idSelected + ' span');
+                var cartPromoItemIds = [];
+                var customUrl = "<?= $this->getUrl().'sales/promo/quoteitem'?>";
+
+                $('.promotion-info .rules-list li input.radio.promo_' + itemId).each(function() {
+                    // console.log($(this).val());
+                    var checked = $(this).is(':checked');
+                    if ($(this).prop('checked')) {
+                        cartPromoItemIds.push($(this).attr("cartPromoPrdId"));
+                    }
+                });
+                $('.promotion-info .rules-list li input.radio.promo_' + itemId).each(function() {
+                    $(this).attr('oldcartpromoitemids', cartPromoItemIds.toString());
+                });
+
+                // console.log(cartPromoItemIds);
+                $.ajax({
+                    url: customUrl,
+                    data: {
+                        cartPromoIds: cartPromoIds,
+                        productSku: productSku,
+                        cartPromoOption: cartPromoOption,
+                        cartPromoQty: cartPromoQty,
+                        cartPromoParentId: cartPromoParentId,
+                        cartPromoItemIds: cartPromoItemIds,
+                        oldCartPromoItemIds: oldCartPromoItemIds,
+                        qtyPrdParent: qtyPrdParent
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $("body").loader("show");
+                        selectedGiftProductsDisable.removeClass('selected-gift-products-show');
+                        selectedGiftProductsDisable.hide();
+                        selectedGiftProductsHtml.html('');
+                    },
+                    success: function(data, status, xhr) {
+                        console.log(data);
+                    },
+                    complete: function() {
+                        $("body").loader("hide");
+                        selectedGiftProductsDisable.removeClass('selected-gift-products-show');
+                        selectedGiftProductsDisable.addClass('selected-gift-products-show');
+                        selectedGiftProductsHtml.html(cartPromoPrdName);
+                        selectedGiftProductsDisable.show();
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                        console.log(errorThrown);
+                    }
+                });
+            });
+        });
+    </script> -->
+
+    <?php if ($helper->isAddressSuggestionEnabled() && ($apiKey = $helper->getGoogleMapsKey())) : ?>
+    <script>
+        window.amasty_checkout_regions = <?= /* @noEscape */ $helper->getRegionsJson() ?>;
+        function amasty_checkout_gmaps_init() {
+            require(['Amasty_Checkout/js/autocomplete'], function (autocomplete) {
+                autocomplete.isReady(true);
+            });
+        }
+    </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=<?= /* @noEscape */ $block->stripTags($apiKey) ?>&libraries=places&callback=amasty_checkout_gmaps_init" async defer></script>
+    <?php endif ?>
+
+</div>

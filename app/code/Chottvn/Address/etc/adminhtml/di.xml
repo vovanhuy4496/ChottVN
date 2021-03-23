@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Data\Form\AbstractForm">
+        <plugin disabled="false" name="Chottvn_Address_Plugin_Magento_Framework_Data_Form_AbstractForm" type="Chottvn\Address\Plugin\Magento\Framework\Data\Form\AbstractForm" sortOrder="10"/>
+    </type>
+</config>

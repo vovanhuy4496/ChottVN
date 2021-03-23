@@ -1,0 +1,340 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Blog\Block\Frontend $block */
+?>
+
+<?php
+    $title = $block->getBlogTitle(true);
+    $nameCategory = $title[1];
+    $url_main = $block->getRequest()->getUriString();
+    $idcate = $block->getRequest()->getParams()["id"];
+    $i = 0;
+    $a = array();
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+?>
+
+<?php 
+    
+     $postCollection = $block->getPostCollection(); 
+     $first_ob_post = $postCollection->getFirstItem();
+     $first_ob_post_id = $postCollection->getFirstItem()->getId();
+     $helper = $this->helper('Chottvn\Blog\Helper\Data');
+     $postCollectionCTT = $helper->getPostCollectionCTT($first_ob_post_id,'desktop'); 
+     $postCollectionmobileCTT = $helper->getPostCollectionCTT($first_ob_post_id,'mobile'); 
+     $allpostCollectionCTT = $helper->getAllPostCollectionCTT($first_ob_post_id); 
+?>
+
+<div class="desktop-post-ctt">
+    <?php if ($postCollection->getSize() > 0): ?>
+        <div class="post-list-news" id="mpblog-list-container">
+            <div class="content-header-wrapper clearfix">
+                <div class="title-wrapper float-left">
+                    <span class="title">
+                        <?php echo $nameCategory; ?>
+                    </span>
+                </div>
+            </div>
+            <div class="content-main-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="card card-news card-news-wrapper">
+                                <div class="post-thumb post-thumb-title">
+                                    <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom" title="<?php echo $first_ob_post->getName() ?>">
+                                        <?php
+                                            $url_image = $block->resizeImage($first_ob_post->getImage()); 
+                                            // $url_resize = $url_main."timthumb.php?src=".$url_image."&w=358&h=280";
+                                        ?>
+                                        <img title="<?php echo $first_ob_post->getName() ?>" alt="<?php echo $first_ob_post->getName() ?>" class="card-img-top border-big-image" src="<?php echo $url_image; ?>">
+                                        <?php if($first_ob_post->getIsVideo()== 1): ?>
+                                            <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-big" style="width: 69.6px;">
+                                        <?php endif;?>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title card-title-news">
+                                        <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom c-title-no-bg-big block-with-text-title" title="<?php echo $first_ob_post->getName() ?>"><?php echo $first_ob_post->getName() ?>
+                                        </a>
+                                    </h5>
+                                    <!-- <h6 class="card-subtitle text-muted">
+                                        <?php echo $first_ob_post->getPublishDate() ? $block->getDateFormat($first_ob_post->getPublishDate()) : ''; ?>
+                                    </h6> -->
+                                    <p class="card-text block-with-text-desc" title="<?php echo $first_ob_post->getShortDescription(); ?>">
+                                        <?php 
+                                            // echo substr($post->getShortDescription(), 0, 150) .((strlen($post->getShortDescription()) > 150) ? '...' : ''); 
+                                            echo $first_ob_post->getShortDescription();
+                                        ?> 
+                                    </p>
+                                    <!-- <a href="<?php echo $first_ob_post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                                </div>
+                        </div>
+                    </div>
+                    <?php if($allpostCollectionCTT->getSize() > 0):?>
+                        <div class="col-lg-12 col-md-12 col-sm-12" id="our_producers">
+                            <?php 
+                                $arrayIds = array();
+                                $lastVendorWebsiteId = 0;
+                            ?>
+                            <!-- BEGIN: News item -->
+                                <?php foreach ($postCollectionCTT as $key => $post): ?>
+                                    <?php 
+                                        $vendorId = $post->getId();
+                                        $publishDate = $post->getPublishDate();
+                                        $arrayIds[] = $publishDate;
+                                    ?>
+                                        <div class="row">
+                                            <div class="card-horizontal">
+                                                <div class="c-display-flex">
+                                                    <div class="col-6 flex-left">
+                                                        <div class="post-thumb">
+                                                            <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                                                <?php
+                                                                    $url_image = $block->resizeImage($post->getImage()); 
+                                                                    // $url_resize = $url_main."timthumb.php?src=".$url_image."&w=150&h=109";
+                                                                ?>
+                                                                <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top card-img-top-resize border-small-image" src="<?php echo $url_image; ?>">
+                                                                <?php if($post->getIsVideo()== 1): ?>
+                                                                        <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-small" style="width: 30.6px;">
+                                                                <?php endif;?>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <?php 
+                                                        $datePublic = $post->getPublishDate();
+                                                        $now = (string) date("Y-m-d H:i:s");
+                                                        $now = new DateTime($now);
+                                                        $ref = new DateTime($datePublic);
+                                                        $intervalMessage  = $helper->getIntervalMessage($now,$ref);
+                                                ?>
+                                                    <div class="col-6 flex-right">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                <a class="c-post-title-resize block-with-text-title" href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?></a></h5>
+                                                            <h6 class="card-subtitle  text-muted">
+                                                                <a href="<?php echo $url_main; ?>" ><span class="category-card-subtitle"><?php echo $nameCategory; ?></span></a><span class="desktop-post">&nbsp;-&nbsp;<?php echo $intervalMessage; ?> </span><span class="mobile-post"> <?php echo $intervalMessage; ?> </span>
+                                                            </h6>
+                                                            <p class="card-text block-with-text-desc" title="<?php echo $post->getShortDescription(); ?>">
+                                                                <?php 
+                                                                    echo $post->getShortDescription();
+                                                                ?> 
+                                                            </p>
+                                                            <!-- <a href="<?php echo $post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                <?php endforeach; ?>
+                        <!-- set last id -->
+                        <?php 
+                            $lastVendorWebsiteId = min($arrayIds); 
+                        ?>
+                            <!-- END: News item -->
+                        </div>
+                    <?php endif;?>
+                    <?php if($allpostCollectionCTT->getSize() > 4):?>
+                        <div class="actions" id="load-more-blog-ctt">
+                            <button id="blog_show_more" data-pid="<?php echo $lastVendorWebsiteId; ?>"  class="our-show-more"><?php echo __('View more blog') ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                        </div>
+                    <?php endif;?>
+                </div>
+            </div>
+        </div>
+    <?php else:?> 
+    <p class="noti-post"><?php echo __('There are no posts at this moment'); ?></p>
+
+    <?php endif; ?>
+    <script type="text/javascript">
+    require(['jquery',
+    ], function ($) {
+        $(document).ready(function () {
+            $(document).on('click', '#blog_show_more', function () {
+                var last_id = $(this).data("pid");
+                var nameCategory = '<?php echo $nameCategory; ?>';
+                var url = '<?php echo $url_main; ?>';
+                var id = '<?php echo $idcate; ?>';
+                var type = 'desktop';
+                $('#blog_show_more').html('<i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo __("View more blog") ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>');
+                $.ajax({
+                    url: "<?php echo $this->getUrl('blogctt/post/updatelist'); ?>",
+                    method: "POST",
+                    data: {
+                        last_id: last_id,
+                        url: url,
+                        name_category: nameCategory,
+                        id: id,
+                        type: type
+                    },
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        setTimeout(function () {
+                            $('#blog_show_more').html('<?php echo __('View more blog') ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>');
+                            $('#our_producers').append(data);
+                        }, 2000);
+                    },
+                    
+                });
+            });
+        });
+    });
+    </script>
+</div>
+<div class="mobile-post">
+<?php if ($postCollection->getSize() > 0): ?>
+        <div class="post-list-news" id="mpblog-list-container">
+            <div class="content-header-wrapper clearfix">
+                <div class="title-wrapper float-left">
+                    <span class="title">
+                        <?php echo $nameCategory; ?>
+                    </span>
+                </div>
+            </div>
+            <div class="content-main-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="card card-news card-news-wrapper">
+                                <div class="post-thumb post-thumb-title">
+                                    <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom" title="<?php echo $first_ob_post->getName() ?>">
+                                        <?php
+                                            $url_image = $block->resizeImage($first_ob_post->getImage()); 
+                                            // $url_resize = $url_main."timthumb.php?src=".$url_image."&w=358&h=280";
+                                        ?>
+                                        <img title="<?php echo $first_ob_post->getName() ?>" alt="<?php echo $first_ob_post->getName() ?>" class="card-img-top border-big-image" src="<?php echo $url_image; ?>">
+                                        <?php if($first_ob_post->getIsVideo()== 1): ?>
+                                            <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-big" style="width: 69.6px;">
+                                        <?php endif;?>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title card-title-news">
+                                        <a href="<?php echo $first_ob_post->getUrl() ?>" class="thumb-zoom c-title-no-bg-big block-with-text-title" title="<?php echo $first_ob_post->getName() ?>"><?php echo $first_ob_post->getName() ?>
+                                        </a>
+                                    </h5>
+                                    <!-- <h6 class="card-subtitle text-muted">
+                                        <?php echo $first_ob_post->getPublishDate() ? $block->getDateFormat($first_ob_post->getPublishDate()) : ''; ?>
+                                    </h6> -->
+                                    <p class="card-text block-with-text-desc" title="<?php echo $first_ob_post->getShortDescription(); ?>">
+                                        <?php 
+                                            // echo substr($post->getShortDescription(), 0, 150) .((strlen($post->getShortDescription()) > 150) ? '...' : ''); 
+                                            echo $first_ob_post->getShortDescription();
+                                        ?> 
+                                    </p>
+                                    <!-- <a href="<?php echo $first_ob_post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                                </div>
+                        </div>
+                    </div>
+                    <?php if($allpostCollectionCTT->getSize() > 0):?>
+                        <div class="col-lg-12 col-md-12 col-sm-12" id="our_producers_mobile">
+                            <?php 
+                                $arraymobileIds = array();
+                                $lastmobileVendorWebsiteId = 0;
+                            ?>
+                            <!-- BEGIN: News item -->
+                                <?php foreach ($postCollectionmobileCTT as $key => $post): ?>
+                                    <?php 
+                                        $vendorId = $post->getId();
+                                        $publishDate = $post->getPublishDate();
+                                        $arraymobileIds[] = $publishDate;
+                                    ?>
+                                        <div class="row">
+                                            <div class="card-horizontal">
+                                                <div class="c-display-flex">
+                                                    <div class="col-6 flex-left">
+                                                        <div class="post-thumb">
+                                                            <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                                                <?php
+                                                                    $url_image = $block->resizeImage($post->getImage()); 
+                                                                    // $url_resize = $url_main."timthumb.php?src=".$url_image."&w=150&h=109";
+                                                                ?>
+                                                                <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top card-img-top-resize border-small-image" src="<?php echo $url_image; ?>">
+                                                                <?php if($post->getIsVideo()== 1): ?>
+                                                                        <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-small" style="width: 30.6px;">
+                                                                <?php endif;?>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 flex-right">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                <a class="c-post-title-resize block-with-text-title" href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?></a>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                <?php endforeach; ?>
+                        <!-- set last id -->
+                        <?php 
+                            $lastmobileVendorWebsiteId = min($arraymobileIds); 
+                        ?>
+                            <!-- END: News item -->
+                        </div>
+                    <?php endif;?>
+                    <?php if($allpostCollectionCTT->getSize() > 5):?>
+                        <div class="actions" id="load-more-mobile-blog-ctt">
+                            <button id="blog_mobile_show_more" data-pid="<?php echo $lastmobileVendorWebsiteId; ?>"  class="our-show-more"><?php echo __('View more blog') ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                        </div>
+                    <?php endif;?>
+                </div>
+            </div>
+        </div>
+    <?php else:?> 
+    <p class="noti-post"><?php echo __('There are no posts at this moment'); ?></p>
+
+    <?php endif; ?>
+    <script type="text/javascript">
+    require(['jquery',
+    ], function ($) {
+        $(document).ready(function () {
+            $(document).on('click', '#blog_mobile_show_more', function () {
+                var last_id = $(this).data("pid");
+                var nameCategory = '<?php echo $nameCategory; ?>';
+                var url = '<?php echo $url_main; ?>';
+                var id = '<?php echo $idcate; ?>';
+                var type = 'mobile';
+                $('#blog_mobile_show_more').html('<i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;<?php echo __("View more blog") ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>');
+                $.ajax({
+                    url: "<?php echo $this->getUrl('blogctt/post/updatelist'); ?>",
+                    method: "POST",
+                    data: {
+                        last_id: last_id,
+                        url: url,
+                        name_category: nameCategory,
+                        id: id,
+                        type: type
+                    },
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        setTimeout(function () {
+                            $('#blog_mobile_show_more').html('<?php echo __('View more blog') ?> &nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>');
+                            $('#our_producers_mobile').append(data);
+                        }, 2000);
+                    },
+                    
+                });
+            });
+        });
+    });
+    </script>
+</div>

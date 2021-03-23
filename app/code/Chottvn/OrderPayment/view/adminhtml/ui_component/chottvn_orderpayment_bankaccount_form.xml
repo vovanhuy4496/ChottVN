@@ -1,0 +1,173 @@
+<?xml version="1.0" ?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_orderpayment_bankaccount_form.bankaccount_form_data_source</item>
+		</item>
+		<item name="label" translate="true" xsi:type="string">General Information</item>
+		<item name="template" xsi:type="string">templates/form/collapsible</item>
+	</argument>
+	<settings>
+		<buttons>
+			<button class="Chottvn\OrderPayment\Block\Adminhtml\BankAccount\Edit\BackButton" name="back"/>
+			<button class="Chottvn\OrderPayment\Block\Adminhtml\BankAccount\Edit\DeleteButton" name="delete"/>
+			<button class="Chottvn\OrderPayment\Block\Adminhtml\BankAccount\Edit\SaveButton" name="save"/>
+			<button class="Chottvn\OrderPayment\Block\Adminhtml\BankAccount\Edit\SaveAndContinueButton" name="save_and_continue"/>
+		</buttons>
+		<namespace>chottvn_orderpayment_bankaccount_form</namespace>
+		<dataScope>data</dataScope>
+		<deps>
+			<dep>chottvn_orderpayment_bankaccount_form.bankaccount_form_data_source</dep>
+		</deps>
+	</settings>
+	<dataSource name="bankaccount_form_data_source">
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+		<settings>
+			<submitUrl path="*/*/save"/>
+		</settings>
+		<dataProvider class="Chottvn\OrderPayment\Model\BankAccount\DataProvider" name="bankaccount_form_data_source">
+			<settings>
+				<requestFieldName>bankaccount_id</requestFieldName>
+				<primaryFieldName>bankaccount_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<fieldset name="general">
+		<settings>
+			<label>General</label>
+		</settings>
+		<field formElement="input" name="bank_name" sortOrder="10">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">bank_name</label>
+				<dataScope>bank_name</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+
+		<!-- field image  -->
+		<field name="bank_image">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="dataType" xsi:type="string">string</item>
+					<item name="source" xsi:type="string">BankAccountGroup</item>
+					<item name="label" xsi:type="string" translate="true">Image</item>
+					<item name="visible" xsi:type="boolean">true</item>
+					<item name="formElement" xsi:type="string">fileUploader</item>
+					<item name="elementTmpl" xsi:type="string">ui/form/element/uploader/uploader</item>
+					<item name="previewTmpl" xsi:type="string">Chottvn_OrderPayment/image-preview</item>
+					<item name="required" xsi:type="boolean">false</item>
+					<item name="sortOrder" xsi:type="number">40</item>
+					<item name="uploaderConfig" xsi:type="array">
+						<item name="url" xsi:type="url" path="chottvn_orderpayment/bankaccountgroup/upload"/>
+					</item>
+				</item>
+			</argument>
+		</field>
+		<field formElement="input" name="bank_branch" sortOrder="30">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">bank_branch</label>
+				<dataScope>bank_branch</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="account_owner" sortOrder="40">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">account_owner</label>
+				<dataScope>account_owner</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="account_number" sortOrder="50">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">account_number</label>
+				<dataScope>account_number</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+			</settings>
+		</field>
+		<field name="status" formElement="select">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Status</label>
+				<dataScope>status</dataScope>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Magento\Config\Model\Config\Source\Enabledisable"/>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="textarea" name="note" sortOrder="70">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">note</label>
+				<dataScope>note</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="order" sortOrder="80">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">BankAccount</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">order</label>
+				<dataScope>order</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+	</fieldset>
+</form>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckMultipleSelectAbovePaymentMethodAsGuest">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Guest User and Admin"/>
+            <title value="Check Order Attribute by Guest User and Admin"/>
+            <description value="Check Multiple Select Order Attribute in Above Payment Method Position at Checkout by Guest User and Admin"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-11"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckMultipleSelectOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Multiple Select Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsMultipleSelect"
+                         stepKey="createMultipleSelectOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOAMultipleSelectAbovePaymentMethod"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsMultipleSelectDefault"/>
+            </actionGroup>
+            <!-- Manage Options for Multiple Select Order Attribute-->
+            <actionGroup ref="AdminManageOptionsForOrderAttribute" stepKey="manageOptionsForMultipleSelect">
+                <argument name="adminCreateOASettings" value="SetOAMultipleSelectAbovePaymentMethod"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOAMultipleSelectAbovePaymentMethod"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCart">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check and Select Multiple Select Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAWithMultipleSelectActionForGuestCustomerCheckoutStepTwo" stepKey="checkOAForGuest">
+            <argument name="customer" value="OneCustomerInfo"/>
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOAMultipleSelectAbovePaymentMethod"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Check Multiple Select Order Attribute on Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOAMultipleSelectAbovePaymentMethod"/>
+        </actionGroup>
+
+    </test>
+</tests>

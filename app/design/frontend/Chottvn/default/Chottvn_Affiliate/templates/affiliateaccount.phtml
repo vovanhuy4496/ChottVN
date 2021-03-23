@@ -1,0 +1,578 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $customerId = $customerSession->getCustomer()->getId();//get id of customer    
+    $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+    $customerPhoneNumber = $customerObj->getData('phone_number');
+
+    $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+
+    $priceHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+    $rewardRuleHelper = $this->helper("\Chottvn\Affiliate\Helper\RewardRule");
+    $productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+    $financeTransactionHelper = $this->helper("\Chottvn\Finance\Helper\Transaction");
+
+    // Affiliate Level Info
+    $affiliateCode = $block->_helperAccount->getAffiliateCode($block->_customer->getId());
+    $affiliateLevel =  $block->_helperAccount->getAffiliateLevel($block->_customer->getId());
+    $levelPercent = explode('ctv_', $affiliateLevel);
+    if (isset($levelPercent[1])) {
+        $levelPercent = (int) $levelPercent[1] * 100 / 5;
+    } else {
+        $levelPercent = 0;
+    }
+    $levelStars = $this->getLayout()
+                    ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                    ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                    ->setData(['percent_rating' => $levelPercent])
+                    ->toHtml();
+    $levelChangeDate = $block->_helperAccount->getAffiliateLevelChangedLatestDateStr($block->_customer->getId());
+    $activatedDate = $block->_helperAccount->getActivatedDate($block->_customer->getId())->format("Y-m-d");
+
+    // Affiliate Purchase
+    $latestOrderDate = $rewardRuleHelper->getLatestOrderDateStr($block->_customer->getId());
+
+    // Statistic Last 6 months
+    $staticMonths = 6;
+    $staticLatestMonthsTitle = __('Statistics results for the last '.$staticMonths.' months');
+    $dateRangeOfStaticLatestMonths = $rewardRuleHelper->getStatisticDateRangeForLatestMonth($staticMonths, $activatedDate);
+    $monthRangeStartFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["start_date"]));
+    $monthRangeEndFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["end_date"]));
+    $staticLatestMonthsStr = $rewardRuleHelper->getStaticMonthRangeStr($dateRangeOfStaticLatestMonths);
+
+    // -- Calcaluate Revenue
+    $affiliateStatisticLatestMonths = $rewardRuleHelper->getStatisticAffiliateRevenue($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateRevenueLatestMonths =  $affiliateStatisticLatestMonths["affiliate_revenue_amount"];
+    $affiliateRewardLatestMonths =  $affiliateStatisticLatestMonths["affiliate_reward_amount"];
+
+    $affiliateStatisticLatestMonthsByBrand = $rewardRuleHelper->getStatisticAffiliateRevenueByBrand($customerId, $dateRangeOfStaticLatestMonths);
+
+    $affiliateOrderCount = $rewardRuleHelper->getStatisticAffiliateOrderCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypeActiveCount = $rewardRuleHelper->getStatisticAffiliateOrderTypeActiveCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypePassiveCount = $affiliateOrderCount - $affiliateOrderTypeActiveCount;
+
+    // Statistic Last 6 months - Breakdown monthly
+    $statisticMonthlyOptions =  $rewardRuleHelper->getMonthOptionsFromDateRange($dateRangeOfStaticLatestMonths);
+    $statisticMonthly = $rewardRuleHelper->getStatisticAffiliateRevenueByMonth($customerId, $dateRangeOfStaticLatestMonths);
+
+    if(sizeof($statisticMonthlyOptions) > 0){
+        $index = 0;//sizeof($statisticMonthlyOptions) - 1;
+        $currentStatisticMonthlyKey = $statisticMonthlyOptions[$index]["month"];
+    }else{
+          $currentStatisticMonthlyKey = "";
+    }
+
+    if(sizeof($statisticMonthlyOptions) > 1){
+        $staticLatestMonthsTitle = __('Statistics results for the last %1 months',sizeof($statisticMonthlyOptions));
+    }else{
+       $staticLatestMonthsTitle = __('Statistics results for the last month');
+    }
+
+    // Transaction & Finance
+    $affiliateStatisticAllTime = $rewardRuleHelper->getStatisticAffiliateRevenue($customerId);
+    $affiliateRewardAllTime =  $affiliateStatisticAllTime["affiliate_reward_amount"];
+    // -- Affiliate Margin Limit
+    // hạng mức ký quỹ
+    $marginLimitBalance = $financeTransactionHelper->getAccountAmountMarginBalance($block->_customer->getId());
+    $marginChangeDate = $block->_helperAccount->getMarginLimitChangedLatestDateStr($block->_customer->getId());
+    // tổng số tiền đã giao dịch
+    $accountAmountTransaction = $financeTransactionHelper->getAccountAmountTransactionAll($block->_customer->getId());
+    // Tổng số tiền trong tài khoản = Tổng số tiền đã giao dịch + Tổng chiết khấu toan thoi gian
+    $accountAmountBalance = $accountAmountTransaction + $affiliateRewardAllTime;
+        //$marginLimitAffiliateLevel  = $this->_helperAccount->getAffiliateMarginLimit($block->_customer->getId());
+    // số dư khả dụng = Tổng số tiền trong tài khoản - hạn mức ký quỹ
+    $accountAmountTransactionAvaiable = $financeTransactionHelper->getAccountAmountTransactionAllAvaiable($block->_customer->getId());
+    $accountAmountAvailable = $accountAmountTransactionAvaiable - $marginLimitBalance + $affiliateRewardAllTime;
+
+
+
+    $accountAmountWithdrawalReward = $financeTransactionHelper->getAccountAmountTransactionWithdrawalReward($block->_customer->getId());
+    $accountAmountDepositWithoutMargin = $financeTransactionHelper->getAccountAmountTransactionDepositWithoutMargin($block->_customer->getId());
+    $accountAmountHandleResponsibility = $financeTransactionHelper->getAccountAmountTransactionHandleResponsibility($block->_customer->getId());
+
+    //$accountTransactions = $financeTransactionHelper->getAccountTransactions($block->_customer->getId());
+    $accountTransactionsByMonth = $financeTransactionHelper->getAccountTransactionsByMonth($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsWithdrawalReward  = $financeTransactionHelper->getAccountTransactionsWithdrawalReward($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsHandleResponsibility  = $financeTransactionHelper->getAccountTransactionsHandleResponsibility($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsDepositWithoutMargin  = $financeTransactionHelper->getAccountTransactionsDepositWithoutMargin($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    // $moneyConditon = 1000000;
+    $withdrawalRewardAmountMin = (int) $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('configuration/general/withdrawal_reward_amount_min');
+
+?>
+<style>
+    .span-sp{
+        color: #ff6000;
+    }
+</style>
+<div class="affiliate">
+    <!-- <p class="title"><?php echo __('Account Affiliate'); ?></p> -->
+    <div class="infor-affiliate">
+
+        <div class="flex-25">
+            <p class="code-ctv"><?php echo __('Affiliate Code Short'); ?>: <span><?= $affiliateCode ?></span></p>
+            <p class="margin-ctv"><?php echo __('Margin limit'); ?>: <span><?= $priceHelper->formatPrice(floatval($marginLimitBalance) ); ?></span></p>
+            <div class="group-ctv">
+                <div class="left-group"><?php echo __('Affiliate Subgroup'); ?>:<span><?php echo __('affiliate_level_' . $affiliateLevel); ?></span></div>
+                <?=  $levelStars ?>
+            </div>
+        </div>
+        <div class="flex-35">
+            <p><?php echo __('Registration date'); ?>: <span><?= $block->_helperAccount->getRegisteredDateStr($block->_customer->getId()) ?></span></p>
+            <p><?php echo __('Official date to become affiliate'); ?>: <span><?= $block->_helperAccount->getActivatedDateStr($block->_customer->getId()) ?></span></p>
+            <?php if ($marginChangeDate) : ?><p><?php echo __('Date margin'); ?>: <span><?= $marginChangeDate ?></span></p><?php endif; ?>
+        </div>
+        <div class="flex-40">
+        <?php if ($latestOrderDate) : ?><p><?php echo __('Date of most recent order'); ?>: <span><?= $latestOrderDate ?></span></p><?php endif; ?>
+            <?php if ($levelChangeDate) : ?><p><?php echo __('Date of most recent subgroup change'); ?>: <span><?= $levelChangeDate ?></span></p><?php endif; ?>
+            <p><?php echo __('Latest login time'); ?>: <span><?= $block->_helperAccount->getLogginLatestDate($block->_customer->getId()) ?></span></p>
+        </div>
+    </div>
+    <div class="affiliate-money" style="">
+        <div class="row">
+            <div class="col-12 first">
+                <div class="float-left"><span class="lbl-total-balance-amount"><?php echo __('Total balance amount'); ?></span></div>
+                <div class="float-right total-account"><span><?= $priceHelper->formatPrice(floatval($accountAmountBalance) ) ?></span></div>
+            </div>
+            <div class="col-12">
+                <div class="float-left"><span class="lbl-available-balances"><?php echo __('Available balances'); ?></span></div>
+                <div class="float-right available-balances"><span><?= $priceHelper->formatPrice(floatval($accountAmountAvailable) ) ?> </span></div>
+            </div>
+        </div>
+    </div>
+    <form class="form withdrawed"
+    id="form-submit-withdraw"
+    action="/customer/account/withdrawal"
+    method="post">
+        <div class="row">
+            <div class="col-12 withdrawedbox">
+                <div class="float-left row-title">(<span class="span-sp">*</span>) <?php echo $block->escapeHtml(__('Available balance: Is the balance CTV can withdraw, the minimum amount of 1 withdrawal is %1 VND', number_format($withdrawalRewardAmountMin, 0, '', '.'))); ?></div>
+                <div class="float-right row-button">
+                    <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                    <input type="hidden" name="accountamountavailable" value="<?php echo $accountAmountAvailable; ?>">
+                    <button class="primary"  <?= ($accountAmountAvailable >= $withdrawalRewardAmountMin) ? "": "disabled";  ?> id="button-withdraw" type="submit"><i class="fas fa-wallet fa-fw"></i> <?php echo __('Withdraw money'); ?></button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="block-statistical-month">
+        <p>
+            <span class="title-statistics"><?= $staticLatestMonthsTitle ?></span>: <?= $staticLatestMonthsStr ?>
+        </p>
+        <div id="table-month">
+            <table id="table-report-summary-stats" class="report-summary-stats">
+              <tbody>
+                <tr style="display: flex;">
+                    <th style="width: 30%; flex: 1 1 30%;"></th>
+                    <th style="width: 35%; flex: 1 1 35%;"><?php echo __('Revenue'); ?></th>
+                    <th style="width: 35%; flex: 1 1 35%;"><?php echo __('Discount'); ?></th>
+                </tr>
+                <tr style="display: flex;">
+                    <td style="width: 30%; flex: 1 1 30%;" class="text-center"><?php echo __('Total'); ?></td>
+                    <td style="width: 35%; flex: 1 1 35%;" class="text-center primary"><strong><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($affiliateRevenueLatestMonths) ) ?></strong></td>
+                    <td style="width: 35%; flex: 1 1 35%;" class="text-center primary"><strong><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($affiliateRewardLatestMonths) ) ?></strong></td>
+                </tr>
+                <?php if($affiliateStatisticLatestMonthsByBrand){ ?>
+                    <?php foreach($affiliateStatisticLatestMonthsByBrand as $item){ ?>
+                        <tr style="display: flex;">
+                            <td style="width: 30%; flex: 1 1 30%;;" class="text-center brand-logo"><img src="<?= $this->getProductBrandImageUrl($item['product_brand_id']) ?>"/></td>
+                            <td style="width: 35%; flex: 1 1 35%;" class="text-center"><?= /* @escapeNotVerified */ $priceHelper->formatPrice($item['affiliate_revenue_amount']) ?></td>
+                            <td style="width: 35%; flex: 1 1 35%;" class="text-center"><?= /* @escapeNotVerified */ $priceHelper->formatPrice($item['affiliate_reward_amount']) ?></td>
+                        </tr>
+                    <?php }?>
+                <?php }?>
+              </tbody>
+            </table>
+        </div>
+        <table class="report-stats" style="margin-top: 30px;">
+            <tr>
+                <td rowspan="2" class="text-center"><?php echo __('Number of successful orders'); ?></td>
+                <td rowspan="2" class="text-center">
+                    <form class="form history-mini-search" id="history_search_big_number" action="/sales/order/history/" method="get">
+                        <a class="primary big-number" href="javascript:void()" onclick="document.getElementById('history_search_big_number').submit();">
+                          <strong><?= $affiliateOrderCount ?></strong>
+                        </a>
+                        <input type="hidden" name="status" value="<?php echo implode(",",['completed']); ?>">
+                        <input type="hidden" name="from" value="<?= $monthRangeStartFilter ?>">
+                        <input type="hidden" name="to" value="<?php echo $monthRangeEndFilter; ?>">
+                    </form>
+                </td>
+                <td class="text-center"><?php echo __('Take the initiative'); ?></td>
+                <td class="text-center">
+                    <form class="form history-mini-search" id="history_search_takeinitiative_number" action="/sales/order/history/" method="get">
+                        <a class="primary" href="javascript:void()" onclick="document.getElementById('history_search_takeinitiative_number').submit();">
+                          <strong><?= $affiliateOrderTypeActiveCount ?></strong>
+                        </a>
+                        <input type="hidden" name="status" value="<?php echo implode(",",['completed']); ?>">
+                        <input type="hidden" name="kind" value="active">
+                        <input type="hidden" name="from" value="<?php echo $monthRangeStartFilter; ?>">
+                        <input type="hidden" name="to" value="<?php echo $monthRangeEndFilter; ?>">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center"><?php echo __('Noted by customers'); ?></td>
+                <td class="text-center">
+                    <form class="form history-mini-search" id="history_search_noted" action="/sales/order/history/" method="get">
+                        <a class="primary" href="javascript:void()" onclick="document.getElementById('history_search_noted').submit();">
+                          <strong><?= $affiliateOrderTypePassiveCount ?></strong>
+                        </a>
+                        <input type="hidden" name="status" value="<?php echo implode(",",['completed']); ?>">
+                        <input type="hidden" name="kind" value="passive">
+                        <input type="hidden" name="from" value="<?php echo $monthRangeStartFilter; ?>">
+                        <input type="hidden" name="to" value="<?php echo $monthRangeEndFilter; ?>">
+                     </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="block-statistical-transaction-adjust-total">
+        <p>
+            <span class="block-title ">Điều chỉnh tăng/giảm</span>
+        </p>
+        <div >
+            <table class="report-stats">
+                <tr>
+                    <th>Đã rút</th>
+                    <th>Xử lý trách nhiệm</th>
+                    <th>Nộp vào tài khoản</th>
+                </tr>
+                <tr>
+                    <td class="text-center "><a  href="#" class="link-warning" data-toggle="modal" data-target="#modal-transactions-withdrawal"><strong class="amount-warning"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval(abs($accountAmountWithdrawalReward) ) ) ?></strong></a></td>
+                    <td class="text-center "><a  href="#" class="link-danger" data-toggle="modal" data-target="#modal-transactions-handleresponsibility"><strong class="amount-danger"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval(abs($accountAmountHandleResponsibility) ) ) ?></strong></a></td>
+                    <td class="text-center "><a  href="#" class="link-primary" data-toggle="modal" data-target="#modal-transactions-depositcash"><strong class="amount-primary"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval(abs($accountAmountDepositWithoutMargin)) ) ?></strong></a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="block-statisic-monthly">
+        <p>
+            <span class="block-title">Thống kê kết quả:</span>
+            <select class="form-control" id="affiliate-level-select">
+                <?php foreach ($statisticMonthlyOptions as $option) {
+                ?>
+                   <option value="<?= $option["month"] ?>"
+                        <?= ($option["month"] == $currentStatisticMonthlyKey) ? "selected" : "" ?>
+                    >Tháng <?= $option["month_label"] ?></option>
+                <?php } ?>
+            </select>
+            <div class="clearfix"></div>
+        </p>
+        <ul class="nav nav-tabs d-none" id="statistic-monthly-tab">
+            <?php foreach ($statisticMonthlyOptions as $option) { ?>
+                <li><a href="#tab-monthly-<?= $option["month"] ?>" data-toggle="tab"><?= $option["month_label"] ?></a></li>
+            <?php } ?>
+        </ul>
+        <div class="tab-content" id="statistic-monthly-content">
+            <?php foreach ($statisticMonthlyOptions as $option) {
+                $monthKey = $option["month"];
+                if(array_key_exists($monthKey, $statisticMonthly)){
+                    $monthlyData = $statisticMonthly[$monthKey];
+                    $orderCountPending = $monthlyData["order_count_pending"];
+                    $revenuePending = $monthlyData["revenue_pending"];
+                    $rewardPending = $monthlyData["reward_pending"];
+
+                    $orderCountFinished = $monthlyData["order_count_finished"];
+                    $revenueFinished = $monthlyData["revenue_finished"];
+                    $rewardFinished = $monthlyData["reward_finished"];
+
+                    $orderCountReturned = $monthlyData["order_count_returned"];
+                    $revenueReturned = $monthlyData["revenue_returned"];
+                    $rewardReturned = $monthlyData["reward_returned"];
+                }else{
+                    $orderCountPending = 0;
+                    $revenuePending = 0;
+                    $rewardPending = 0;
+
+                    $orderCountFinished = 0;
+                    $revenueFinished = 0;
+                    $rewardFinished = 0;
+
+                    $orderCountReturned = 0;
+                    $revenueReturned = 0;
+                    $rewardReturned = 0;
+                }
+            ?>
+            <div class="tab-pane <?= ($option["month"] == $currentStatisticMonthlyKey) ? " show active " : "" ?>" id="tab-monthly-<?= $option["month"] ?>" role="tabpanel">
+                <table class="report-stats">
+                    <tr>
+                        <th>Hạng mục</th>
+                        <th>Số đơn hàng</th>
+                        <th>Doanh thu</th>
+                        <th>Chiết khấu</th>
+                    </tr>
+                    <tr>
+                        <td>1. Chưa hoàn thành/ chưa xác nhận</td>
+                        <td class="text-center"><?= $orderCountPending ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($revenuePending) ) ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($rewardPending) )?></td>
+                    </tr>
+                    <tr>
+                        <td>2. Hoàn thành/ hợp lệ</td>
+                        <td class="text-center"><?= $orderCountFinished ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($revenueFinished)  ) ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($rewardFinished)  ) ?></td>
+                    </tr>
+                    <tr>
+                        <td>3. Bị hủy/ trả hàng</td>
+                        <td class="text-center"><?= $orderCountReturned ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($revenueReturned)  ) ?></td>
+                        <td class="text-center"><?= $priceHelper->formatPrice(floatval($rewardReturned)  ) ?></td>
+                    </tr>
+                </table>
+
+                <!-- Adjust Details by Month -->
+                <div class="block-statistical-transaction-adjust-detail">
+                    <p>
+                        <span class="block-title ">Điều chỉnh tăng/giảm</span>
+                    </p>
+                    <div >
+                        <table class="report-stats">
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Mã chứng từ</th>
+                                <th>Số tiền</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                            <?php
+                                if ( array_key_exists($monthKey, $accountTransactionsByMonth)
+                                    && sizeof($accountTransactionsByMonth[$monthKey]) > 0){
+                                    $accountTransactions =  $accountTransactionsByMonth[$monthKey];
+                            ?>
+                                <?php foreach ($accountTransactions as $transaction) {
+                                    $amountClass = $financeTransactionHelper->getTransactionTypeAmountCssClass($transaction["transaction_type_id"]);
+                                    $transactionDateRaw = $transaction["start_date"];
+                                    $transactionDateStr = $transactionDateRaw ? date('d/m/Y', strtotime($transactionDateRaw )) : "";
+                                    $transactionDocumentCode = $transaction["document_code"];
+                                    $transactionAmount = $transaction["amount"];
+                                    $transactionNote = $financeTransactionHelper->getTransactionNote($transaction);
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $transactionDateStr ?></td>
+                                    <td class="text-center"><?=  $transactionDocumentCode ?></td>
+                                    <td class="text-center"><span class="<?= $amountClass ?>"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($transactionAmount) ) ?></span></td>
+                                    <td class="text-center"><?= $transactionNote ?></td>
+                                </tr>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <tr>
+                                    <td colspan="4" class="text-center">Không có thông tin</td>
+                                </tr>
+                            <?php } ?>
+                        </table>
+                    </div>
+                </div> <!-- ./block-statistical-transaction-adjust-detail -->
+
+            </div> <!-- /.tab-pane -->
+            <?php } ?>
+
+
+        </div>
+    </div>
+
+   <!-- Modal Withdrawal -->
+   <div class="modal fade modal-transactions" id="modal-transactions-withdrawal" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modal-transactions-withdrawal-title" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-transactions-withdrawal-title"><i class="fas fa-comment-dollar fa-fw"></i>Đã rút</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div >
+                <table class="report-stats">
+                    <tr>
+                        <th>Ngày yêu cầu</th>
+                        <th>Ngày hoàn thành</th>
+                        <th>Mã chứng từ</th>
+                        <th>Số tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    <?php
+                        if ( sizeof($accountTransactionsWithdrawalReward) > 0){
+                    ?>
+                        <?php foreach ($accountTransactionsWithdrawalReward as $transaction) {
+                            $amountClass = $financeTransactionHelper->getTransactionTypeAmountCssClass($transaction["transaction_type_id"]);
+                            $startDateRaw = $transaction["start_date"];
+                            $startDateStr = $startDateRaw ? date('d/m/Y', strtotime($startDateRaw )) : "";
+                            $endDateRaw  = $transaction["end_date"];
+                            $endDateStr = $endDateRaw ? date('d/m/Y', strtotime($endDateRaw )) : "";
+                            $transactionDocumentCode = $transaction["document_code"];
+                            $transactionAmount = $transaction["amount"];
+                            $transactionNote = $financeTransactionHelper->getTransactionNote($transaction);
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $startDateStr ?></td>
+                            <td class="text-center"><?= $endDateStr ?></td>
+                            <td class="text-center"><?=  $transactionDocumentCode ?></td>
+                            <td class="text-center"><span class="<?= $amountClass ?>"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($transactionAmount) ) ?></span></td>
+                            <td class="text-center"><?= $transactionNote ?></td>
+                        </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="5" class="text-center">Không có thông tin</td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= __("Close") ?></button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#modal-transactions-withdrawal -->
+
+    <!-- Modal HandleResponsibility -->
+    <div class="modal fade modal-transactions" id="modal-transactions-handleresponsibility" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modal-transactions-handleresponsibility-title" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-transactions-handleresponsibility-title"><i class="fas fa-comment-dollar fa-fw"></i>Xử lý trách nhiệm</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div >
+                <table class="report-stats">
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Mã chứng từ</th>
+                        <th>Số tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    <?php
+                        if ( sizeof($accountTransactionsHandleResponsibility) > 0){
+                    ?>
+                        <?php foreach ($accountTransactionsHandleResponsibility as $transaction) {
+                            $amountClass = $financeTransactionHelper->getTransactionTypeAmountCssClass($transaction["transaction_type_id"]);
+                            $transactionDateRaw = $transaction["start_date"];
+                            $transactionDateStr = $transactionDateRaw ? date('d/m/Y', strtotime($transactionDateRaw )) : "";
+                            $transactionDocumentCode = $transaction["document_code"];
+                            $transactionAmount = $transaction["amount"];
+                            $transactionNote = $financeTransactionHelper->getTransactionNote($transaction);
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $transactionDateStr ?></td>
+                            <td class="text-center"><?=  $transactionDocumentCode ?></td>
+                            <td class="text-center"><span class="<?= $amountClass ?>"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($transactionAmount) ) ?></span></td>
+                            <td class="text-center"><?= $transactionNote ?></td>
+                        </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="4" class="text-center">Không có thông tin</td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= __("Close") ?></button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#modal-transactions-handleresponsibility -->
+
+    <!-- Modal DepositCash -->
+    <div class="modal fade modal-transactions" id="modal-transactions-depositcash" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modal-transactions-depositcash-title" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-transactions-depositcash-title"><i class="fas fa-comment-dollar fa-fw"></i>Nộp vào tài khoản</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div >
+                <table class="report-stats">
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Mã chứng từ</th>
+                        <th>Số tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    <?php
+                        if ( sizeof($accountTransactionsDepositWithoutMargin) > 0){
+                    ?>
+                        <?php foreach ($accountTransactionsDepositWithoutMargin as $transaction) {
+                            $amountClass = $financeTransactionHelper->getTransactionTypeAmountCssClass($transaction["transaction_type_id"]);
+                            $transactionDateRaw = $transaction["start_date"];
+                            $transactionDateStr = $transactionDateRaw ? date('d/m/Y', strtotime($transactionDateRaw )) : "";
+                            $transactionDocumentCode = $transaction["document_code"];
+                            $transactionAmount = $transaction["amount"];
+                            $transactionNote = $financeTransactionHelper->getTransactionNote($transaction);
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $transactionDateStr ?></td>
+                            <td class="text-center"><?=  $transactionDocumentCode ?></td>
+                            <td class="text-center amount-custom"><span class="<?= $amountClass ?>"><?= /* @escapeNotVerified */ $priceHelper->formatPrice(floatval($transactionAmount) ) ?></span></td>
+                            <td class="text-center"><?= $transactionNote ?></td>
+                        </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="4" class="text-center">Không có thông tin</td>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= __("Close") ?></button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- /#modal-transactions-depositcash -->
+
+</div>
+
+
+<script type="text/javascript">
+   require([ 'jquery', 'jquery/ui'], function($) {
+
+      $(document).ready(function(){
+            $('#table-report-summary-stats').readmore({
+              speed: 75,
+              collapsedHeight: 81,
+              moreLink: '<div class="load-show"><a href="#"><?php  echo __('Load more details'); ?> <i class="fa fa-caret-down" aria-hidden="true"></i></a></div>',
+              lessLink: '<div class="load-show"><a href="#"><?php  echo __('Load less details'); ?> <i class="fa fa-caret-up" aria-hidden="true"></i></a></div>',
+
+            });
+      });
+
+   });
+</script>
+<script type="text/javascript">
+    require([
+            'jquery',
+            'Magento_Customer/js/customer-data',
+            'mage/translate',
+            'Chottvn_Affiliate/js/ddslick'
+        ],
+        function($, customerData, $t) {
+            // load html selector
+            $('#affiliate-level-select').ddslick({width: 140});
+
+            // event click select option
+            $('#affiliate-level-select a.dd-option').on('click', function(e) {
+                //var level = $(this).val();
+                var level = $('#affiliate-level-select .dd-selected-value').val();
+                $('a[href="#tab-monthly-' + level + '"]').tab('show');
+            });
+            // $('#button-withdraw').click(function(){
+            //     var check = $("button").hasClass("require-withdrawed");
+            //     if(check){
+            //         $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __("Unqualified"); ?>' });
+            //     }else{
+            //         $('#form-submit-withdraw').submit();
+            //     }
+            //     return false;
+            // });
+        });
+</script>

@@ -1,0 +1,89 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Blog\Block\Sidebar\MostView $block */
+?>
+<?php
+    // call helper data
+    $blogHelper = $this->helper('Chottvn\Blog\Helper\Data');
+    // get configs
+    $data = $block->getData() ? $block->getData():array();
+    // get Related Posts By Category Ids
+    $customPosts = $blogHelper->getCustomPosts($data);
+    // style display
+    $display_style = isset($data['display_style']) ? $data['display_style']:'';
+    // youtube url
+    $youtube_url = isset($data['youtube_url']) ? $data['youtube_url']:'';
+?>
+
+<div class="mp-sidebar product info detailed <?php echo $display_style; ?>">
+    <?php if ($customPosts->getSize()>0): ?>
+        <div class="ctt-block-mp-sidebar-heading">
+            <span class="title"><?php echo $this->getData('title'); ?></span>
+        </div>
+        <!-- List Posts -->
+        <div class="ctt-side-content-wrapper">
+            <!-- BEGIN: News item -->
+            <?php foreach ($customPosts as $post): ?>
+                <div class="post-item">
+                    <?php 
+                    if($youtube_url){ 
+                        $youtube_code = $blogHelper->convertYoutubeCode($post->getPostContent());
+
+                        if($youtube_code){
+                            echo '<div class="video-wrapper">';
+                                echo '<iframe width="560" height="315" src="https://www.youtube.com/embed/'.$youtube_code.'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+                            echo '</div>';
+                            echo '<div class="post-item-title">'.$post->getName().'</div>';
+                        }
+                    ?>
+                    <?php }else{ ?>
+                        <div class="post-item-image">
+                            <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                <img class="card-img-top border-small-image" src="<?php echo $block->resizeImage($post->getImage());  ?>" title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>">
+                                <?php if($post->getIsVideo()== 1): ?>
+                                    <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-small">
+                                <?php endif;?>
+                            </a>
+                        </div>
+                        <div class="post-item-data">
+                            <span class="post-item-name">
+                                <a href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>">
+                                    <?php echo $post->getName(); ?>
+                                </a>
+                            </span>
+                            <span class="post-item-date">
+                                <?php echo $post->getPublishDate() ? $block->getDateFormat($post->getPublishDate()) : ''; ?>
+                            </span>
+                        </div>
+                    <?php } ?>
+                    
+                </div>
+            <?php endforeach; ?>
+            <!-- END: News item -->
+            <?php 
+                if($youtube_url){
+                    echo '<div class="post-url"><a target="_blank" href="'.$youtube_url.'" title="'.$this->getData('title').'">'.__('View more youtube').' <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></div>';
+                }
+            ?>
+        </div>
+    <?php endif; ?>
+</div>

@@ -1,0 +1,17 @@
+<!--@subject {{trans "Thông báo đóng băng tài khoản tại %store_name" store_name=$store.getFrontendName()}}  @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>{{trans "Chào %full_name," full_name=$fullName}}</p>
+<br />
+<p>{{trans "Chúng tôi xin thông báo tài khoản của bạn đã bị Đóng băng"}}</p>
+<p>{{trans "Trong thời gian tài khoản của bạn bị đóng băng, bạn vẫn được phép đăng nhập vào tài khoản của mình, nhưng sẽ không được ghi nhận đơn hàng."}}</p>
+<p>{{trans "Mã CTV của bạn là: <strong>%affiliate_code</strong>" affiliate_code=$affiliateCode |raw}}</p>
+<p>{{trans "Tên đăng nhập là: <strong>%username</strong>" username=$username |raw}}</p>
+<p>{{trans "Mọi thắc mắc về tài khoản cộng tác viên, vui lòng liên hệ với Phòng Nhân sự, Cty CP Chợ Trực Tuyến qua email: <a href='mailto:lienhe@chotructuyen.co'>ctv@chotructuyen.co</a>" |raw}}</p>
+<br />
+<p>{{trans "Chúc bạn một ngày vui vẻ."}}</p>
+<p>{{trans "Trân trọng!"}}</p>
+<p>{{trans "Cty CP Chợ Trực Tuyến"}}</p>
+
+{{template config_path="design/email/footer_template"}}

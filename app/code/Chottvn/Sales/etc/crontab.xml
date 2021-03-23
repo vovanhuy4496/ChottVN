@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+	<group id="default">
+		<job instance="Chottvn\Sales\Cron\FinishOrder" method="execute" name="chottvn_sales_finishorder">
+			<!-- <schedule>*/5 * * * *</schedule> -->
+			<config_path>chottvn_sales_configuration/chottvn_sales/finish_order_cron</config_path>
+		</job>
+	</group>
+</config>

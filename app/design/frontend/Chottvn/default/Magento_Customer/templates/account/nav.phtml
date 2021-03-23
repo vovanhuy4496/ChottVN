@@ -1,0 +1,57 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');  
+$customerData = $customerSession->getCustomer(); //get all data of customerData
+
+$request = $objectManager->get('Magento\Framework\App\Action\Context')->getRequest();
+$current_action = implode('/', explode('_',$request->getFullActionName()));
+// nav_my_account="{\"name\":\"My Account\",\"link\":\"customer/account\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_my_orders="{\"name\":\"My Orders\",\"link\":\"sales/order/history\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_my_downloadable_products="{\"name\":\"My Downloadable Products\",\"link\":\"downloadable/customer/products\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_my_wish_list="{\"name\":\"My Wish List\",\"link\":\"wishlist\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_address_book="{\"name\":\"Address Book\",\"link\":\"customer/address\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_account_information="{\"name\":\"Account Information\",\"link\":\"customer/account/edit\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_my_product_reviews="{\"name\":\"My Product Reviews\",\"link\":\"review/customer\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_newsletter_subscriptions="{\"name\":\"Newsletter Subscriptions\",\"link\":\"newsletter/manage\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// nav_loyalty_program="{\"name\":\"Loyalty Program\",\"link\":\"amrules/index\",\"target\":\"_self\",\"icon\":\"fa-user\"}"
+// $link_tabs = $this->_getConfig('link_tabs') ? json_decode(stripslashes($this->_getConfig('link_tabs'))):"";
+// {{block class="Magento\Framework\View\Element\Template" template="Sm_ListingTabs::viewed.phtml" name="sidebar.main.account_nav_v2" template="Magento_Customer::account/nav.phtml" my_account="{\"name\":\"My Account\",\"link\":\"customer/account\",\"target\":\"_self\",\"icon\":\"fa-user\"}" my_orders="{\"name\":\"My Orders\",\"link\":\"sales/order/history\",\"target\":\"_self\",\"icon\":\"fa-user\"}" my_downloadable_products="{\"name\":\"My Downloadable Products\",\"link\":\"downloadable/customer/products\",\"target\":\"_self\",\"icon\":\"fa-user\"}" my_wish_list="{\"name\":\"My Wish List\",\"link\":\"wishlist\",\"target\":\"_self\",\"icon\":\"fa-user\"}" address_book="{\"name\":\"Address Book\",\"link\":\"customer/address\",\"target\":\"_self\",\"icon\":\"fa-user\"}" account_information="{\"name\":\"Account Information\",\"link\":\"customer/account/edit\",\"target\":\"_self\",\"icon\":\"fa-user\"}" my_product_reviews="{\"name\":\"My Product Reviews\",\"link\":\"review/customer\",\"target\":\"_self\",\"icon\":\"fa-user\"}" newsletter_subscriptions="{\"name\":\"Newsletter Subscriptions\",\"link\":\"newsletter/manage\",\"target\":\"_self\",\"icon\":\"fa-user\"}" loyalty_program="{\"name\":\"Loyalty Program\",\"link\":\"amrules/index\",\"target\":\"_self\",\"icon\":\"fa-user\"}"}}
+$arr_block_data = $block->getData();
+
+$filtered_account_nav = array_filter($arr_block_data, function($k){
+   return preg_match('/^nav_/', $k);
+}, ARRAY_FILTER_USE_KEY);
+
+$current_url = $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]);
+?>
+
+<div class="block account-nav">
+    <div class="content account-nav-content" id="account-nav">
+        <ul class="nav items">
+        	<?php foreach ($filtered_account_nav as $nav) { 
+        		$isActive = false;
+        		$info = $nav ? json_decode(stripslashes($nav)):"";
+        		//echo '<pre>';print_r($customerData->getGroupId());echo '</pre>';exit;
+        		if(isset($info->group)){
+        			$accept_groups = explode(',', $info->group);
+        			if(!in_array($customerData->getGroupId(), $accept_groups)){
+        				continue;
+        			}
+        		}
+        		// echo '<pre>';
+        		// print_r($info);exit;
+        		if ($current_action == $info->link) {
+        	?>
+	        		<li class="nav item current">
+	        			<strong><i class="<?php echo $info->icon; ?>"></i><?php echo __($info->name); ?></strong>
+	        		</li>
+	        	<?php }else{ ?>
+	        		<li class="nav item">
+		        		<a href="<?php echo $block->getUrl($info->link); ?>" target="<?php echo $info->target;?>"><i class="<?php echo $info->icon; ?>"></i><?php echo __($info->name); ?></a>
+		        	</li>
+	        	<?php } ?>
+			<?php } ?>
+		</ul>
+	</div>
+</div>

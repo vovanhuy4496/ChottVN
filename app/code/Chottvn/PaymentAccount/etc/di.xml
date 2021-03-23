@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Chottvn\PaymentAccount\Api\BankRepositoryInterface" type="Chottvn\PaymentAccount\Model\BankRepository"/>
+	<preference for="Chottvn\PaymentAccount\Api\Data\BankInterface" type="Chottvn\PaymentAccount\Model\Data\Bank"/>
+	<preference for="Chottvn\PaymentAccount\Api\Data\BankSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\PaymentAccount\Model\ResourceModel\Bank\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_paymentaccount_bank</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\PaymentAccount\Model\ResourceModel\Bank\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_paymentaccount_bank_listing_data_source" xsi:type="string">Chottvn\PaymentAccount\Model\ResourceModel\Bank\Grid\Collection</item>
+				<item name="chottvn_paymentaccount_customerbankaccount_listing_data_source" xsi:type="string">Chottvn\PaymentAccount\Model\ResourceModel\CustomerBankAccount\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+	<preference for="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" type="Chottvn\PaymentAccount\Model\CustomerBankAccountRepository"/>
+	<preference for="Chottvn\PaymentAccount\Api\Data\CustomerBankAccountInterface" type="Chottvn\PaymentAccount\Model\Data\CustomerBankAccount"/>
+	<preference for="Chottvn\PaymentAccount\Api\Data\CustomerBankAccountSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\PaymentAccount\Model\ResourceModel\CustomerBankAccount\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_paymentaccount_customerba</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\PaymentAccount\Model\ResourceModel\CustomerBankAccount\Collection</argument>
+		</arguments>
+	</virtualType>
+</config>

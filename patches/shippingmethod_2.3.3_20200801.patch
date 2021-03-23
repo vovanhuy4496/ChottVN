@@ -1,0 +1,29 @@
+--- a/vendor/magento/module-quote/Model/Cart/ShippingMethod.php	2020-08-01 19:42:41.000000000 +0700
++++ b/vendor/magento/module-quote/Model/Cart/ShippingMethod.php.new	2020-08-01 19:45:37.000000000 +0700
+@@ -16,7 +16,25 @@
+     ShippingMethodInterface
+ {
+ 
+-     /**
++    /**
++    * Returns Get Flag.
++    *
++    * @return string Get Flag.
++    */
++    public function getFlag(){
++        return $this->_get(self::KEY_FLAG);
++    }
++
++    /**
++    * Returns Set Flag.
++    *
++    * @return string Set Flag.
++    */
++    public function setFlag($flag){
++        return $this->setData(self::KEY_FLAG, $flag);
++    }
++
++    /**
+      * Returns Get Min Delivery Dates.
+      *
+      * @return int Get Min Delivery Dates.

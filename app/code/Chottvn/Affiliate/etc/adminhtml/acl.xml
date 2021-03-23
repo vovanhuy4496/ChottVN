@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Chottvn_Affiliate::affiliate" title="Affiliates" translate="title" sortOrder="40">
+                    <resource id="Chottvn_Affiliate::manage" title="All Affiliates" translate="title" sortOrder="10">
+                        <resource id="Chottvn_Affiliate::actions" title="Actions" translate="title" sortOrder="10">
+                            <resource id="Chottvn_Affiliate::delete" title="Delete" translate="title" sortOrder="10" />
+                            <resource id="Chottvn_Affiliate::reset_password" title="Reset password" translate="title" sortOrder="20" />
+                            <resource id="Chottvn_Affiliate::invalidate_tokens" title="Invalidate tokens" translate="title" sortOrder="30" />
+                        </resource>
+                    </resource>
+                    <resource id="Chottvn_Affiliate::online" title="Now Online" translate="title" sortOrder="20" />
+                    <resource id="Chottvn_Affiliate::group" title="Customer Groups" translate="title" sortOrder="30" />
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Chottvn_Affiliate::config_affiliate" title="Affiliates Section" translate="title" sortOrder="50" />
+                        </resource>
+                    </resource>
+                </resource>
+				<resource id="Chottvn_Affiliate::rewardrule" sortOrder="10" title="RewardRule">
+					<resource id="Chottvn_Affiliate::rewardrule_save" sortOrder="10" title="Save RewardRule"/>
+					<resource id="Chottvn_Affiliate::rewardrule_delete" sortOrder="20" title="Delete RewardRule"/>
+					<resource id="Chottvn_Affiliate::rewardrule_update" sortOrder="30" title="Update RewardRule"/>
+					<resource id="Chottvn_Affiliate::rewardrule_view" sortOrder="40" title="View RewardRule"/>
+				</resource>
+				<resource id="Chottvn_Affiliate::levelrule" sortOrder="10" title="LevelRule">
+					<resource id="Chottvn_Affiliate::levelrule_save" sortOrder="10" title="Save LevelRule"/>
+					<resource id="Chottvn_Affiliate::levelrule_delete" sortOrder="20" title="Delete LevelRule"/>
+					<resource id="Chottvn_Affiliate::levelrule_update" sortOrder="30" title="Update LevelRule"/>
+					<resource id="Chottvn_Affiliate::levelrule_view" sortOrder="40" title="View LevelRule"/>
+				</resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

@@ -1,0 +1,74 @@
+{
+    "chottvn_finance_transactiontype": {
+        "column": {
+            "transactiontype_id": true,
+            "code": true,
+            "rate": true,
+            "name": true,
+            "description": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_finance_request": {
+        "column": {
+            "request_id": true,
+            "account_id": true,
+            "transaction_type_id": true,
+            "requested_at": true,
+            "amount": true,
+            "note": true,
+            "status": true,
+            "processed_by": true,
+            "processed_at": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_finance_transaction": {
+        "column": {
+            "transaction_id": true,
+            "account_id": true,
+            "request_id": true,
+            "transaction_type_id": true,
+            "amount": true,
+            "rate": true,
+            "status": true,
+            "start_date": true,
+            "end_date": true,
+            "transaction_date": true,
+            "note": true,
+            "processed_by": true,
+            "created_at": true,
+            "updated_at": true,
+            "document_code": true,
+            "document_file": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_log_finance": {
+        "column": {
+            "id": true,
+            "account_id": true,
+            "notification": true,
+            "event": true,
+            "resource_id": true,
+            "resource_type": true,
+            "value": true,
+            "value_old": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

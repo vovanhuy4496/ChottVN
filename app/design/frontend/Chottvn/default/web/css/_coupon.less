@@ -1,0 +1,244 @@
+.customer-account-coupon {
+  .page-title-wrapper{
+    display: block !important;
+    .page-title{
+      font-size: 20px;
+      font-weight: 600;
+      color: @color_theme_text;
+      text-transform: none;
+      margin-bottom: 15px;
+      &:before{
+        display: none;
+      }
+    }
+  }
+  .coupon-empty {
+    padding: 0px;
+    text-align: center;
+
+    .coupon-empty-notes {
+      padding: 45px 0px;
+
+      .coupon-icon {
+        color: @color_theme_line;
+        font-size: 70px;
+      }
+    }
+  } // coupon-empty
+
+  .coupon-list {
+    .coupon-item-wrapper {
+      float: left;
+      display: block;
+      border: dashed 1px @color_border_line;
+      padding: 15px;
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .coupon-item {
+
+
+      .coupon-thumb {
+        width: 150px;
+        height: 150px;
+        float: left;
+        text-align: center;
+
+        @media (max-width: 767px) {
+          width: 90px;
+          height: 90px;
+        }
+
+        .rule-type {
+          text-transform: uppercase;
+          margin: 0px;
+          padding: 40px 0 0 0;
+          font-weight: 600;
+
+          @media (max-width: 767px) {
+            padding: 20px 0 0 0;
+          }
+        }
+
+        .discount-amount {
+          margin: 0px;
+          padding: 0px;
+          font-weight: 600;
+          font-size: 30px;
+
+          @media (max-width: 767px) {
+            font-size: 20px;
+          }
+        }
+
+        &.orange-thumb {
+          background: @color_theme_secondary;
+          color: @white;
+        }
+      }
+      .coupon-content {
+        width: calc(~"100% - 150px");
+        padding-left: 15px;
+        float: left;
+
+        @media (max-width: 767px) {
+          width: calc(~"100% - 90px");
+        }
+
+        .rule-name {
+          font-size: 20px;
+          color: @color_theme_text;
+          padding-bottom: 10px;
+          margin: 0px;
+        }
+
+        .code-status {
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 12px;
+          font-weight: 600;
+
+          .coupon-code {
+            float: left;
+            border: dashed 1px @color_theme_secondary;
+            background: @color_rules_gift;
+            margin-right: 10px;
+            line-height: 28px;
+            padding: 0 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+
+            &.active {
+              color: @color_theme_text;
+            }
+
+            &.inactive {
+              color: @color_theme_text_disable!important;
+            }
+
+            .title {
+              font-weight: 400;
+              text-transform: none;
+            }
+          }
+
+          .copy-action {
+            float: left;
+            border: dashed 1px @color_theme_text_muted;
+            text-transform: none;
+            line-height: 28px;
+            padding: 0 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            &.active {
+              color: @color_theme_text;
+            }
+
+            &.inactive {
+              color: @color_theme_text_disable!important;
+            }
+          }
+
+          .coupon-status {
+            float: right;
+
+            &.new {
+              border: solid 3px @color_theme_green;
+              color: @color_theme_green;
+              padding: 0 6px;
+              line-height: 24px;
+            }
+
+            &.used {
+              border: solid 3px @color_theme_red;
+              color: @color_theme_red;
+              padding: 0 6px;
+              line-height: 24px;
+            }
+
+            &.expired {
+              border: solid 3px @color_theme_text_muted;
+              color: @color_theme_text_muted;
+              padding: 0 6px;
+              line-height: 24px;
+            }
+
+            &.revoked {
+              border: solid 3px @color_theme_yellow;
+              color: @color_theme_yellow;
+              padding: 0 6px;
+              line-height: 24px;
+            }
+          }
+        }
+
+        .exp-date {
+          font-size: 14px;
+          color: @color_theme_text;
+          padding-bottom: 10px;
+          margin: 0px;
+
+          span {
+            font-weight: 600;
+          }
+        }
+
+        .rule-desc {
+          margin: 0px;
+          padding: 0px;
+
+          .html-content {
+            line-height: 20px;
+            font-size: 14px;
+          }
+
+          .moreless {
+            line-height: 20px;
+            padding-top: 10px;
+          }
+        }
+
+        .coupon-status-bottom {
+          display: none;
+          margin-top: 10px;
+          text-align: center;
+          text-transform: uppercase;
+
+          &.new {
+            border: solid 3px @color_theme_green;
+            color: @color_theme_green;
+            padding: 0 6px;
+            line-height: 24px;
+          }
+
+          &.used {
+            border: solid 3px @color_theme_red;
+            color: @color_theme_red;
+            padding: 0 6px;
+            line-height: 24px;
+          }
+
+          &.expired {
+            border: solid 3px @color_theme_text_muted;
+            color: @color_theme_text_muted;
+            padding: 0 6px;
+            line-height: 24px;
+          }
+        }
+
+        @media (max-width: 767px) {
+          .code-status .coupon-status {
+            display: none;
+          }
+          .coupon-status-bottom {
+            display: inline-block;
+          }
+        }
+
+      }
+
+    } // coupon-list
+  } // coupon-list
+} // customer-account-coupon

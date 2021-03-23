@@ -1,0 +1,44 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Magento\Theme\Block\Html\Header\Logo $block
+ */
+
+// create info
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// detect mobile
+$detectMobile = $_objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+
+?>
+<?php $storeName = $block->getThemeName() ? $block->getThemeName() : $block->getLogoAlt(); ?>
+<div class="logo-wrapper">
+	<div class="logo-content">
+		<strong class="logo">
+			<a class="logo" href="<?php echo $block->getUrl(''); ?>" title="<?php /* @escapeNotVerified */
+			echo $storeName ?>">
+				<?php if($detectMobile->isMobile() == true && $detectMobile->isTablet() == false){ ?>
+					<img src="<?= $this->getViewFileUrl('images/logo-cho-truc-tuyen-mobile.png');  ?>"
+	                     alt="<?php /* @escapeNotVerified */
+						 echo $block->getLogoAlt() ?>"
+						<?php echo $block->getLogoWidth() ? 'width="' . $block->getLogoWidth() . '"' : '' ?>
+						<?php echo $block->getLogoHeight() ? 'height="' . $block->getLogoHeight() . '"' : '' ?>
+	                />
+            	<?php }else{ ?>
+                <img src="<?= $this->getViewFileUrl('images/logo-cho-truc-tuyen-desktop.png');  ?>"
+      	                     alt="<?php /* @escapeNotVerified */
+      						 echo $block->getLogoAlt() ?>"
+      						<?php echo $block->getLogoWidth() ? 'width="' . $block->getLogoWidth() . '"' : '' ?>
+      						<?php echo $block->getLogoHeight() ? 'height="' . $block->getLogoHeight() . '"' : '' ?>
+      	                />
+            	<?php } ?>
+			</a>
+		</strong>
+	</div>
+</div>

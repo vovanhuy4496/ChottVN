@@ -1,0 +1,83 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+$currentStore = $storeManager->getStore();
+$urlMedia = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+
+// $customerSession = $objectManager->create('Magento\Customer\Model\Session');  
+// $customerData = $customerSession->getCustomer(); //get all data of customerData
+// $current_url = $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]);
+
+$arr_block_data = $block->getData();
+
+$filtered_call_in_action = array_filter($arr_block_data, function($k){
+   return preg_match('/^cia_/', $k);
+}, ARRAY_FILTER_USE_KEY);
+
+$support_online = $arr_block_data['support_online'] ? json_decode(stripslashes($arr_block_data['support_online'])):"";
+$support_close = $arr_block_data['support_close'] ? json_decode(stripslashes($arr_block_data['support_close'])):"";
+?>
+<div class="call-in-action">
+    <div class="action-blocks">
+        <div class="action-blocks-container">
+            <ul class="action-blocks-list">
+                <?php 
+                    foreach ($filtered_call_in_action as $val) {
+                        $val = $val ? json_decode(stripslashes($val)):"";
+                        $name_val = $val->name;
+                        $link_val = $val->link;
+                        $target_val = $val->target;
+                        $image_val = $urlMedia.$val->image;
+                ?>
+                    <li>
+                        <a href="<?= $link_val ?>" title="<?= $name_val ?>" target="<?= $target_val ?>">
+                            <span class="block-image-icon">
+                                <img src="<?= $image_val ?>" title="<?= $name_val ?>" width="50px">
+                            </span>
+                            <div class="block-label"><?= $name_val ?></div>
+                        </a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <?php if($support_online && $support_close){ ?>
+        <div class="action-button">
+            <div class="action-button-close">
+                <a id="cia-action-button-close" href="<?php echo $support_close->link; ?>" target="<?php echo $support_close->target; ?>" title="<?php echo $support_close->name; ?>">
+                    <span class="action-icon">
+                        <img src="<?php echo $urlMedia.$support_close->image; ?>" width="80px" alt="<?php echo $support_close->name; ?>">
+                    </span>
+                    <!-- <div class="action-label"><?php echo $support_close->name; ?></div> -->
+                </a>
+            </div>
+            <div class="action-button-open">
+                <a id="cia-action-button-open" href="<?php echo $support_online->link; ?>" target="<?php echo $support_online->target; ?>" title="<?php echo $support_online->name; ?>">
+                    <div class="action-label"><?php echo $support_online->name; ?></div>
+                    <span class="action-icon">
+                        <img src="<?php echo $urlMedia.$support_online->image; ?>" width="80px" alt="<?php echo $support_online->name; ?>">
+                    </span>
+                </a>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+ require([
+    'jquery'
+], function($) {
+    $('#cia-action-button-open').on('click', function(event){
+        event.preventDefault();
+        $(".action-button-open").addClass( "hide-button" );
+        $(".action-blocks").fadeIn();
+    });
+    $('#cia-action-button-close').on('click', function(event){
+        event.preventDefault();
+        $(".action-button-open").removeClass( "hide-button" );
+        $(".action-blocks").fadeOut();
+    });
+});
+//]]>
+</script>

@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<div class="actions-toolbar">
+    <div class="primary" id="button-handle">
+        <a href="<?= $block->escapeUrl($this->getUrl()) ?>" class="action continue_shopping">
+            <span><?= $block->escapeHtml(__('Continue shopping')) ?></span>
+        </a>
+    </div>
+    <div class="secondary" id="button-back">
+        <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+            <span><?= $block->escapeHtml(__('Back')) ?></span>
+        </a>
+    </div>
+</div>

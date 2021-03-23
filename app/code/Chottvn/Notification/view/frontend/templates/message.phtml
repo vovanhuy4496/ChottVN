@@ -1,0 +1,54 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+    $timezone = $objectManager->get('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+
+    $message = $block->getDetailMessage();
+?>
+<style>
+    .message-detail {
+        margin-top: 0;
+        float: none;
+        display: table-cell;
+        vertical-align: top;
+        padding-bottom: 10px;
+    }
+    .message-header {
+        margin-bottom: 20px;
+    }
+    .message-header h1 {
+        display: block;
+        padding: 0 0 10px 0;
+        line-height: 1.3em;
+        font-size: 24px;
+        color: #000;
+        font-weight: 600;
+        margin: 0;
+    }
+    .message-header span {
+        color: #a8a8a8;
+    }
+    .message-header .firstico:before {
+        content: "●";
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+    .message-header p {
+        border-bottom: 1px solid #ccc;
+        padding-top: 10px;
+    }
+</style>
+<div class="message-detail row">
+    <div class="col-12 message-header">
+        <h1><?= $message['title'] ?></h1>
+        <span>Đăng lúc 08h00, 06/11/2020</span>
+        <span class="firstico">3.693 lượt xem</span>
+        <p></p>
+    </div>
+    <div class="col-12 message-body">
+        <p>
+            <?= $message['description'] ?>
+        </p>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="Chottvn Inventory Log Table" engine="innodb" name="chottvn_inventory_log" resource="default">
+		<column comment="Entity Id" identity="true" name="log_id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="log_id"/>
+		</constraint>
+		<column identity="false" name="user_id" nullable="false" xsi:type="int"/>
+		<column length="255" name="log_type" nullable="true" xsi:type="varchar"/>
+		<column name="file_name" nullable="true" xsi:type="text"/>
+		<column identity="false" name="file_row_count" nullable="true" xsi:type="int"/>
+		<column length="255" name="feature_type" nullable="true" xsi:type="varchar"/>
+		<column length="255" name="status" nullable="true" xsi:type="varchar"/>
+		<column identity="false" name="affected_row_count" nullable="true" xsi:type="int"/>
+		<column name="details" nullable="true" xsi:type="text"/>
+		<column name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column name="updated_at" nullable="true" xsi:type="timestamp"/>
+	</table>
+	<table comment="Chottvn Inventory Temp Import Table" engine="innodb" name="chottvn_inventory_temp_import" resource="default">
+		<column comment="Id" identity="true" name="id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="id"/>
+		</constraint>
+		<column identity="false" name="qty_saleable" nullable="false" xsi:type="int"/>
+		<column identity="false" name="product_price" nullable="false" xsi:type="int"/>
+		<column length="255" name="product_code" nullable="false" xsi:type="varchar"/>
+		<column name="product_name" nullable="true" xsi:type="text"/>
+    <column name="product_weight" nullable="true" xsi:type="decimal"  scale="4" precision="12" />
+    <column length="255" name="product_model" nullable="true" xsi:type="varchar" />
+    <column length="255" name="product_brand" nullable="true" xsi:type="varchar" />
+    <column name="product_weight_net" nullable="true" xsi:type="text"/>
+    <column name="product_weight_gross" nullable="true" xsi:type="text"/>
+	</table>
+</schema>

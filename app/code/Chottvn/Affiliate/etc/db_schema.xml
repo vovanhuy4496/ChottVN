@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="chottvn_affiliate_account">
+        <column xsi:type="int" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="int" name="customer_id"  unsigned="true" nullable="true" comment="Customer Id"/>
+        <column xsi:type="varchar" name="issue_number" nullable="true" length="255" comment="Issue Number"/>
+        <column xsi:type="timestamp" name="issue_date" nullable="true" comment="Issue Date"/>
+        <column xsi:type="varchar" name="issue_place" nullable="true" comment="Issue Place"/>
+        <column xsi:type="float" name="deposit_margin" unsigned="true" nullable="true" comment="Deposit Margin"/>
+        <column xsi:type="varchar" name="tax_code" nullable="true" length="255" comment="Issue Number"/>
+        <column xsi:type="timestamp" name="created_at" nullable="true" comment="Create Date"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="true" comment="Update Date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="chottvn_log_affiliate">
+        <column xsi:type="bigint" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="bigint" name="account_id"  unsigned="true" nullable="true" comment="Affiliate Account Id"/>
+        <column xsi:type="varchar" name="event" nullable="true" length="255" comment="Event: registered, phone_verified, processing, approved, activated, margin_limit_changed, affiliate_level_changed, bank_account_changed,..."/>
+        <column xsi:type="varchar" name="resource_type" nullable="true" comment="Resource type: Class Name"/>
+        <column xsi:type="bigint" name="resource_id" nullable="true" comment="Resource ID"/>
+        <column xsi:type="text" name="value" nullable="false" />
+        <column xsi:type="text" name="value_old" nullable="true" />
+        <column xsi:type="timestamp" name="created_at" nullable="true" comment="Created Date"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="true" comment="Updated Date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="chottvn_affiliate_reward_rule">
+        <column xsi:type="bigint" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Name of rule"/>
+        <column xsi:type="int" name="status"  unsigned="false" nullable="false" comment="{1: active, 0: inactive}"/>
+        <column xsi:type="timestamp" name="start_date" nullable="false" comment="The day rule affected"/>
+        <column xsi:type="timestamp" name="end_date" nullable="true" comment="The day rule not affect"/>
+        <column xsi:type="varchar" name="reward_level" nullable="false" comment="per_product, all_accessories"/>
+        <column xsi:type="varchar" name="affiliate_level" nullable="false" comment="Affiliate level"/>
+        <column xsi:type="bigint" name="product_brand_id"  unsigned="true" nullable="false" comment="Product brand"/>
+        <column xsi:type="int" name="product_kind" nullable="false"/>
+        <column xsi:type="text" name="conditions" nullable="false"  comment="JSON string"/>
+        <column xsi:type="text" name="description" nullable="true"  comment="Description"/>
+        <column xsi:type="int" name="priority"  unsigned="false" nullable="false" />
+        <column xsi:type="varchar" name="discard_subsequent_rules" nullable="false" />
+        <column xsi:type="text" name="notes" nullable="true"  comment="Notes"/>
+        <column xsi:type="timestamp" name="deleted_at" nullable="true" comment="For soft delete"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table comment="affiliate_levelrule Table" engine="innodb" name="chottvn_affiliate_level_rule" resource="default">
+		<column comment="Entity Id" identity="true" name="id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="id"/>
+		</constraint>
+		<column length="255" name="name" nullable="false" xsi:type="varchar"/>
+		<column identity="false" name="status" nullable="false" xsi:type="int"/>
+		<column name="start_date" nullable="false" xsi:type="timestamp"/>
+		<column name="end_date" nullable="true" xsi:type="timestamp"/>
+		<column length="255" name="affiliate_level" nullable="false" xsi:type="varchar"/>
+		<column name="conditions" nullable="false" xsi:type="text"/>
+		<column name="description" nullable="true" xsi:type="text"/>
+		<column identity="false" name="priority" nullable="false" xsi:type="int"/>
+		<column length="255" name="discard_subsequent_rules" nullable="false" xsi:type="varchar"/>
+		<column name="notes" nullable="true" xsi:type="text"/>
+	</table>
+</schema>

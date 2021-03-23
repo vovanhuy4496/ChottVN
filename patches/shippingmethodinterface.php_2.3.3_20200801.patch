@@ -1,0 +1,28 @@
+--- a/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-08-01 19:26:40.000000000 +0700
++++ b/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php.new	2020-08-01 19:39:23.000000000 +0700
+@@ -66,7 +66,24 @@
+      * Max Delivery Dates.
+      */
+     const KEY_MAX_DELIVERY_DATES = 'max_delivery_dates';
+-    
++    /**
++    * Flag.
++    */
++    const KEY_FLAG = 'flag';
++
++    /**
++    * Returns Get Flag.
++    *
++    * @return string Get Flag.
++    */
++    public function getFlag();
++
++    /**
++    * Returns Set Flag.
++    *
++    * @return string Set Flag.
++    */
++    public function setFlag($flag);
+     /**
+      * Returns Get Max Delivery Dates.
+      *

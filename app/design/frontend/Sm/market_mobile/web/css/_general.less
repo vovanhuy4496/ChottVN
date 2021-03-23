@@ -1,0 +1,128 @@
+//  General
+//  ---------------------------------------------
+.action.quickview-handler{
+    display: none!important;
+}
+
+.direction-rtl {
+    direction: rtl;
+
+    .owl-carousel {
+        direction: ltr;
+    }
+}
+
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+body.overflow-hidden {
+    overflow: hidden;
+    /*position: fixed;*/
+
+    &:before {
+        background: #000;
+        bottom: 0;
+        content: "";
+        display: block;
+        left: 0;
+        opacity: 0.7;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 220;
+    }
+}
+
+.row {
+    margin-left: -5px !important;
+    margin-right: -5px !important;
+}
+
+.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+// CSS LOADING
+.loading-content {
+    background: url(../images/loading.svg) no-repeat center center / 30px auto;
+    min-height: 100px;
+}
+
+// END CSS LOADING
+
+.lazyload {
+    display: block;
+    background: url(../images/loading.svg) no-repeat center center / 30px auto;
+    min-height: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.primary-title {
+    padding-bottom: 12px;
+
+    h2 {
+        font-size: 150%;
+        color: #222222;
+        font-weight: 700;
+        margin: 0;
+        text-transform: uppercase;
+    }
+}
+
+.form.password.forget .fieldset,
+.page-wrapper .fieldset.create.account {
+    margin-bottom: 20px;
+}
+
+.fieldset > .legend {
+    margin-bottom: 10px;
+}
+
+.page-wrapper .fieldset.create.info,
+.page-wrapper .fieldset.create.account {
+    width: 100%;
+    float: none;
+}
+
+.block.block-compare {
+    display: block;
+}
+
+.block-compare .counter,
+.block-wishlist .counter {
+    float: left;
+}
+
+.breadcrumbs {
+    display: none;
+}
+
+.mobile-style .page-header .dropdown-header-sticky .title-sticky-bottom .close-sticky-bottom,
+.mobile-style .page-header .myaccount-dropdown .logout-button,
+.mobile-style .page-header .mycart-dropdown .minicart-items-wrapper .minicart-items .product-item .product .product-item-photo {
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.mobile-style .checkout-payment-method .payment-option .payment-option-content .action.action-apply,
+.mobile-style .checkout-payment-method .checkout-billing-address .primary .action-update,
+.mobile-style .product-add-form .product-social-links .action {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.mobile-style .page-header .search-dropdown .block-content .field.search .control .input-text,
+.mobile-style .page-header .search-dropdown .block-content .actions .action.search,
+.mobile-style .page-header .myaccount-dropdown .block-customer-login .input-text,
+.mobile-style .page-header .myaccount-dropdown .block-customer-login button,
+.mobile-style .page-header .mycart-dropdown .actions .action.viewcart,
+.mobile-style .page-header .mycart-dropdown .actions .action.checkout {
+    border-radius: 21px;
+    -webkit-border-radius: 21px;
+}

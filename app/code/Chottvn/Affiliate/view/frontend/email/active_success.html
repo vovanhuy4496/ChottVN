@@ -1,0 +1,17 @@
+<!--@subject {{trans "Kích hoạt tài khoản CTV thành công tại %store_name" store_name=$store.getFrontendName()}}  @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>{{trans "Chào %full_name," full_name=$fullName}}</p>
+<br />
+<p>{{trans "Chúc mừng bạn đã kích hoạt thành công tài khoản và chính thức trở thành Cộng tác viên Tư vấn bán hàng tại <a href='%home_url'>chotructuyen.co</a>" home_url=$homeLink |raw}}</p>
+<p>{{trans "Để xem lại thông tin chi tiết hợp đồng điện tử đã được ký kết giữa 2 bên, vui lòng đăng nhập tài khoản CTV hoặc xem tại đường link sau:"}}
+</p>
+<div class="ta-center mg-t-30 mg-b-30">{{trans "<a href='%pdfLink' class="btn-primary">Hợp đồng điện tử cộng tác viên</a>" pdfLink=$pdfLink |raw}}</div>
+<p>{{trans "Mọi thắc mắc liên quan đến cộng tác viên, vui lòng liên hệ với Cty CP Chợ Trực Tuyến qua email: <a href='mailto:lienhe@chotructuyen.co'>ctv@chotructuyen.co</a>" |raw}}</p>
+<br />
+<p>{{trans "Chúc bạn một ngày vui vẻ."}}</p>
+<p>{{trans "Trân trọng!"}}</p>
+<p>{{trans "Cty CP Chợ Trực Tuyến"}}</p>
+
+{{template config_path="design/email/footer_template"}}

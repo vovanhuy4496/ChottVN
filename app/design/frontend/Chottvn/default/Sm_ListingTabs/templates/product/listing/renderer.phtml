@@ -1,0 +1,96 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */
+$tag_id = $this->getData('tagid');
+// get config page
+$config = $this->getData('config_data');
+$pageClass = isset($config['page_class']) ? $config['page_class'] : "ctt-listingtabs";
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$jsonEncoder = $objectManager->create('\Magento\Framework\Json\EncoderInterface');
+$localeFormat = $objectManager->create('\Magento\Framework\Locale\FormatInterface');
+$priceCurrency = $objectManager->create('\Magento\Framework\Pricing\PriceCurrencyInterface');
+
+$product = $block->getProduct();
+
+if ($product->getTypeInstance()->hasOptions($product)) {
+    $config = [
+        'productId' => $product->getId(),
+        'priceFormat' => $localeFormat->getPriceFormat()
+        ];
+    $priceConfig = $jsonEncoder->encode($config);
+} else {
+    $tierPrices = [];
+    $tierPricesList = $product->getPriceInfo()->getPrice('tier_price')->getTierPriceList();
+    foreach ($tierPricesList as $tierPrice) {
+        $tierPrices[] = $priceCurrency->convert($tierPrice['price']->getValue());
+    }
+    $config = [
+        'productId' => $product->getId(),
+        'priceFormat' => $localeFormat->getPriceFormat(),
+        'prices' => [
+            'oldPrice' => [
+                'amount' => $priceCurrency->convert(
+                    $product->getPriceInfo()->getPrice('regular_price')->getAmount()->getValue()
+                ),
+                'adjustments' => []
+            ],
+            'basePrice' => [
+                'amount' => $priceCurrency->convert(
+                    $product->getPriceInfo()->getPrice('final_price')->getAmount()->getBaseAmount()
+                ),
+                'adjustments' => []
+            ],
+            'finalPrice' => [
+                'amount' => $priceCurrency->convert(
+                    $product->getPriceInfo()->getPrice('final_price')->getAmount()->getValue()
+                ),
+                'adjustments' => []
+            ]
+        ],
+        'idSuffix' => '_clone',
+        'tierPrices' => $tierPrices
+    ];
+
+    $priceConfig = $jsonEncoder->encode($config);
+}
+?>
+<div class="product-options-wrapper swatch-opt-<?php /* @escapeNotVerified */
+echo $block->getProduct()->getId() ?> "></div>
+<script>
+    require(["jquery", "jquery/ui", "priceBox", "Magento_Swatches/js/swatch-renderer"], function ($) {
+        // var _parent_seletor = $('.ltabs-items-selected ').parents('.sm-listing-tabs').attr('id'),
+        //     _parent_id = $('#' + _parent_seletor);
+        var _parent_seletor = '<?=$pageClass?>';
+        var _parent_id = $('.' + _parent_seletor);
+        var _swatch_opt = $('.ltabs-items-selected .swatch-opt-<?php /* @escapeNotVerified */ echo $block->getProduct()->getId() ?>', _parent_id);
+
+        var dataPriceBoxSelector = '[data-role=priceBox]',
+            dataProductIdSelector = '[data-product-id=<?php echo $block->getProduct()->getId()?>]',
+            priceBoxes = $('.' + _parent_seletor + ' .product-item-info-<?php /* @escapeNotVerified */ echo $block->getProduct()->getId() ?> ' + dataPriceBoxSelector + dataProductIdSelector);
+
+        priceBoxes = priceBoxes.filter(function(index, elem){
+            return !$(elem).find('.price-from').length;
+        });
+
+        priceBoxes.priceBox({'priceConfig': <?php echo $priceConfig; ?>});
+
+        _swatch_opt.SwatchRenderer({
+            selectorProduct: '.' + _parent_seletor + ' .product-item-info-<?php /* @escapeNotVerified */ echo $block->getProduct()->getId() ?>',
+            onlySwatches: true,
+            enableControlLabel: true,
+            numberToShow: <?php /* @escapeNotVerified */ echo $block->getNumberSwatchesPerProduct(); ?>,
+            jsonConfig: <?php /* @escapeNotVerified */ echo $block->getJsonConfig(); ?>,
+            jsonSwatchConfig: <?php /* @escapeNotVerified */ echo $block->getJsonSwatchConfig(); ?>,
+            mediaCallback: "<?= $block->escapeJs($block->escapeUrl($block->getMediaCallback())) ?>",
+            gallerySwitchStrategy: "<?= $block->escapeJs($block->getVar('gallery_switch_strategy', 'Magento_ConfigurableProduct')) ?: 'replace'; ?>",
+            jsonSwatchImageSizeConfig: <?= /* @noEscape */ $block->getJsonSwatchSizeConfig() ?>,
+            onPageListing: 'listing'
+        });
+
+    });
+</script>

@@ -1,0 +1,44 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+<referenceBlock name="checkout.root">
+    <arguments>
+        <argument name="jsLayout" xsi:type="array">
+            <item name="components" xsi:type="array">
+                <item name="checkout" xsi:type="array">
+                    <item name="children" xsi:type="array">
+                        <item name="steps" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="billing-step" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="payment" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="additional-payment-validators" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="vat-invoice-required" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Chottvn_OrderPayment/js/view/vat-invoice-required</item>
+                                                        </item>
+                                                        <item name="bank-transfer-validator" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Chottvn_OrderPayment/js/view/bank-transfer-validator</item>
+                                                        </item>
+                                                        <item name="delivery-address" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Chottvn_OrderPayment/js/view/delivery-address</item>
+                                                        </item>
+                                                        <item name="customer-info" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Chottvn_OrderPayment/js/view/customer-info</item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+            </item>
+        </argument>
+    </arguments>
+</referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,45 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2019 Amasty (https://www.amasty.com)
+ * @package Amasty_Promo
+ */
+?>
+<?php /** @var \Amasty\Promo\Block\Banner $block */?>
+<?php /** @var \Amasty\Promo\Model\Rule $rule */?>
+<?php foreach ($block->getValidRules() as $rule) :?>
+    <?php if ($block->isShowGiftImages($rule)) :?>
+        <ul class="ampromo-gift">
+            <?php /** @var \Magento\Catalog\Model\Product $product */?>
+            <?php foreach ($block->getProducts($rule) as $product): ?>
+                <?php
+                $product->getAttributeRawValue($product->getId(), $block->getAttributeHeader(), 1);
+                $id = uniqid("ampromo-gift-img-");
+                ?>
+                <li>
+                    <a class="product-image" href="<?= $block->escapeUrl($product->getProductUrl())?>">
+                        <img class="ampromo-banner-<?= $block->escapeHtml($block->getPosition())?>-img"
+                             id="<?= $id;?>"
+                             alt="<?= $block->escapeHtml('Product Image') ?>"
+                             width="<?= $block->escapeHtml($block->getWidth());?>"
+                             height="<?= $block->escapeHtml($block->getHeight());?>"
+                             src="<?= $block->escapeUrl($block->getImageHelper()->init($product, 'mini_cart_product_thumbnail')
+                                 ->keepFrame(false)
+                                 ->constrainOnly(true)
+                                 ->resize($block->getWidth())
+                                 ->getUrl());
+                             ?>"/>
+                        <div id="<?= $id;?>-data" style="display: none;">
+                            <div class="ampromo-product-name"><?= $product->getResource()->getAttribute($block->
+                                getAttributeHeader())->getFrontend()->getValue($product);?>
+                            </div>
+                            <div class="ampromo-short-description"><?= $product->getResource()->
+                                getAttribute($block->getAttributeDescription())->getFrontend()->getValue($product);?>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+<?php endforeach; ?>

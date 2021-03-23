@@ -1,0 +1,67 @@
+<?php
+$customerMembershipHelperData = $this->helper('Chottvn\CustomerMembership\Helper\Data');
+?>
+<?php
+$genderName = '';
+$prefix = $block->getCustomer()->getPrefix() ? strtolower($block->getCustomer()->getPrefix()).' ':'';
+$name = $block->getCustomer()->getFirstname();
+$currentCustomer = $block->getCustomer();
+//echo '<pre>';print_r($currentCustomer->getCustomAttributes());echo'</pre>';exit;
+// $gender = $block->getCustomer()->getGender();
+// switch ($gender) {
+// 	case 1:
+// 		$genderName = strtolower(__('Male')).' ';
+// 		break;
+// 	case 2:
+// 		$genderName = strtolower(__('Female')).' ';
+// 		break;
+// }
+
+?>
+<div class="customer-level-info">
+	<div class="icon-loyal">
+        <?php 
+            if($currentCustomer->getGroupId() == 4){
+        ?>
+            <img class="level-icon" src="<?= $this->getViewFileUrl('images/icon_cong_tac_vien-01.png');  ?>" alt="Affiliate Account"/>
+        <?php }else{ ?>
+            <img class="level-icon" src="<?php echo $customerMembershipHelperData->getCustomerLevelImageUrl($block->getCustomer()); ?>" />
+        <?php } ?>
+    </div>
+    <div class="userinfo">
+    	<a href="<?php echo $block->getUrl('customer/account'); ?>">
+	    	<span class="user-name">
+	    		<?php echo __('Hi').' '; ?><?= $block->escapeHtml($name); ?>
+	    	</span>
+	    </a>
+    	<br/>
+        <?php 
+            if($currentCustomer->getGroupId() == 4){
+                $affiliate_code = $currentCustomer->getCustomAttribute('affiliate_code')->getValue();
+                $affiliate_level = $currentCustomer->getCustomAttribute('affiliate_level') ? $currentCustomer->getCustomAttribute('affiliate_level')->getValue():'ctv';
+                $percent_level = explode('ctv_', $affiliate_level);
+                if(isset($percent_level[1])){
+                    $percent_level = (int) $percent_level[1] * 100 / 5;
+                }else{
+                    $percent_level = 0;
+                }
+        ?>
+            <span class="level-name">
+                <?php echo $affiliate_code.' - '; ?>
+            </span>
+            <?php
+                // get star reviews
+                echo $this->getLayout()
+                    ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                    ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                    ->setData(['percent_rating' => $percent_level])
+                    ->toHtml();
+            ?>
+        <?php }else{ ?>
+        	<span class="level-name">
+        		<?php echo $customerMembershipHelperData->getCustomerLevelName($block->getCustomer()); ?>
+        	</span>
+        <?php } ?>
+    </div>
+
+</div>

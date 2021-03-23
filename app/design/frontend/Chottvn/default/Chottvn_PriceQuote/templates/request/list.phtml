@@ -1,0 +1,174 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+// detect mobile
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$allRequest = $block->getResult();
+$saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+$checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$FormKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
+$priceQuoteHelper = $this->helper('Chottvn\PriceQuote\Helper\Data');
+$messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+$sessionCart = $objectManager->create('Magento\Checkout\Model\Session');
+$itemCart = $sessionCart->getQuote()->getAllItems();
+$countItemCart = count($itemCart);
+$index = 0;
+?>
+<style>
+   .order-here-quote-price, .order-here-quote-price:focus{
+      border: unset !important;
+      background: #00409d !important;
+      color: #ffffff !important;
+      border-radius: 8px;
+      -moz-border-radius: 8px;
+      -webkit-border-radius: 8px;
+      font-size: 14px !important;
+      text-transform: none;
+      height: 40px;
+      min-width: 120px;
+      opacity: 0.9;
+   }
+</style>
+<?php if ($allRequest && count($allRequest)):
+    $index = 0;
+    ?>
+<div class="orders-history">
+   <?php foreach($allRequest as $key => $value):?>
+      <?php
+          $showDetail = false;
+          if($index == 0){
+              $showDetail = true;
+          }
+         $amount_value = $block->getTotalAmount($key);
+         $qty = $block->getQty($key);
+         $requestQuote = $priceQuoteHelper->getCollectionRequest($key);
+         $originalTotal = $requestQuote->getData('original_total');
+         $savingsAmount = $requestQuote->getData('savings_amount');
+         $discountAmount = $requestQuote->getData('discount_amount');
+         $shippingAmount = $requestQuote->getData('shipping_amount');
+         $flagShipping = $requestQuote->getData('flag_shipping');
+         $couponcode = $requestQuote->getData('counpon_code');
+         $grandTotal = $requestQuote->getData('grand_total');
+         $company_name = $requestQuote->getData('company_name');
+         $company_address = $requestQuote->getData('company_address');
+         $company_vat_number = $requestQuote->getData('company_vat_number');
+         $contact_name = $requestQuote->getData('contact_name');
+         $contact_phone_number = $requestQuote->getData('contact_phone_number');
+         $contact_email = $requestQuote->getData('contact_email');
+         $created_at = $requestQuote->getData('created_at');
+         $pdf = $requestQuote->getData('file_path');
+         $filepdf = $block->getUrl().$pdf;
+         $checkFile = $objectManager->create('\Magento\Framework\Filesystem\Driver\File');
+         $timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+         $createdDate = $timefc->date($created_at)->format('d/m/Y H:i');
+      ?>
+      <div class="row order">
+         <div class="col-sm-12 order-summary">
+            <div class="row">
+               <div class="col-sm-6 order-summary-left">
+                  <span class="order-label">
+                     <?= $company_name; ?>
+                  </span>
+                  <br>
+                  <span class="items-value">
+                    <?= __('Date request price quote') ?>: <strong><?= $createdDate; ?></strong>
+                  </span>
+               </div>
+               <div class="col-sm-6 order-price-quote-right">
+                  <span class="amount-value"><span class="price"><?= $checkoutHelper->formatPrice($amount_value);  ?></span></span>
+                  <br>
+                  <span class="items-value"><?= (int) $qty ? (int)$qty : 0;  ?> sản phẩm</span>
+               </div>
+            </div>
+         </div>
+         <!-- /.order-items -->
+         <div class="col-sm-12 order-detail">
+            <div class="row">
+               <div class="col-md-12 options-button">
+                  <?php
+                     if ($checkFile->isExists($pdf)) { ?>
+                        <button onclick="window.open('<?php echo $filepdf; ?>')" id="myButton-<?php echo $key; ?>"  class="btn request-callback" ><?= __('View price quote') ?></button>
+                     <?php  } else { ?>
+                        <form name="requestForm" id="requestFormid-<?php echo $key; ?>" method="POST" target="_blank" class="form-send">
+                           <button id="myButton-<?php echo $key; ?>" type="submit" class="btn request-callback" ><?= __('View price quote') ?></button>
+                        </form>
+                  <?php  } ?>
+                  <!-- Trigger the modal with a button -->
+                  <?php if($countItemCart > 0): ?>
+                     <button type="button" class="order-here-quote-price" id="order-here-<?php echo $key; ?>" data-toggle="modal" data-target="#modal-list-<?php echo $key; ?>"><?= __('Place order'); ?></button>
+                  <?php else: ?>
+                     <form method="POST" action="<?php echo $block->getUrl('price_quote/cart/add'); ?>" class="form-send">
+                           <input type="hidden" name="request_id" value="<?php echo $key; ?>" />
+                           <input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey();?>">
+                           <input name="check" type="hidden" value="1">
+                           <input type="submit" class="order-here-quote-price" value="<?= __('Place order'); ?>" id="order-here-<?php echo $key; ?>">
+                     </form>
+                  <?php endif; ?>
+                  <!-- Modal -->
+                  <div id="modal-list-<?php echo $key; ?>" class="modal fade" role="dialog">
+                     <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                           <div class="modal-header">
+                              <p><?= __('Would you like to add an item in the shopping cart to this order?');?></p>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                           </div>
+                           <div class="modal-footer">
+                              <form method="POST" action="<?php echo $block->getUrl('price_quote/cart/add'); ?>" class="form-send">
+                                 <input type="hidden" name="request_id" value="<?php echo $key; ?>" />
+                                 <input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey();?>">
+                                 <input name="check" type="hidden" value="0">
+                                 <input type="submit" value="<?= __('Yes'); ?>" id="yes-add">
+                              </form>
+                              <form method="POST" action="<?php echo $block->getUrl('price_quote/cart/add'); ?>" class="form-send">
+                                 <input type="hidden" name="request_id" value="<?php echo $key; ?>" />
+                                 <input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey();?>">
+                                 <input name="check" type="hidden" value="1">
+                                 <input type="submit" value="<?= __('No'); ?>" id="no-add">
+                              </form>
+                           <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- /.order-detail -->
+      </div>
+      <script>
+         require(['jquery'],function(){
+            jQuery(document).ready(function() {
+               // var num = jQuery(".block-minicart .minicart-items-wrapper ol#mini-cart li").length;
+               // alert(num);
+               jQuery("#requestFormid-<?php echo $key; ?>").submit(function(){
+                     var url = "<?php echo $block->getBaseUrl().'price_quote/request/pdf/' ?>";
+                     var id_request = '<?php echo $key; ?>';
+                     jQuery.ajax({
+                     url: url,
+                     type: "POST",
+                     data: {
+                        id_request : id_request
+                     },
+                     // showLoader: true,
+                     cache: false,
+                     success: function(response){
+                        window.open('<?php echo $block->getBaseUrl()?>'+response, '_blank');
+                        location.reload();
+                     }
+               });
+               return false;
+               });
+            });
+         });
+   </script>
+   <?php
+    $index++;
+      endforeach;?>
+</div>
+<?php else: ?>
+    <?php
+         echo '<div class="message-order-history"><i class="fas fa-file-invoice-dollar"></i><br/><span>'.__('You have placed no request price quote.').'</span></div>';
+    ?>
+<?php endif ?>

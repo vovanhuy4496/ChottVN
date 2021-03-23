@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="chottvn_finance_transactiontype Table" engine="innodb" name="chottvn_finance_transactiontype" resource="default">
+		<column comment="Entity Id" identity="true" name="transactiontype_id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="transactiontype_id"/>
+		</constraint>
+		<column length="255" name="code" nullable="false" xsi:type="varchar"/>
+		<column default="1" name="rate" nullable="false" xsi:type="float"/>
+		<column length="255" name="name" nullable="true" xsi:type="varchar"/>
+		<column name="description" nullable="true" xsi:type="text"/>
+		<column default="CURRENT_TIMESTAMP" name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column default="CURRENT_TIMESTAMP" name="updated_at" nullable="true" xsi:type="timestamp"/>
+	</table>
+
+	<table comment="chottvn_finance_request Table" engine="innodb" name="chottvn_finance_request" resource="default">
+		<column comment="Entity Id" identity="true" name="request_id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="request_id"/>
+		</constraint>
+		<column identity="false" name="account_id" nullable="false" xsi:type="int"/>
+		<column identity="false" name="transaction_type_id" nullable="true" xsi:type="int"/>
+		<column default="CURRENT_TIMESTAMP" name="requested_at" nullable="true" xsi:type="timestamp"/>
+		<column name="amount" nullable="true" precision="20" scale="4" xsi:type="decimal"/>
+		<column name="note" nullable="true" xsi:type="text"/>
+		<column default="0 " identity="false" name="status" nullable="true" xsi:type="tinyint"/>
+		<column identity="false" name="processed_by" nullable="true" xsi:type="int"/>
+		<column name="processed_at" nullable="true" xsi:type="timestamp"/>
+		<column default="CURRENT_TIMESTAMP" name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column default="CURRENT_TIMESTAMP" name="updated_at" nullable="true" xsi:type="timestamp"/>
+	</table>
+	
+	<table comment="chottvn_finance_transaction Table" engine="innodb" name="chottvn_finance_transaction" resource="default">
+		<column comment="Entity Id" identity="true" name="transaction_id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="transaction_id"/>
+		</constraint>
+		<column identity="false" name="account_id" nullable="false" xsi:type="int"/>
+		<column identity="false" name="request_id" nullable="true" xsi:type="int"/>
+		<column identity="false" name="transaction_type_id" nullable="false" xsi:type="int"/>
+		<column name="amount" nullable="false" precision="20" scale="4" xsi:type="decimal"/>
+		<column name="rate" nullable="false" xsi:type="float"/>
+		<column default="0 " identity="false" name="status" nullable="true" xsi:type="tinyint"/>
+		<column name="start_date" nullable="true" xsi:type="date"/>
+		<column name="end_date" nullable="true" xsi:type="date"/>
+		<column name="transaction_date" nullable="true" xsi:type="date"/>
+		<column name="note" nullable="true" xsi:type="text"/>
+		<column identity="false" name="processed_by" nullable="true" xsi:type="int"/>
+		<column default="CURRENT_TIMESTAMP" name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column default="CURRENT_TIMESTAMP" name="updated_at" nullable="true" xsi:type="timestamp"/>
+		<column length="1000" name="document_code" nullable="true" xsi:type="varchar"/>
+		<column length="1000" name="document_file" nullable="true" xsi:type="varchar"/>
+	</table>
+	<table comment="chottvn_log_finance Table" engine="innodb" name="chottvn_log_finance" resource="default">
+		<column xsi:type="bigint" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="bigint" name="account_id"  unsigned="true" nullable="true" comment="Affiliate Account Id"/>
+        <column xsi:type="varchar" name="notification" nullable="true" length="255" comment="Notification Step"/>
+        <column xsi:type="varchar" name="event" nullable="true" length="255" comment="Event"/>
+        <column xsi:type="varchar" name="resource_id" nullable="true" comment="Resource type: Id"/>
+        <column xsi:type="varchar" name="resource_type" nullable="true" comment="Resource type: Class Name"/>
+        <column xsi:type="text" name="value" nullable="false" />
+        <column xsi:type="text" name="value_old" nullable="true" />
+        <column xsi:type="timestamp" default="CURRENT_TIMESTAMP" name="created_at" nullable="true" comment="Created Date"/>
+        <column xsi:type="timestamp" default="CURRENT_TIMESTAMP" name="updated_at" nullable="true" comment="Updated Date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+	</table>
+
+</schema>

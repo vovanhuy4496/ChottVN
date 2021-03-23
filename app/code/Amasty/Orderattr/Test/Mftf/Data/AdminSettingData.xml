@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+
+    <entity name="SetCheckoutSettingsDefault" type="adminCheckoutSettings">
+        <data key="DisplayAttributeInOrderSummary">Yes</data>
+        <data key="DateFormat">yyyy-mm-dd</data>
+        <data key="TimeFormat">12-hour AM/PM format</data>
+        <data key="IncludeOrderAttributesIntoEmails">Yes</data>
+        <data key="SendAttributes">Yes</data>
+    </entity>
+
+    <entity name="SetPDFDocumentsSettingsDefault" type="adminPDFDocuments">
+        <data key="IncludeOrderAttributesIntoShipment">Yes</data>
+        <data key="IncludeOrderAttributesIntoInvoice">Yes</data>
+    </entity>
+
+    <entity name="SetOrderAttributesInTheInvoicesAndShipmentsDefault" type="adminInvoicesAndShipments">
+        <data key="DisplayOAOnInvoiceGrid">Yes</data>
+        <data key="DisplayOAWhenCreatingInvoice">Yes</data>
+        <data key="DisplayOAWhenViewingInvoice">Yes</data>
+        <data key="DisplayOAOnShipmentsGrid">Yes</data>
+        <data key="DisplayOAWhenCreatingShipment">Yes</data>
+        <data key="DisplayOAWhenViewingShipment">Yes</data>
+    </entity>
+
+    <entity name="SetOATextFieldDefault" type="adminCreateOASettings">
+        <data key="DefaultLabel">Text Field OA Default</data>
+        <data key="AttributeCode">text_field_default</data>
+        <data key="CustomerGroupGeneral">General</data>
+        <data key="OAValue">Test123</data>
+        <data key="FrontendInputType">Text Field</data>
+        <data key="ValuesRequired">No</data>
+        <data key="PositionAtCheckout">Shipping Address</data>
+        <data key="SortOrder">0</data>
+        <data key="SaveEnteredValue">No</data>
+        <data key="ShowOnAdminGrids">No</data>
+        <data key="IncludeIntoHTML">No</data>
+        <data key="IncludeIntoPDF">No</data>
+        <data key="IncludeIntoTransactionalEmails">Yes</data>
+    </entity>
+
+    <entity name="SetOATextFieldShowOnAdminGrid" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Field OA Show on Admin Grid</data>
+        <data key="AttributeCode">text_field_grid</data>
+        <data key="ShowOnAdminGrids">Yes</data>
+    </entity>
+
+    <entity name="SetOATextFieldLength" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Field OA Check Length</data>
+        <data key="AttributeCode">text_field_length</data>
+        <data key="OAValueUp5Symbols">1234</data>
+        <data key="OAValueGreaterThan10Symbols">12345abcde0</data>
+    </entity>
+
+    <entity name="SetOATextField1" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Field OA 1</data>
+        <data key="AttributeCode">text_field_1</data>
+        <data key="OAValue">Test Sort Order</data>
+        <data key="SortOrder">30</data>
+    </entity>
+
+    <entity name="SetOATextField2" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Field OA 2</data>
+        <data key="AttributeCode">text_field_2</data>
+    </entity>
+
+    <entity name="SetOATextField3" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Field OA 3</data>
+        <data key="AttributeCode">text_field_3</data>
+        <data key="SortOrder">20</data>
+    </entity>
+
+    <entity name="SetOATextFieldManageTooltip" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="TooltipForDefaultStoreView">Tooltip For Default Store View</data>
+        <data key="TooltipAdmin">Tooltip Admin</data>
+        <data key="TooltipForCustomStoreView">Tooltip For Custom Store View</data>
+    </entity>
+
+    <entity name="SetOATextFieldCustomerGroupValuesRequired" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="CustomerGroupGeneral">General</data>
+        <data key="ValuesRequired">On the Frontend Only</data>
+    </entity>
+
+    <entity name="SetOATextAreaShippingMethods" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Area OA Default</data>
+        <data key="AttributeCode">text_area_default</data>
+        <data key="OAValue">Add an unlimited number of extra fields to your checkout page to easily collect and process additional order related data.
+            Display all created order attributes on a handy backend grid to keep necessary information at hand.</data>
+        <data key="FrontendInputType">Text Area</data>
+        <data key="PositionAtCheckout">Shipping Methods</data>
+    </entity>
+
+    <entity name="SetOATextAreaShippingAddress" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Area OA Default</data>
+        <data key="AttributeCode">text_area_default</data>
+        <data key="OAValue">Add an unlimited number of extra fields to your checkout page to easily collect and process additional order related data.
+            Display all created order attributes on a handy backend grid to keep necessary information at hand.</data>
+        <data key="FrontendInputType">Text Area</data>
+        <data key="PositionAtCheckout">Shipping Address</data>
+        <data key="DefaultValueInput">Test Default Value for Text Area Order Attribute</data>
+    </entity>
+
+    <entity name="SetOATextAreaOrderSummary" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Text Area OA Default</data>
+        <data key="AttributeCode">text_area_default</data>
+        <data key="OAValue">Add an unlimited number of extra fields to your checkout page to easily collect and process additional order related data.
+            Display all created order attributes on a handy backend grid to keep necessary information at hand.</data>
+        <data key="FrontendInputType">Text Area</data>
+        <data key="PositionAtCheckout">Order Summary</data>
+    </entity>
+
+    <entity name="SetOADateShippingMethods" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Date OA Default</data>
+        <data key="AttributeCode">date</data>
+        <data key="OAValue">2020-12-25</data>
+        <data key="FrontendInputType">Date</data>
+        <data key="PositionAtCheckout">Shipping Methods</data>
+    </entity>
+
+    <entity name="SetOADateWithTimeShippingAddress" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Date With Time OA Default</data>
+        <data key="AttributeCode">date_with_time</data>
+        <data key="OAValue">2020-12-31 9:43 AM</data>
+        <data key="FrontendInputType">Date With Time</data>
+        <data key="PositionAtCheckout">Shipping Address</data>
+    </entity>
+
+    <entity name="SetOADateWithTimeBelowPaymentMethod" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Date With Time OA Default</data>
+        <data key="AttributeCode">date_with_time</data>
+        <data key="OAValue">2020-12-31 9:43 AM</data>
+        <data key="FrontendInputType">Date With Time</data>
+        <data key="PositionAtCheckout">Below Payment Method</data>
+    </entity>
+
+    <entity name="SetOADropdownDefault" type="adminCreateOASettings">
+        <data key="DefaultLabel">Dropdown OA Default</data>
+        <data key="AttributeCode">drop_down_default</data>
+        <data key="FrontendInputType">Dropdown</data>
+        <data key="ValuesRequired">No</data>
+        <data key="PositionAtCheckout">Shipping Address</data>
+        <data key="SortOrder">0</data>
+        <data key="SaveEnteredValue">No</data>
+        <data key="ShowOnAdminGrids">No</data>
+        <data key="IncludeIntoHTML">No</data>
+        <data key="IncludeIntoPDF">No</data>
+        <data key="IncludeIntoTransactionalEmails">Yes</data>
+        <data key="Option1">Option 1</data>
+        <data key="Option2">Option 2</data>
+        <data key="Option3">Option 3</data>
+        <data key="OAValue">Option 2</data>
+    </entity>
+
+    <entity name="SetOADropdownRelation" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="OAValue">Option 3</data>
+    </entity>
+
+    <entity name="SetOADropdownManageTitles" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="TitleForDefaultStoreView">Title for Default Store View</data>
+        <data key="TitleForCustomStoreView">Title for Custom Store View</data>
+    </entity>
+
+    <entity name="SetOADropdownDefaultStoreView" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Title for Default Store View</data>
+    </entity>
+
+    <entity name="SetOADropdownCustomStoreView" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Title for Custom Store View</data>
+    </entity>
+
+    <entity name="SetOAMultipleSelectAbovePaymentMethod" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Multiple Select OA Default</data>
+        <data key="AttributeCode">multiple_select</data>
+        <data key="FrontendInputType">Multiple Select</data>
+        <data key="stateArray">'Option 1', 'Option 3'</data>
+        <data key="PositionAtCheckout">Above Payment Method</data>
+        <data key="OAValue">Option 1, Option 3</data>
+    </entity>
+
+    <entity name="SetOAMultipleSelectDefault" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Multiple Select OA Default</data>
+        <data key="AttributeCode">multiple_select</data>
+        <data key="FrontendInputType">Multiple Select</data>
+        <data key="stateArray">'Option 1', 'Option 3'</data>
+        <data key="OAValue">Option 1, Option 3</data>
+    </entity>
+
+    <entity name="SetOAYesNoBelowPaymentMethod" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Yes/No OA Default</data>
+        <data key="AttributeCode">yes_no</data>
+        <data key="FrontendInputType">Yes/No</data>
+        <data key="OAValue">Yes</data>
+        <data key="Option2">Yes</data>
+        <data key="PositionAtCheckout">Below Payment Method</data>
+    </entity>
+
+    <entity name="SetOAYesNoDefault" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Yes/No OA Default</data>
+        <data key="AttributeCode">yes_no</data>
+        <data key="FrontendInputType">Yes/No</data>
+        <data key="OAValue">Yes</data>
+        <data key="Option2">Yes</data>
+    </entity>
+
+    <entity name="SetOAYesNoSaveValue" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Yes/No OA Save Value</data>
+        <data key="AttributeCode">yes_no_save_value</data>
+        <data key="FrontendInputType">Yes/No</data>
+        <data key="OAValue">Yes</data>
+        <data key="Option2">Yes</data>
+        <data key="SaveEnteredValue">Yes</data>
+    </entity>
+
+    <entity name="SetOAYesNoShowOnAdminGrid" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Yes/No OA Show on Admin Grid</data>
+        <data key="AttributeCode">yes_no_grid</data>
+        <data key="FrontendInputType">Yes/No</data>
+        <data key="OAValue">Yes</data>
+        <data key="Option2">Yes</data>
+        <data key="ShowOnAdminGrids">Yes</data>
+    </entity>
+
+    <entity name="SetOARadioButtonsShippingMethods" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Radio Buttons OA Default</data>
+        <data key="AttributeCode">radio_buttons</data>
+        <data key="FrontendInputType">Radio Buttons</data>
+        <data key="OAValue">Option 3</data>
+        <data key="PositionAtCheckout">Shipping Methods</data>
+    </entity>
+
+    <entity name="SetOARadioButtonsDefault" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Radio Buttons OA Default</data>
+        <data key="AttributeCode">radio_buttons</data>
+        <data key="FrontendInputType">Radio Buttons</data>
+        <data key="OAValue">Option 3</data>
+    </entity>
+
+    <entity name="SetOARadioButtonsShowOnAdminGrid" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Radio Buttons OA Show on Admin Grid</data>
+        <data key="AttributeCode">radio_buttons_grid</data>
+        <data key="FrontendInputType">Radio Buttons</data>
+        <data key="OAValue">Option 3</data>
+        <data key="ShowOnAdminGrids">Yes</data>
+    </entity>
+
+    <entity name="SetOACheckboxGroupDefault" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Checkbox Group OA Default</data>
+        <data key="AttributeCode">checkbox_group</data>
+        <data key="FrontendInputType">Checkbox Group</data>
+        <data key="OAValue">Option 3</data>
+    </entity>
+
+    <entity name="SetOACheckboxGroupSaveValue" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="DefaultLabel">Checkbox Group OA Save Value</data>
+        <data key="AttributeCode">checkbox_group_save</data>
+        <data key="FrontendInputType">Checkbox Group</data>
+        <data key="OAValue">Option 2</data>
+        <data key="SaveEnteredValue">Yes</data>
+    </entity>
+
+    <entity name="SetOAHtmlShippingMethods" type="adminCreateOASettings" extends="SetOATextFieldDefault">
+        <data key="DefaultLabel">Html OA Default</data>
+        <data key="AttributeCode">html</data>
+        <data key="FrontendInputType">Html</data>
+        <data key="PositionAtCheckout">Shipping Methods</data>
+        <data key="ShippingMethod">flatrate_flatrate</data>
+        <data key="Title">Amasty Official Site</data>
+        <data key="CheckFollowTheLink">amasty</data>
+    </entity>
+
+    <entity name="SetOADropdownBelowPaymentMethod" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="PositionAtCheckout">Below Payment Method</data>
+    </entity>
+
+    <entity name="SetOADropdownOrderSummary" type="adminCreateOASettings" extends="SetOADropdownDefault">
+        <data key="PositionAtCheckout">Order Summary</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsTextDefault" type="adminOATypeSettings">
+        <data key="VisibleOnFrontEnd">Yes</data>
+        <data key="VisibleOnBackEnd">Yes</data>
+        <data key="InputValidation">None</data>
+        <data key="InputFilter">None</data>
+        <data key="MinimalText">0</data>
+        <data key="MaximumText">0</data>
+        <data key="DefaultValue">text</data>
+        <data key="DefaultValueInput">Default Value</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsTextAreaDefault" type="adminOATypeSettings" extends="SetOATypeSettingsTextDefault">
+        <data key="DefaultValue">textarea</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsTextLength" type="adminOATypeSettings" extends="SetOATypeSettingsTextDefault">
+        <data key="MinimalText">5</data>
+        <data key="MaximumText">10</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsTextAreaWithDefaultValue" type="adminOATypeSettings" extends="SetOATypeSettingsTextDefault">
+        <data key="DefaultValue">textarea</data>
+        <data key="DefaultValueInput">Test Default Value for Text Area Order Attribute</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsDateDefault" type="adminOATypeSettings">
+        <data key="VisibleOnFrontEnd">Yes</data>
+        <data key="VisibleOnBackEnd">Yes</data>
+        <data key="MinimalValue">0</data>
+        <data key="MaximumValue">0</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsDropdownDefault" type="adminOATypeSettings">
+        <data key="VisibleOnFrontEnd">Yes</data>
+        <data key="VisibleOnBackEnd">Yes</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsMultipleSelectDefault" type="adminOATypeSettings">
+        <data key="VisibleOnFrontEnd">Yes</data>
+        <data key="VisibleOnBackEnd">Yes</data>
+        <data key="MultipleSelectSize">0</data>
+    </entity>
+
+    <entity name="SetOATypeSettingsHtmlDefault" type="adminOATypeSettings">
+        <data key="VisibleOnFrontEnd">Yes</data>
+        <data key="VisibleOnBackEnd">Yes</data>
+        <data key="DefaultValue">html</data>
+        <data key="DefaultValueInput">&lt;a href=&quot;https://www.amasty.com&quot;&gt;Amasty Official Site&lt;/a&gt;</data>
+    </entity>
+
+    <entity name="SetOARelationDropdownTextField" type="adminCreateOARelation">
+        <data key="RelationName">Dropdown Parent and Text Field Dependent</data>
+        <data key="ParentAttribute">Dropdown OA Default</data>
+        <data key="AttributeOptions">Option 3</data>
+        <data key="DependentAttributes">Text Field OA Default</data>
+    </entity>
+
+    <entity name="theSimpleProduct1" type="product">
+        <data key="sku">SimpleProduct</data>
+        <data key="type_id">simple</data>
+        <data key="attribute_set_id">4</data>
+        <data key="name">SimpleProduct</data>
+        <data key="price">123.00</data>
+        <data key="visibility">4</data>
+        <data key="status">1</data>
+        <data key="quantity">1000</data>
+        <data key="urlKey">simpleproduct</data>
+        <data key="weight">1</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+
+    <entity name="EavStockItem" type="product_extension_attribute">
+        <requiredEntity type="stock_item">Qty_1000</requiredEntity>
+    </entity>
+
+    <entity name="Qty_1000" type="stock_item">
+        <data key="qty">1000</data>
+        <data key="is_in_stock">true</data>
+    </entity>
+
+    <entity name="CustomAttributeCategoryIds" type="custom_attribute_array">
+        <data key="attribute_code">category_ids</data>
+        <var key="value" entityType="category" entityKey="id"/>
+    </entity>
+
+</entities>

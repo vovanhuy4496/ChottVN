@@ -1,0 +1,111 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Category layered navigation
+ *
+ * @var $block \Magento\LayeredNavigation\Block\Navigation
+ */
+?>
+
+<?php if ($block->canShowBlock()) : ?>
+    <div class="block filter">
+        <!-- <div class="block-title filter-title">
+            <strong><?= $block->escapeHtml(__('Shop By')) ?></strong>
+        </div> -->
+
+        <div class="block-content filter-content">
+            <?= $block->getChildHtml('state') ?>
+
+            <?php if ($block->getLayer()->getState()->getFilters()) : 
+            $explode_filter_url = explode('?', $block->getClearUrl());
+            // get query request 
+            $query = $block->getRequest()->getParam('q') ? trim($block->getRequest()->getParam('q')):'';
+            if($query){
+                $filter_url = $explode_filter_url[0].'?q='.str_replace(' ', '+', $query);
+            }else{
+                $filter_url = $explode_filter_url[0];
+            }
+            ?>
+                <div class="block-actions filter-actions">
+                    <a href="<?= $block->escapeUrl($filter_url) ?>" class="action clear filter-clear"><span><?= $block->escapeHtml(__('Clear All')) ?></span></a>
+                </div>
+            <?php endif; ?>
+            <?php $wrapOptions = false; ?>
+            <?php 
+            // $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            // $filterableAttributes = $objectManager->get(\Magento\Catalog\Model\Layer\Category\FilterableAttributeList::class);
+            // $filter_collect = $filterableAttributes->getList()->addFieldToFilter('is_global',array('eq' => 1));
+            // // echo '<pre>';
+            // // echo $filter_collect->getSelect();
+            // // print_r(get_class_methods($filterableAttributes));exit;
+
+            // $appState = $objectManager->get(\Magento\Framework\App\State::class);
+            // $layerResolver = $objectManager->get(\Magento\Catalog\Model\Layer\Resolver::class);
+            // $filterList = $objectManager->create(
+            // \Magento\Catalog\Model\Layer\FilterList::class,
+            //     [
+            //         'filterableAttributes' => $filterableAttributes
+            //     ]
+            // );
+
+            // $layer = $layerResolver->get();
+            // $filters = $filterList->getFilters($layer);
+
+            // echo '<pre>';
+            // echo $filter_collect->getSelect();
+            // print_r(get_class_methods($filters));exit;
+
+            // foreach ($filters as $f) {
+            //     echo '-name='.$f->getName().'-count:'.$f->getItemsCount().'<br>';
+            // }
+
+            foreach ($block->getFilters() as $filter) : 
+                ?>
+                <?php if (!$wrapOptions) : ?>
+                    <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?= $block->escapeHtml(__('Shopping Options')) ?></strong>
+                    <dl class="filter-options" id="narrow-by-list">
+                    <?php $wrapOptions = true;
+                endif; ?>
+                    <?php if ($filter->getItemsCount()) : ?>
+                        <?php if($filter->getName() == 'Phân nhóm' || $filter->getName() == 'Category'){ ?>
+                            <dt id="<?= $filter->getRequestVar(); ?>" role="heading" aria-level="3" class="filter-options-title category"><?= $block->escapeHtml(__($filter->getName())) ?></dt>
+                            <dt id="<?= $filter->getRequestVar(); ?>" role="heading" aria-level="3" class="filter-options-title primary-category"><?= $block->escapeHtml(__('Primary Category')) ?></dt>
+                        <?php }else{ ?>
+                            <dt id="<?= $filter->getRequestVar(); ?>" role="heading" aria-level="3" class="filter-options-title"><?= $block->escapeHtml(__($filter->getName())) ?></dt>
+                        <?php } ?>
+                        <dd id="<?= $filter->getRequestVar().'_content'; ?>" class="filter-options-content"><?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?></dd>
+                    <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if ($wrapOptions) : ?>
+                </dl>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$current_category = $_objectManager->get('Magento\Framework\Registry')->registry('current_category');
+if($current_category){
+?>
+<script type="text/x-magento-init">
+{
+    "*": {
+         "Sm_ShopBy/js/product/list/toolbar": {}
+    }
+}
+</script>
+<?php }else{ ?>
+<script type="text/x-magento-init">
+{
+    "*": {
+         "Sm_ShopBy/js/product/list/toolbar_search": {}
+    }
+}
+</script>
+<?php } ?>
+
+<?php endif; ?>

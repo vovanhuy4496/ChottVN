@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Chottvn_PriceQuote::request" sortOrder="10" title="Price Quote Request">
+					<resource id="Chottvn_PriceQuote::request_save" sortOrder="10" title="Save Request"/>
+					<resource id="Chottvn_PriceQuote::request_delete" sortOrder="20" title="Delete Request"/>
+					<resource id="Chottvn_PriceQuote::request_update" sortOrder="30" title="Update Request"/>
+					<resource id="Chottvn_PriceQuote::request_view" sortOrder="40" title="View Request"/>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

@@ -1,0 +1,18 @@
+{
+    "chottvn_sms_otplog": {
+        "column": {
+            "id": true,
+            "phone_number": true,
+            "type": true,
+            "status": true,
+            "send_at": true,
+            "provider": true,
+            "params": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_signinphonenumber_otplog": [],
+    "chottvn_send_otp_log": []
+}

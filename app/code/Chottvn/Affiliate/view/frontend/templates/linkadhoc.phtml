@@ -1,0 +1,22 @@
+<?php
+// get tag_wrapper
+$tag_wrapper = $block->getTagWrapper() ? $block->getTagWrapper() : '';
+// get css_class
+$css_class = $block->getCssClass() ? $block->getCssClass() : '';
+// get title
+$title = $block->getTitle() ? __($block->getTitle()) : __("Login");
+
+switch ($this->getParamLinkType()) {
+?>
+<?php case "login_footer" : ?>
+	<?php if(! $this->isLoggedIn() ) { ?>
+	<?php if($tag_wrapper) { echo '<'.$tag_wrapper.'>'; } ?>
+		<a class="btn-affiliate <?= $css_class; ?>" title="<?= $title; ?>" href="/affiliate/account/login">
+			<img src="/pub/media/call_in_action/icon-cong-tac-vien.png" width="10px" height="10px" alt="<?= $title; ?>" style="display: inline-block;">
+			<span><?= $title; ?></span>
+		</a>
+	<?php if($tag_wrapper) { echo '</'.$tag_wrapper.'>'; } ?>
+  <?php } ?>
+<?php 	break; ?>
+
+<?php } // ./ switch case ?>

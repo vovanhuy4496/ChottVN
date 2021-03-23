@@ -1,0 +1,64 @@
+<?php
+/**
+ * Copyright (c) 2019 ChottVN
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+namespace Chottvn\OfflineShipping\Setup;
+
+use Magento\Framework\Setup\UpgradeDataInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+
+/**
+ * Class UpgradeData
+ *
+ * @package Chottvn\OfflineShipping\Setup
+ */
+class UpgradeData implements UpgradeDataInterface
+{
+
+    /**
+     * {@inheritdoc}
+     */
+    public function upgrade(
+        ModuleDataSetupInterface $setup,
+        ModuleContextInterface $context
+    ) {
+        $installer = $setup;
+        $installer->startSetup();
+
+        if (version_compare($context->getVersion(), '1.0.2', '<')) {
+            $data = [
+                'max_delivery_dates' => 7
+            ];
+            $setup->getConnection()->update($setup->getTable('shipping_tablerate'),$data);
+        }
+        if (version_compare($context->getVersion(), '1.0.3', '<')) {
+            $data = [
+                'min_delivery_dates' => 2
+            ];
+            $setup->getConnection()->update($setup->getTable('shipping_tablerate'),$data);
+        }
+
+        $installer->endSetup();
+    }
+}
+

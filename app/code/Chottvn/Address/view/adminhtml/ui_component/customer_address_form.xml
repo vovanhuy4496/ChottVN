@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd" component="Magento_Customer/js/form/components/form">
+    <fieldset name="general">
+        <field name="city_id" sortOrder="81" component="Chottvn_Address/js/form/element/city" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <label translate="true">City</label>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <filterBy>
+                            <field>region_id</field>
+                            <target>${ $.provider }:${ $.parentScope }.region_id</target>
+                        </filterBy>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="township_id" sortOrder="82" component="Chottvn_Address/js/form/element/township" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <visible>true</visible>
+                <label translate="true">Township</label>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <filterBy>
+                            <field>city_id</field>
+                            <target>${ $.provider }:${ $.parentScope }.city_id</target>
+                        </filterBy>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="township" sortOrder="83" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <label translate="true">Township</label>
+            </settings>
+        </field>
+    </fieldset>
+</form>

@@ -1,0 +1,13 @@
+<!--@subject {{trans "Đăng ký lại tài khoản CTV tại %store_name" store_name=$store.getFrontendName()}}  @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>{{trans "Chào %full_name," full_name=$fullName}}</p>
+<p>{{trans "Cảm ơn bạn đã đăng ký tham gia chương trình Cộng tác viên Tư vấn bán hàng tại <a href='%home_url'>chotructuyen.co</a>" home_url=$homeLink |raw"}}</p>
+<p>{{trans "Vui lòng xem kỹ hướng dẫn và kiểm tra chính xác thông tin trước khi <a href='%register_link'>đăng ký</a> lại" register_link=$registerLink |raw}}</p>
+<p>{{trans "Mọi thắc mắc về tài khoản cộng tác viên, vui lòng liên hệ với Phòng Nhân sự, Cty CP Chợ Trực Tuyến qua email: <a href='mailto:lienhe@chotructuyen.co'>ctv@chotructuyen.co</a>" |raw}}</p>
+<br />
+<p>{{trans "Trân trọng!"}}</p>
+<p>{{trans "Cty CP Chợ Trực Tuyến"}}</p>
+
+{{template config_path="design/email/footer_template"}}

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
+        <plugin disabled="false" name="Chottvn_Address_Plugin_Magento_Checkout_Block_Checkout_LayoutProcessor" type="Chottvn\Address\Plugin\Magento\Checkout\Block\Checkout\LayoutProcessor" sortOrder="10"/>
+    </type>
+    <type name="Magento\Checkout\Model\DefaultConfigProvider">
+        <plugin disabled="false" name="Chottvn_Address_Plugin_Magento_Checkout_Model_DefaultConfigProvider" sortOrder="10" type="Chottvn\Address\Plugin\Magento\Checkout\Model\AddressProvider"/>
+    </type>
+    <type name="Magento\Ui\Component\Form\AttributeMapper">
+        <plugin disabled="false" name="Chottvn_Address_Plugin_Magento_Ui_Component_Form_AttributeMapper" sortOrder="10" type="Chottvn\Address\Plugin\Magento\Ui\Component\Form\AttributeMapper"/>
+    </type>
+    <type name="Magento\Customer\Block\Address\Edit">
+        <plugin disabled="false" name="Chottvn_Address_Plugin_Magento_Customer_Block_Address_Edit" sortOrder="10" type="Chottvn\Address\Plugin\Magento\Customer\Block\Address\Edit"/>
+    </type>
+</config>

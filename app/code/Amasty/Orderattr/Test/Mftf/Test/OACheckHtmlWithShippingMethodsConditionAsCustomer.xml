@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckHtmlWithShippingMethodsConditionAsCustomer">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Customer and Admin"/>
+            <title value="Check Order Attribute by Customer and Admin"/>
+            <description value="Check Html Order Attribute With Shipping Methods Condition by Customer and Admin"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-18"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckHtmlOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create Html Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsHtml" stepKey="createHtmlOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOAHtmlShippingMethods"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsHtmlDefault"/>
+            </actionGroup>
+            <!-- Add Shipping Method Condition-->
+            <actionGroup ref="AdminManageConditionsShippingMethods" stepKey="manageShippingCondition">
+                <argument name="adminCreateOASettings" value="SetOAHtmlShippingMethods"/>
+            </actionGroup>
+            <magentoCLI command="indexer:reindex" stepKey="reindexForMessage"/>
+            <magentoCLI command="cache:flush" stepKey="cleanCacheForMessage"/>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOAHtmlShippingMethods"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Login as Simple US Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="login">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheFirstTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check Html Order Attribute on Frontend-->
+        <actionGroup ref="StorefrontCheckOAHtmlForCustomerCheckoutStepOne" stepKey="checkOAForCustomer">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOAHtmlShippingMethods"/>
+        </actionGroup>
+        <!-- Place Order-->
+        <actionGroup ref="StorefrontCreateOrderAsCustomerWithPaymentMethods" stepKey="createPlaceOrder">
+            <argument name="paymentMethods" value="paymentCheckMoneyOrder"/>
+        </actionGroup>
+        <!-- Add Product to Cart-->
+        <actionGroup ref="AddProductToCart" stepKey="AddProductToCartForTheSecondTime">
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="products" value="theSimpleProduct1"/>
+        </actionGroup>
+        <!-- Check Follow the Link-->
+        <actionGroup ref="StorefrontCheckOAHtmlForCustomerCheckoutStepTwo" stepKey="checkFollowTheLink">
+            <argument name="shippingMethodsOnCheckout" value="FlatRateMethod"/>
+            <argument name="adminCreateOASettings" value="SetOAHtmlShippingMethods"/>
+        </actionGroup>
+
+    </test>
+</tests>

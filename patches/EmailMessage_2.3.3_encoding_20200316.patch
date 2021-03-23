@@ -1,0 +1,10 @@
+--- a/vendor/magento/framework/Mail/EmailMessage.php	2020-03-16 23:51:57.000000000 +0700
++++ ab/vendor/magento/framework/Mail/EmailMessage.php	2020-03-16 23:52:41.000000000 +0700
+@@ -214,6 +214,7 @@
+      */
+     public function toString(): string
+     {
++        $this->message->setEncoding('utf-8');
+         return $this->message->toString();
+     }
+ 

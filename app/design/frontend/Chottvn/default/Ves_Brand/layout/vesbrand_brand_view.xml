@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Venustheme
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Venustheme.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.venustheme.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Venustheme
+ * @package    Ves_Brand
+ * @copyright  Copyright (c) 2014 Venustheme (http://www.venustheme.com/)
+ * @license    http://www.venustheme.com/LICENSE-1.0.html
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<body>
+        <referenceContainer name="columns.top">
+            <container name="brand.view.container" htmlTag="div" htmlClass="brand-view" after="-">
+                <block class="Ves\Brand\Block\Brand\View" name="brand.image" template="Ves_Brand::brand/image.phtml"/>
+                <block class="Ves\Brand\Block\Brand\View" name="brand.description" template="Ves_Brand::brand/description.phtml"/>
+            </container>
+        </referenceContainer>
+        <referenceContainer name="div.col-leftmain-bg">
+            <block class="Magento\Framework\View\Element\Template" name="block.sidebar.mobile.vesbrand" template="Ves_Brand::brand/sidebar-mobile.phtml" cacheable="false" before="-" />
+        </referenceContainer>
+        <referenceContainer name="sidebar.main">
+            <block class="Chottvn\Brand\Block\Ves\Brand\Block\BrandList" name="brand_list_sidebar" template="Ves_Brand::brand/sidebar.phtml"/>
+            <block class="Ves\Brand\Block\GroupList" name="group_list" template="Ves_Brand::grouplist.phtml"/>
+            <block class="Magento\Framework\View\Element\Template" ifconfig="vesbrand/general_settings/enable_search" name="brand.searchform.main" template="Ves_Brand::search/form.phtml" before="-"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <container name="custom.brand.view.container" htmlTag="div" htmlClass="brand-view" after="-">
+                <block class="Ves\Brand\Block\Brand\View" name="custom.brand.description" template="Ves_Brand::brand/description.phtml"/>
+                <block class="Chottvn\Brand\Block\BrandCategories" name="custom.brand.by.categories" template="Chottvn_Brand::brand/categories.phtml"/>
+            </container>
+            <block class="Ves\Brand\Block\Brand\View" name="brand.products" template="Ves_Brand::brand/view.phtml">
+                <block class="Ves\Brand\Block\Brand\Product\ListProduct" name="brand.products.list" as="product_list" template="Magento_Catalog::product/list.phtml">
+                    <container name="category.product.list.additional" as="additional" />
+                    <block class="Magento\Framework\View\Element\RendererList" name="category.product.type.details.renderers" as="details.renderers">
+                        <block class="Magento\Framework\View\Element\Template" as="default"/>
+                    </block>
+                    <block class="Magento\Catalog\Block\Product\ProductList\Toolbar" name="product_list_toolbar" template="Magento_Catalog::product/list/toolbar.phtml">
+                        <block class="Magento\Theme\Block\Html\Pager" name="product_list_toolbar_pager"/>
+                    </block>
+                    <action method="setToolbarBlockName">
+                        <argument name="name" xsi:type="string">product_list_toolbar</argument>
+                    </action>
+                </block>
+            </block>
+            <block class="Magento\Cookie\Block\RequireCookie" name="require-cookie" template="Magento_Cookie::require_cookie.phtml">
+                <arguments>
+                    <argument name="triggers" xsi:type="array">
+                        <item name="compareProductLink" xsi:type="string">.action.tocompare</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <referenceContainer name="div.container.more.blocks">
+            <!-- <block class="Ves\Brand\Block\BrandList" template="Ves_Brand::block/brand_list_owl.phtml" name="brand-list-slider" /> -->
+            <!-- <block class="Sm\ListingTabs\Block\ListingTabs" template="Sm_ListingTabs::viewed.phtml" name="viewed-product-cates" after="brand-list-slider">
+                    <arguments>
+                    <argument name="title" xsi:type="string">Sản phẩm đã xem</argument>
+                    <argument name="type_show" xsi:type="string">slider</argument>
+                    <argument name="display_countdown" xsi:type="string">0</argument>
+                    <argument name="type_filter" xsi:type="string">categories</argument>
+                    <argument name="field_tabs" xsi:type="string"></argument>
+                    <argument name="type_product" xsi:type="string">viewed</argument>
+                    <argument name="category_select" xsi:type="string"></argument>
+                    <argument name="category_tabs" xsi:type="string">2</argument>
+                    <argument name="order_by" xsi:type="string">created_at</argument>
+                    <argument name="order_dir" xsi:type="string">DESC</argument>
+                    <argument name="limitation" xsi:type="string">12</argument>
+                    <argument name="view_all_url" xsi:type="string">/san-pham-da-xem</argument>
+                    </arguments>
+            </block> -->
+        </referenceContainer>
+
+        <referenceBlock name="group_list" remove="true"/>
+        <referenceBlock name="brand.products" remove="true"/>
+        <referenceBlock name="require-cookie" remove="true"/>
+        <referenceContainer name="brand.view.container" remove="true"/>
+        <referenceBlock name="block.sidebar.mobile" remove="true"/>
+        <referenceBlock name="page.main.title" remove="true" />
+    </body>
+</page>

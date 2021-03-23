@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-finance",
+    "description": "Chottvn Module Finance",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "authors": [
+        {
+            "email": "dataman@ecepvn.com",
+            "name": "ECEPVN Dev"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Chottvn\\Finance\\": ""
+        }
+    }
+}

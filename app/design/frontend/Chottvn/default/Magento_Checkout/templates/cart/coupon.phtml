@@ -1,0 +1,196 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Element\AbstractBlock $block
+ */
+// detect mobile
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$_detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$detectMobile = $_detectMobile->isMobile();
+$detectTablet = $_detectMobile->isTablet();
+?>
+<style>
+    .actions-toolbar .primary .action{
+        margin: 0;
+    }
+</style>
+<div class="block discount active" id="block-discount">
+<!-- <div class="block discount <?= strlen($block->getCouponCode()) ? 'active' : '' ?>" id="block-discount"> -->
+    <!-- <div class="title" data-role="title" id="title-discount">
+        <strong id="block-discount-heading" role="heading" aria-level="2"><?= $block->escapeHtml(__('Apply Discount Code')) ?></strong>
+    </div> -->
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading">
+        <form id="discount-coupon-form">
+            <div class="fieldset coupon<?= strlen($block->getCouponCode()) ? ' applied' : '' ?>">
+                <div class="field">
+                    <label for="coupon_code" class="label"><span><?= $block->escapeHtml(__('Enter discount code')) ?></span></label>
+                    <div class="control">
+                        <input type="text"
+                               class="input-text <?= strlen($block->getCouponCode()) ? 'applied-coupon' : '' ?>"
+                               id="coupon_code"
+                               name="coupon_code"
+                               value="<?= $block->escapeHtmlAttr($block->getCouponCode()) ?>"
+                               placeholder="<?= ($detectMobile > 0 && $detectTablet == 0) ? 'Nhập mã giảm giá/KM' : 'Nhập mã giảm giá/khuyến mãi' ?>"
+                        />
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <?php if (!strlen($block->getCouponCode())) :?>
+                    <div class="primary">
+                        <button class="action apply primary ctt-button" type="button" value="<?= $block->escapeHtmlAttr(__('Apply Discount')) ?>">
+                            <span><?= $block->escapeHtml(__('Apply Discount')) ?></span>
+                        </button>
+                    </div>
+                    <?php else :?>
+                        <div class="primary">
+                            <button type="button" class="action cancel primary ctt-button" value="<?= $block->escapeHtmlAttr(__('Cancel Coupon')) ?>"><span><?= $block->escapeHtml(__('Cancel Coupon')) ?></span></button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php if (!strlen($block->getCouponCode())) : ?>
+                <?= /* @noEscape */ $block->getChildHtml('captcha') ?>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+require([
+    'jquery',
+    'mage/translate',
+    'Magento_Customer/js/customer-data',
+    'mage/validation',
+    ], function($, $t, customerData,validation) {
+        $(document).ready(function(){ 
+            var dataForm = $('#discount-coupon-form');
+            dataForm.submit(function (e) {
+                e.preventDefault();
+            });
+            if ($('#coupon_code').val()) {
+                $('#coupon_code').prop('disabled', true);
+            }
+            $("#coupon_code").keyup(function() {
+                $(this).val($(this).val().toUpperCase());
+            });
+            $('#coupon_code').on("keypress", function(e) {
+                if (e.keyCode == 13) {
+                    if ($("button.ctt-button").hasClass("apply")) {
+                        $("button.ctt-button.apply").trigger("click");
+                        return false;
+                    }
+                }
+            });
+            $(document).on('click','button.ctt-button', function() {
+                var url = '<?= $block->escapeUrl($block->getUrl('checkout/cart/couponPost')) ?>';
+                var value = $('#coupon_code').val();
+                if (jQuery.trim(value).length > 0) {
+                    if ($("button.ctt-button").hasClass("apply")) {
+                        url +='?remove=0&coupon_code='+value;
+                    }else{
+                        url +='?remove=1&coupon_code='+value;
+                    }
+                    $.ajax({
+                        url:url,
+                        data: $('#discount-coupon-form').serialize(),
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data) {
+                            if(data.status == 'error'){
+                                $.toaster({ title: $t('Notice'), priority: 'danger', message: data.message });
+
+                            }else if(data.status == 'success'){
+                                $.toaster({ title: $t('Notice'), priority: 'success', message: data.message });
+                                $('.loader-quote-price').show();
+                                setTimeout(function(){ success(data); }, 3000);
+                                // The mini cart reloading
+                                customerData.reload(['cart'], true);
+                            }else if(data.status == 'canceled'){
+                                $.toaster({ title: $t('Notice'), priority: 'success', message: data.message });
+                                $('.loader-quote-price').show();
+                                setTimeout(function(){ cancel(data); }, 3000);
+                                // The mini cart reloading
+                                customerData.reload(['cart'], true);
+                            }
+                            else{
+                                $.toaster({ title: $t('Notice'), priority: 'info', message: data.message });
+                                // The mini cart reloading
+                                customerData.reload(['cart'], true);
+                            }
+                            $('#coupon_code').css({"border": "solid 1px #f5f5f5"});
+                        },
+                        error: function (data) {
+                            $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Error happens. Try again.'); ?>' });
+                        }
+                    });
+                }else{
+                    $('#coupon_code').css({"border": "1px solid #ff6000"});
+                    $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+                }
+            });
+            function success(data){
+                if(data.value !== undefined){
+                    var value = data.value;
+                    var is_freeship = Boolean(value.is_freeship);
+                    $("#id-originaltotal").html(value.original_total);
+                    if (parseInt(value.savings_amount > 0)) {
+                        $("#id-savingsamount").html(value.savings_amount);
+                    }
+                    $("#id-discountamount").html(value.discount_amount);
+                    $("#id-shippingamount").html(value.shipping_amount);
+                    $("#id-titlegrandtotal").html(value.title_grand_total);
+                    $("#id-grandtotal").html(value.grand_total);
+                    if (!is_freeship){
+                        var list_coupon = value.list_coupon;
+                        $.each(list_coupon, function( index, value ) {
+                            $(".rule-name").html(value['name']);
+                            $(".rule-amount").html(value['discount_amount']);
+                        });
+                        $(".show-ajax").show();
+                        $(".hide-ajax").hide();
+                    }else{
+                        $(".show-ajax").hide();
+                        $(".hide-ajax").hide();
+                    }
+                }
+                $(".primary .action.primary").removeClass("apply");
+                $(".primary .action.primary").addClass("cancel");
+                $(".primary .action.primary.cancel").val('<?php echo __('Cancel Coupon') ?>');
+                $(".primary .action.primary.cancel span").html('<?php echo __('Cancel Coupon') ?>');
+                $('#coupon_code').prop('disabled', true);
+                $('.loader-quote-price').hide();
+            }
+            function cancel(data){
+                if(data.value !== undefined){
+                    var value = data.value;
+                    $("#id-originaltotal").html(value.original_total);
+                    if (parseInt(value.savings_amount > 0)) {
+                        $("#id-savingsamount").html(value.savings_amount);
+                    }
+                    $("#id-discountamount").html(value.discount_amount);
+                    $("#id-shippingamount").html(value.shipping_amount);
+                    $("#id-titlegrandtotal").html(value.title_grand_total);
+                    $("#id-grandtotal").html(value.grand_total);
+                    $(".hide-ajax").hide();
+                    $(".show-ajax").hide();
+                    if ($('.total-rules-cart').hasClass('show-total-rules')) {
+                        $('.total-rules-cart').removeClass('show-total-rules');
+                        $('.total-rules-cart').addClass('hide-total-rules')
+                    }
+                }
+                $(".primary .action.primary").removeClass("cancel");
+                $(".primary .action.primary").addClass("apply");
+                $(".primary .action.primary.apply").val('<?php echo __('Apply Discount') ?>');
+                $(".primary .action.primary.apply span").html('<?php echo __('Apply Discount') ?>');
+                $('#coupon_code').prop('disabled', false);
+                $('#coupon_code').val('');
+                $('.loader-quote-price').hide();
+            }
+        });
+});
+
+</script>

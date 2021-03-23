@@ -1,0 +1,28 @@
+--- a/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-07-02 13:41:08.000000000 +0700
++++ b/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-07-02 13:40:53.000000000 +0700
+@@ -63,6 +63,25 @@
+     const KEY_PRICE_INCL_TAX = 'price_incl_tax';
+ 
+     /**
++     * Min Delivery Dates.
++     */
++    const KEY_MIN_DELIVERY_DATES = 'min_delivery_dates';
++    
++    /**
++     * Returns Get Min Delivery Dates.
++     *
++     * @return int Get Min Delivery Dates.
++     */
++    public function getMinDeliveryDates();
++
++     /**
++     * Returns Set Min Delivery Dates.
++     *
++     * @return int Set Min Delivery Dates.
++     */
++    public function setMinDeliveryDates($minDeliveryDates);
++
++    /**
+      * Returns the shipping carrier code.
+      *
+      * @return string Shipping carrier code.

@@ -1,0 +1,8 @@
+/* CSS For Sales Guest View */
+.main-bg {
+    border: 0px !important;
+}
+
+.sales-guest-view .col1-layout .main-bg .column.main .box-infor-order {
+    padding: 0px;
+}

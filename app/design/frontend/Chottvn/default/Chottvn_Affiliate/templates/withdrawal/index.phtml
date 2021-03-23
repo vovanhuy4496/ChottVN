@@ -1,0 +1,281 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $customerId = $customerSession->getCustomer()->getId();//get id of customer
+
+    $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+    $customerPhoneNumber = $customerObj->getData('phone_number');
+
+    $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+
+    $priceHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+    $rewardRuleHelper = $this->helper("\Chottvn\Affiliate\Helper\RewardRule");
+    $productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+
+    $financeTransactionHelper = $this->helper("\Chottvn\Finance\Helper\Transaction");
+
+    // Affiliate Level Info
+    $affiliateCode = $block->_helperAccount->getAffiliateCode($block->_customer->getId());
+    $affiliateLevel =  $block->_helperAccount->getAffiliateLevel($block->_customer->getId());
+    $levelPercent = explode('ctv_', $affiliateLevel);
+    if (isset($levelPercent[1])) {
+        $levelPercent = (int) $levelPercent[1] * 100 / 5;
+    } else {
+        $levelPercent = 0;
+    }
+    $levelStars = $this->getLayout()
+                    ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                    ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                    ->setData(['percent_rating' => $levelPercent])
+                    ->toHtml();
+    $levelChangeDate = $block->_helperAccount->getAffiliateLevelChangedLatestDateStr($block->_customer->getId());
+    $activatedDate = $block->_helperAccount->getActivatedDate($block->_customer->getId())->format("Y-m-d");
+
+    // Affiliate Purchase
+    $latestOrderDate = $rewardRuleHelper->getLatestOrderDateStr($block->_customer->getId());
+
+    // Statistic Last 6 months
+    $staticMonths = 6;
+    $staticLatestMonthsTitle = __('Statistics results for the last '.$staticMonths.' months');
+    $dateRangeOfStaticLatestMonths = $rewardRuleHelper->getStatisticDateRangeForLatestMonth($staticMonths, $activatedDate);
+    $monthRangeStartFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["start_date"]));
+    $monthRangeEndFilter = date('d-m-Y', strtotime( $dateRangeOfStaticLatestMonths["end_date"]));
+    $staticLatestMonthsStr = $rewardRuleHelper->getStaticMonthRangeStr($dateRangeOfStaticLatestMonths);
+
+    // -- Calcaluate Revenue
+    $affiliateRevenueStatistic = $rewardRuleHelper->getStatisticAffiliateRevenue($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateRevenue =  $affiliateRevenueStatistic["affiliate_revenue_amount"];
+    $affiliateReward =  $affiliateRevenueStatistic["affiliate_reward_amount"];
+
+    $affiliateRevenueStatisticByBrand = $rewardRuleHelper->getStatisticAffiliateRevenueByBrand($customerId, $dateRangeOfStaticLatestMonths);
+
+    $affiliateOrderCount = $rewardRuleHelper->getStatisticAffiliateOrderCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypeActiveCount = $rewardRuleHelper->getStatisticAffiliateOrderTypeActiveCount($customerId, $dateRangeOfStaticLatestMonths);
+    $affiliateOrderTypePassiveCount = $affiliateOrderCount - $affiliateOrderTypeActiveCount;
+
+    // Statistic Last 6 months - Breakdown monthly
+    $statisticMonthlyOptions =  $rewardRuleHelper->getMonthOptionsFromDateRange($dateRangeOfStaticLatestMonths);
+    $statisticMonthly = $rewardRuleHelper->getStatisticAffiliateRevenueByMonth($customerId, $dateRangeOfStaticLatestMonths);
+
+    if(sizeof($statisticMonthlyOptions) > 0){
+        $index = 0;//sizeof($statisticMonthlyOptions) - 1;
+        $currentStatisticMonthlyKey = $statisticMonthlyOptions[$index]["month"];
+    }else{
+          $currentStatisticMonthlyKey = "";
+    }
+
+    if(sizeof($statisticMonthlyOptions) > 1){
+        $staticLatestMonthsTitle = __('Statistics results for the last %1 months',sizeof($statisticMonthlyOptions));
+    }else{
+       $staticLatestMonthsTitle = __('Statistics results for the last month');
+    }
+
+    // Transaction & Finance
+    $affiliateStatisticAllTime = $rewardRuleHelper->getStatisticAffiliateRevenue($customerId);
+    $affiliateRewardAllTime =  $affiliateStatisticAllTime["affiliate_reward_amount"];
+    $marginLimitBalance = $financeTransactionHelper->getAccountAmountMarginBalance($block->_customer->getId());
+    $marginChangeDate = $block->_helperAccount->getMarginLimitChangedLatestDateStr($block->_customer->getId());
+    // tổng số tiền đã giao dịch
+    $accountAmountTransaction = $financeTransactionHelper->getAccountAmountTransactionAll($block->_customer->getId());
+    // Tổng số tiền trong tài khoản = Tổng số tiền đã giao dịch + Tổng chiết khấu toan thoi gian
+    $accountAmountBalance = $accountAmountTransaction + $affiliateRewardAllTime;
+    //$marginLimitAffiliateLevel  = $this->_helperAccount->getAffiliateMarginLimit($block->_customer->getId());
+    // số dư khả dụng = Tổng số tiền trong tài khoản - hạn mức ký quỹ
+    $accountAmountTransactionAvaiable = $financeTransactionHelper->getAccountAmountTransactionAllAvaiable($block->_customer->getId());
+    $accountAmountAvailable = $accountAmountTransactionAvaiable - $marginLimitBalance + $affiliateRewardAllTime;
+ 
+ 
+    $accountAmountWithdrawal = $financeTransactionHelper->getAccountAmountTransactionWithdrawal($block->_customer->getId());
+    $accountAmountDepositCash = $financeTransactionHelper->getAccountAmountTransactionDepositCash($block->_customer->getId()); 
+    $accountAmountHandleResponsibility = $financeTransactionHelper->getAccountAmountTransactionHandleResponsibility($block->_customer->getId());  
+
+    //$accountTransactions = $financeTransactionHelper->getAccountTransactions($block->_customer->getId());  
+    $accountTransactionsByMonth = $financeTransactionHelper->getAccountTransactionsByMonth($block->_customer->getId(), $dateRangeOfStaticLatestMonths);  
+    $accountTransactionsWithdrawal  = $financeTransactionHelper->getAccountTransactionsWithdrawal($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsHandleResponsibility  = $financeTransactionHelper->getAccountTransactionsHandleResponsibility($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    $accountTransactionsDepositCash  = $financeTransactionHelper->getAccountTransactionsDepositCash($block->_customer->getId(), $dateRangeOfStaticLatestMonths);
+    //
+    $withdrawalRewardAmountMin = (int) $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('configuration/general/withdrawal_reward_amount_min') ? (int) $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('configuration/general/withdrawal_reward_amount_min'): 0;
+    $transactionTypeHelperData = $this->helper('Chottvn\Finance\Helper\Data');
+    $transactionTypeCollection = $transactionTypeHelperData->getTransactionTypeCollection();
+    $priceHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+?>
+<style>
+    #withdrawal-error{
+        display: none !important;
+    }
+    /* .actions-toolbar{
+        margin-top: 35px !important;
+    } */
+</style>
+<div class="col-sm-12 order-timeline">
+    <div class="row order-progress" >
+        <div class="col-sm-4 col-4 order-progress-step active">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-1.png');  ?>" alt="<?= __('Place order success'); ?>"/> -->
+                <!-- <i class="fas fa-luggage-cart pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                <p class="order-steps-label" ><?= __('Step initialization'); ?></p>
+            </div>
+        </div>
+        <div class="col-sm-4 col-4 order-progress-step disabled ">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-2.png');  ?>" alt="<?= __('Order in processing'); ?>"/> -->
+                <!-- <i class="fas fa-clipboard-list pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                <p class="order-steps-label" ><?= __('Step confirm'); ?></p>
+            </div>
+        </div>
+
+        <div class="col-sm-4 col-4 order-progress-step disabled ">
+            <div class="text-center order-progress-stepnum">&nbsp;</div>
+            <div class="progress"><div class="progress-bar"></div></div>
+            <a href="#" class="order-progress-dot"></a>
+            <div class="order-progress-info">
+                <!-- <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-3.png');  ?>" alt="<?= __('Order in delivery'); ?>"/> -->
+                <!-- <i class="fas fa-truck-moving pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                <p class="order-steps-label" ><?= __('Step result'); ?></p>
+            </div>
+        </div>
+    </div>
+</div><!-- /.order-progress -->
+
+<!-- Page Info -->
+<form class="form" method="post" id="form-validate" enctype="multipart/form-data" autocomplete="off">
+    <?= /* @noEscape */ $block->getBlockHtml('formkey'); ?>
+    <div class="affiliate-container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-12 personal-information">
+				<div class="col-affiliate-height-auto">
+                    <p class="available-balances"><?= __('Available balances'); ?>: <?= /* @escapeNotVerified */ $priceHelper->formatPrice($accountAmountAvailable) ?></p>
+					<fieldset class="fieldset">
+				        <div class="field _required form-group-required">
+				            <label for="withdrawal" class="label"><span><?= $block->escapeHtml(__('Withdrawal Amount')) ?></span></label>
+				            <div class="control">
+                                <input value="<?php echo $accountAmountAvailable; ?>" type="hidden" name="accountamountavailable" />
+								<input value="<?php echo $withdrawalRewardAmountMin; ?>" type="hidden" name="withdrawalrewardamountmin" />
+				                <input type="text" name="withdrawal" value ="<?= number_format($accountAmountAvailable, 0, '', '.'); ?>" id="withdrawal" title="<?= $block->escapeHtml(__('Amount')) ?>" placeholder="<?= $block->escapeHtml(__('Input Amount')) ?>" class="input-text" data-validate="{'required': true}">
+				            </div>
+				        </div>
+                        <div class="field required form-group-required" style="display: none;">
+                            <label class="label" for="transaction_type_id">
+                                <label class="label" for="transaction_type_id"><span><?= $block->escapeHtmlAttr(__('Aff Transaction Type')) ?></span></label>
+                            </label>
+                            <div class="control custom-width-control form-group-required">
+                                <select id="transaction_type_id" name="transaction_type_id"
+                                        title="<?= $block->escapeHtmlAttr(__('Aff Transaction Type')) ?>"
+                                        class="select-width-50 validate-select required-entry"
+                                        autocomplete="off"
+                                        style="pointer-events: none;"
+                                        >
+                                    <option value=""><?= $block->escapeHtml(__('Please select a Transaction Type.')) ?></option>
+                                    
+                                    <?php 
+                                    // Phuoc add 2020-08-12 for load list bank
+                                    foreach ($transactionTypeCollection  as $item) : ?>
+                                        <option value="<?= $item['transactiontype_id']; ?>"> <?= $item['name']; ?> </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <input type="text"
+                                            id="transaction_type_id_form"
+                                            name="transaction_type_id_form"
+                                            value="4"
+                                            style="display: none;"
+                                            autocomplete="off" />
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <?=
+				        $block->getChildHtml('form_additional_info') ?>
+                    <div class="actions-toolbar">
+                        <div class="primary">
+                            <button type="submit" class="action submit primary" id="submit-affiliate" title="<?= $block->escapeHtmlAttr(__('Create')) ?>"><?= $block->escapeHtml(__('Continue')) ?></span></button>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script>
+require(['jquery','mage/translate','mage/validation'], function($,$t){
+    var dataForm = $('#form-validate');
+	dataForm.mage('validation', {});
+	$('button#submit-affiliate').click( function(e) { //can be replaced with any event
+			e.preventDefault();
+            var isValid = true;
+			var status = dataForm.validation('isValid'); //validates form and returns boolean
+			if(status){
+				console.log('form is validated'); //form is valid
+				$.ajax({
+					url: "/affiliate/account_withdrawal/handle",
+					data: $('#form-validate').serialize(),
+					type: 'POST',
+					dataType: 'json',
+					beforeSend: function() {
+						// show some loading icon
+					},
+					success: function(data, status, xhr) {
+						if(data.status == 'error'){
+							$.toaster({ title: $t('Notice'), priority: 'danger', message: data.message });
+						}else{
+							window.location.href = data.redirect_url;
+						}
+					},
+					error: function (xhr, status, errorThrown) {
+						$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Error happens. Try again.'); ?>' });
+					}
+				});
+			}else{
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+			}
+            return isValid;
+    });
+});
+</script>
+<script>
+    require([
+        "jquery"
+    ], function($){
+		$(document).ready(function() {
+			var transaction_type_id = $('#transaction_type_id_form').val();
+			$('#transaction_type_id').val(transaction_type_id);
+
+            $('#form-validate').submit(function (e) {
+			    e.preventDefault();
+                isValid = true;
+                $(".form-group-required" ).find('input').each(function( index, element ) {
+                    if ($(this).val().trim() == '') {
+                        isValid = false;
+                        $(this).attr('style', 'border-color:#ff6000 !important;');
+                    }else{
+                        $(this).attr('style', 'border-color:#f5f5f5 !important;');
+                    }
+                })  
+                return isValid;
+            });
+            
+            $('#withdrawal').on('input', function(e){        
+                $(this).val(formatCurrency(this.value.replace(/[.VNĐ]/g,'')));
+            }).on('keypress',function(e){
+                if(!$.isNumeric(String.fromCharCode(e.which))) e.preventDefault();
+            }).on('paste', function(e){    
+                var cb = e.originalEvent.clipboardData || window.clipboardData;      
+                if(!$.isNumeric(cb.getData('text'))) e.preventDefault();
+            });
+            function formatCurrency(number){
+                var n = number.split('').reverse().join("");
+                var n2 = n.replace(/\d\d\d(?!$)/g, "$&.");    
+                return  n2.split('').reverse().join('');
+            }
+		});
+
+    });
+</script>
+

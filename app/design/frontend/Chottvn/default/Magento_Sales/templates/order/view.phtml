@@ -1,0 +1,933 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var  $block \Magento\Sales\Block\Order\View*/ ?>
+<?php
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+$orderattr = $objectManager->create('Amasty\Orderattr\Block\Order\PrintOrder');
+$checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+$reviewFactory = $objectManager->create('Magento\Review\Model\Review');
+$storeId = $storeManager->getStore()->getId();
+$amPromoHelper = $this->helper('Amasty\Promo\Helper\Item');
+$productRepository = $objectManager->get('\Magento\Catalog\Model\Product');
+$saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+
+// detect mobile
+$_order = $block->getOrder();
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$quote = $objectManager->create('Magento\Quote\Model\Quote')->load($_order->getQuoteId());
+$flagShipping = $quote->getFlagShipping();
+$shipping_amount = $checkoutHelper->formatPrice($_order->getShippingAmount());;
+$grandTotal = __('Grand Total');
+if ($flagShipping === 'freeshipping') {
+    $shipping_amount = __('Free Shipping');
+}
+if ($flagShipping === 'over') {
+    $grandTotal = __('Grand Total(temp)');
+    $shipping_amount = __('Price Contact');
+}
+
+// mã giảm giá
+$couponcode = $_order->getCouponCode();
+// mã CTV
+$codeAffiliate = $_order->getAffiliateAccountCode();
+// giá giảm
+$discountAmount = $_order->getDiscountAmount();
+// group id
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$grCustomer = $customerSession->getCustomerGroupId();
+$customerId = $_order->getDiscountAmount();
+// id CTV
+$idAffiliate = $_order->getAffiliateAccountId() ? $_order->getAffiliateAccountId(): -1;
+// customerId
+$customerId = $_order->getCustomerId() ? $_order->getCustomerId(): -2;
+?>
+<style>
+    .title-infor-cus{
+        font-weight: 600;
+    }
+    .rules-list i{
+        padding-right: 10px;
+    }
+
+</style>
+
+<div class="orders-history">
+    <?php
+    $showDetail = true;
+    $isStatusCancel = in_array($_order->getStatus(), ["canceled"]);
+    // $isStatusComplete = in_array($_order->getStatus(), ["complete"]);
+    $isStatusComplete = in_array($_order->getStatus(), ["complete", "finished", "returned", "returned_and_finished"]);
+    $isStatusNew = in_array($_order->getStatus(), ["pending"]);
+    $isStatusProcessing = in_array($_order->getStatus(), ["processing"]);
+    $isStatusPackaging = in_array($_order->getStatus(), ["packaging"]);
+    $isStatusInDelivery = in_array($_order->getStatus(), ["delivery"]);
+
+    if ($isStatusNew || $isStatusProcessing || $isStatusPackaging || $isStatusInDelivery) {
+        $showDetail = true;
+    }
+
+    $createdDate = $_order->getCreatedAt();
+    // $updatedDate = $_order->getUpdatedAt();
+
+    $salesHelper = $this->helper('Chottvn\Sales\Helper\Data');
+    $updatedDate = $salesHelper->getCompleteDeliveryLog($_order);
+
+    $estimatedDeliveryDate = "";
+    try {
+        $timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+        $createdDate = $timefc->date($_order->getCreatedAt())->format('Y-m-d');
+        $maxDeliveryDates = $_order->getMaxDeliveryDates();
+        $estimatedDeliveryDate = date('d/m/Y', strtotime($createdDate . " + ".$maxDeliveryDates." day"));
+    } catch (\Exception $e) {
+    }
+    $payment = $_order->getPayment();
+    $paymentMethod = $payment->getMethodInstance();
+    $paymentMethodCode = $paymentMethod->getCode();
+    $paymentMethodTitle = $paymentMethod->getTitle();
+    $shippingAddress = $_order->getShippingAddress();
+    $billingAddress = $_order->getBillingAddress();
+    $orderResource = $objectManager->create('\Magento\Sales\Model\OrderRepository')->get($_order->getId());
+    $bankTransferNote = $orderResource->getBankTransferNote();
+    // $salesHelper = $this->helper('Chottvn\Sales\Helper\Data');
+    ?>
+    <div class="row order">
+        <div class="col-sm-12 order-summary">
+            <div class="row">
+                <div class="col-7 order-summary-left">
+                    <span class="order-label"><?= $block->escapeHtml(__('Order')) ?>:<span class="order-value">#<?= $_order->getRealOrderId() ?></span></span>
+                    <br />
+                    <span class="date-label"><?= __('Order date:') ?><span class="date-value"><?= $block->formatDate($_order->getCreatedAt()) ?></span></span>
+                </div>
+                <div class="col-5 order-summary-right">
+                    <span class="amount-value"><?= $checkoutHelper->formatPrice($_order->getGrandTotal()) ?></span>
+                    <br />
+                    <span class="items-value"><?= (string)(int)$_order->getTotalQtyOrdered(); ?> <?= ((int)$_order->getTotalQtyOrdered() > 1) ? __('products') : __('product') ; ?></span>
+                </div>
+            </div>
+        </div><!-- /.order-summary -->
+        <?php if($isStatusNew || $isStatusProcessing ||  $isStatusPackaging || $isStatusInDelivery){ ?>
+            <div class="col-sm-12 order-timeline" >
+                <div class="row order-progress" >
+                    <div class="col-sm-3 col-3 order-progress-step
+                    <?php
+                        if($isStatusNew){ echo "complete"; }
+                        if($isStatusProcessing){ echo "complete"; }
+                        if($isStatusPackaging){ echo "complete"; }
+                        if($isStatusInDelivery){ echo "complete"; }
+                    ?> ">
+                        <div class="text-center order-progress-stepnum">&nbsp;</div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <a href="#" class="order-progress-dot"></a>
+                        <div class="order-progress-info">
+                            <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-1.png');  ?>" alt="<?= __('Place order success'); ?>"/>
+                            <!-- <i class="fas fa-luggage-cart pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                            <p class="order-steps-label" ><?= __('Place order success'); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3 col-3 order-progress-step
+                        <?php
+                        if($isStatusNew){ echo "active"; }
+                        if($isStatusProcessing){ echo "complete"; }
+                        if($isStatusPackaging){ echo "complete"; }
+                        if($isStatusInDelivery){ echo "complete"; }
+                    ?> ">
+                        <div class="text-center order-progress-stepnum">&nbsp;</div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <a href="#" class="order-progress-dot"></a>
+                        <div class="order-progress-info">
+                            <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-2.png');  ?>" alt="<?= __('Order in processing'); ?>"/>
+                            <!-- <i class="fas fa-clipboard-list pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                            <p class="order-steps-label" ><?= __('Order in processing'); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3 col-3 order-progress-step <?php
+                        if($isStatusNew){ echo "disabled"; }
+                        if($isStatusProcessing){ echo "active"; }
+                        if($isStatusPackaging){ echo "active"; }
+                        if($isStatusInDelivery){ echo "complete"; }
+                    ?> ">
+                        <div class="text-center order-progress-stepnum">&nbsp;</div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <a href="#" class="order-progress-dot"></a>
+                        <div class="order-progress-info">
+                            <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-3.png');  ?>" alt="<?= __('Order in delivery'); ?>"/>
+                            <!-- <i class="fas fa-truck-moving pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                            <p class="order-steps-label" ><?= __('Order in delivery'); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3 col-3 order-progress-step <?php
+                        if($isStatusNew){ echo "disabled"; }
+                        if($isStatusProcessing){ echo "disabled"; }
+                        if($isStatusPackaging){ echo "disabled"; }
+                        if($isStatusInDelivery){ echo "active"; }
+                    ?> ">
+                        <div class="text-center order-progress-stepnum">&nbsp;</div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <a href="#" class="order-progress-dot"></a>
+                        <div class="order-progress-info">
+                            <img class="order-steps-icon" src="<?= $this->getViewFileUrl('images/icon-order-step-4.png');  ?>" alt="<?= __('Order delivered'); ?>"/>
+                            <!-- <i class="fas fa-calendar-check pt-2 text-secondary" style="font-size: 40px;"></i> -->
+                            <p class="order-steps-label" ><?= __('Order delivered'); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.order-progress -->
+            <?php } ?>
+        <div class="col-sm-12 order-items">
+            <div class="row">
+              <!-- OrderItems-Header -->
+              <div class="col-sm-8 item-head" style="padding: 10px 0">
+                        <?php if ($isStatusComplete  ) { ?>
+                            <?= __("Delivered at"); ?>: <?= $updatedDate; ?>
+
+                        <?php } else if ($isStatusCancel ) { ?>
+                            <?= __("Canceled at"); ?>: <?= $updatedDate; ?>
+
+                        <?php } else if ($isStatusNew || $isStatusProcessing || $isStatusPackaging || $isStatusInDelivery ) { ?>
+                            <?php if($_order->getMaxDeliveryDates()): ?>
+                                <?= __("Estimated delivery date"); ?>: <?= $estimatedDeliveryDate; ?>
+                            <?php else: ?>
+                                <?= __("Estimated delivery date"); ?>: <?= __("Max Delivery Dates Contact"); ?>
+                            <?php endif; ?>
+                        <?php } ?>
+
+                    </div>
+                <div class="col-sm-2 hidden-xs item-head" style="padding: 10px 15px; text-align: right;">
+                    <?= $block->escapeHtml(__('Quantity x Price')) ?>
+                </div>
+                <div class="col-sm-2 hidden-xs text-right item-head" style="padding: 10px 0">
+                    <?= $block->escapeHtml(__('Subtotal')) ?>
+                </div>
+            </div><!-- ./item-header -->
+            <!-- OrderItems-List -->
+            <?php 
+                $orderItems =  $_order->getAllItems();  
+                $arrayMain = array();
+                $arrayMain = $salesHelper->getListOrder($orderItems);
+            ?>
+            <?php
+                // echo '<pre>';
+                // print_r(get_class_methods($_order));
+                // echo '</pre>';
+                if(!empty($arrayMain) && count($arrayMain) > 0){
+                foreach ($arrayMain as $orderItem): ?>
+                    <?php
+                        $parentItem = $orderItem->getParentItemId();
+                        $cartPromoOption = $orderItem->getCartPromoOption() ? $orderItem->getCartPromoOption(): '' ;
+                    ?>
+                        <div class="row">
+                            <?php
+                                $product = $orderItem->getProduct();
+                                $productResource = $objectManager->create('Magento\Catalog\Model\Product');
+                                $blockRules = $block->getLayout()->createBlock('Chottvn\Frontend\Block\Rules');
+                                if($product){
+                                    $productResource = $productResource->load($product->getId());
+                                    if($childProd = current($orderItem->getChildrenItems())){
+                                        $productImage = $imageHelper->init($childProd->getProduct(), 'category_page_list')->getUrl();
+                                    }
+                                    else{
+                                    $productImage = $imageHelper->init($orderItem->getProduct(), 'category_page_list')->getUrl();
+                                    }
+                                }else{
+                                    $imageHelper = $objectManager->get(\Magento\Catalog\Helper\Image::class);
+                                    $productImage = $imageHelper->getDefaultPlaceholderUrl('image');
+                                }
+                                // bảo hành
+                                $guaranteeInfo = $orderItem->getData('guarantee');
+                                // đơn vị tính /cái
+                                $productunit = $productResource->getData('product_unit') ? $productResource->getData('product_unit'): $orderItem->getData('product_unit');
+                                $reviewFactory->getEntitySummary($productResource, $storeId);
+                                $ratingSummary = $productResource->getRatingSummary()->getRatingSummary();
+                                $ratingCount = $productResource->getRatingSummary()->getReviewsCount();
+
+                                $checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+                                $ruleIdsApplied = $orderItem->getAppliedRuleIds();
+                                // $rulesApplied = $saleRuleFactory->create()->addFieldToFilter('rule_id', array('in' => $ruleIdsApplied) )->addFieldToSelect('name');
+                                $productId = $orderItem->getProductId();
+                                $cartPromoItemids = $orderItem->getCartPromoItemIds();
+                                $orderId = $orderItem->getOrderId();
+                                $getQuoteItemId = $orderItem->getQuoteItemId();
+                                $rulesApplied = $salesHelper->getRulesNameByOrderCTT($getQuoteItemId,$orderId,$ruleIdsApplied);
+                                $quoteItem = $objectManager->create('Magento\Quote\Model\Quote\Item')->load($orderItem->getQuoteItemId());
+                                // $isPromoItem = $amPromoHelper->isPromoItem($quoteItem);
+                                $productOptions = $orderItem->getProductOptions();
+                                // $isPromoItem = $salesHelper->isPromoItem($productOptions);
+                                
+                                // cart promo option
+                                $cartPromoOption = $orderItem->getData('cart_promo_option');
+                                $isPromoItem = $salesHelper->isPromoItemCTT($cartPromoOption);
+
+                                $ruleId = $salesHelper->getRulesIdByProductOptions($productOptions);
+                                $nameRule = $salesHelper->getRulesNameByIdRule($ruleId);
+                                $messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+                                // $isPromoItem = ($orderItem->getPrice() == 0);
+                                // options attributes
+                                $attributesOption = array();
+                                if(isset($orderItem->getProductOptions()["info_buyRequest"]["super_attribute"])){
+                                    $attributesOption = $orderItem->getProductOptions()["info_buyRequest"]["super_attribute"];
+                                }
+                                $productModel = $productResource->getData('model') ? $productResource->getData('model'): $orderItem->getData('model');
+
+                                if($product){
+                                    $jacket = array();
+                                    $productidOfconfigurable = $product->getId();
+
+                                    if($attributesOption){
+                                        $itemQuote = $objectManager->get('Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory');
+                                        $itemQuoteCollection = $itemQuote->create()->addFieldToFilter('parent_item_id',$orderItem->getQuoteItemId())->addFieldToFilter('product_type','simple');
+                                        $lastItemQuote = $itemQuoteCollection->getLastItem();
+                                        $productidOfconfigurable = $lastItemQuote->getData('product_id');
+                                        $productResourceConfiguration = $objectManager->create('Magento\Catalog\Model\Product')->load($productidOfconfigurable);
+                                        if(!$productModel){
+                                            $productModel = $productResourceConfiguration->getData('model');
+                                        }
+                                    }
+                                    $productTypeInstance = $objectManager->get('Magento\Catalog\Model\ResourceModel\Eav\Attribute');
+                                    if ($attributesOption) {
+                                        foreach ($attributesOption as $key => $attr) {
+                                            $_attr = $productTypeInstance->load($key);
+                                            $attributeCode = $_attr->getAttributeCode();
+                                            $jacket[$attributeCode] = $attr;
+                                        }
+                                    }
+
+                                    $getProductUrl = $product->getProductUrl();
+                                    if ($jacket) {
+                                        $getProductUrl = $getProductUrl . '#';
+                                        foreach($jacket as $key => $value){
+                                            $getProductUrl = $getProductUrl .$key. '='. $value .'&';
+                                        }
+                                        $getProductUrl = substr($getProductUrl, 0, -1);
+                                    }
+                                }
+                            ?>
+                            <div class="col-sm-8 item-body clearfix">
+                            <?php if ($detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+                                <!-- Mobile View -->
+                                <!-- name product -->
+                                <?php if(!$isPromoItem){ ?>
+                                    <div class="product-item-details-mobile clearfix">
+                                        <?php if ($product) :?>
+                                            <?php if ($salesHelper->hasProductUrl($product)) :?>
+                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                <?= $orderItem->getProductNameLongHtml(); ?>
+                                                </a>
+                                            <?php else :?>
+                                                <?= $orderItem->getProductNameLongHtml(); ?>
+                                            <?php endif; ?>
+                                        <?php else :?>
+                                            <?= $orderItem->getProductNameLongHtml(); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php } ?>
+                                <!-- Brand, Model -->
+                                    <?php
+                                        if($product){
+                                            $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                        }else{
+                                            $productBrand = $productBrandHelper->getFirstBrandFromOrderItem($orderItem);
+                                        }
+                                        if ($productBrand || $productModel){
+                                    ?>
+                                    <div class="brand-model-mobile clearfix">
+                                        <div class="brand-name">
+                                            <?php
+                                                if ($productBrand) {
+                                            ?>
+                                            <span><?php echo __('Brands: '); ?></span>
+                                            <span class="name"><?php echo $productBrand->getName(); ?></span>
+                                        <?php } ?>
+                                        </div>
+                                        <div class="model-name">
+                                        <?php
+                                            if ($productModel) {
+                                        ?>
+                                            <span><?php echo __('Model: '); ?></span>
+                                            <span class="name"><?php echo $productModel; ?></span>
+                                        <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                    <!-- Guarantee -->
+                                <?php if ($guaranteeInfo) { ?>
+                                    <div class="guarantee-info">
+                                        <span><?php echo __('Guarantee: '); ?></span>
+                                        <span class="name"><?php echo $guaranteeInfo; ?></span>
+                                    </div>
+                                <?php } ?>
+                                <!-- Options -->
+                                <?php if ($attributesOption) { ?>
+                                    <div class="guarantee-info">
+                                        <?php foreach($attributesOption as $key => $value): ?>
+                                            <?php
+                                                $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                $labelOptions = '';
+                                                $valueOptions = '';
+                                                foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                    $tmp_option = $value_o['values'];
+                                                    if(count($tmp_option) > 0)
+                                                    {
+                                                        foreach ($tmp_option as $tmp) {
+                                                            if($key_o == $key && $tmp['value_index'] == $value){
+                                                                $labelOptions = $value_o['store_label'];
+                                                                $valueOptions = $tmp['label'];
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ?>
+                                            <span class="span-options-right"><?php echo $labelOptions; ?>: <?php echo $valueOptions; ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php } ?>
+                                <div class="product-item-photo mobile-view">
+                                    <?php if ($product) :?>
+                                        <?php if ($salesHelper->hasProductUrl($product) && $product) :?>
+                                            <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                <div class="img-box">
+                                                    <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                                </div>
+                                            </a>
+                                        <?php else :?>
+                                            <div class="img-box">
+                                                <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php else :?>
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if (!$isPromoItem) { ?>
+                                    <div class="product-item-info">
+                                        <!-- Reviews -->
+                                        <?php if (false && $ratingSummary && $product) :?>
+                                        <div class="rating-summary">
+                                            <div class="rating-result" title="<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                                <span style="width:<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                                    <span>
+                                                        <span itemprop="ratingValue"><?= $block->escapeHtml($ratingSummary); ?></span>% of <span itemprop="bestRating">100</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <?= $block->escapeHtml($ratingCount) ?>&nbsp;<span><?php if ($ratingCount == 0){
+                                                    echo __("No review on product");
+                                                }else if ($ratingCount == 1){
+                                                    echo $block->escapeHtml(__('review turn'));
+                                                }else{
+                                                    echo $block->escapeHtml(__('review turns'));
+                                                }
+                                                ?></span>
+                                        </div>
+                                        <?php endif;?>
+                                        
+                                    <?php if (!$isPromoItem) { ?>
+                                        <?php } ?>
+                                        <!-- Product Price -->
+                                        <div class="product-price">
+                                            <span><?= __('Qty'); ?>:&nbsp;</span><span class="quantity"><?= (int) $orderItem->getQtyOrdered();  ?></span><span class="price"><?php if($productunit): ?> <?= $productunit;  ?><?php endif; ?></span>
+                                            <br/>
+                                            <?= $checkoutHelper->formatPrice($orderItem->getPrice());  ?>
+                                            <?php
+                                                $priceOriginal = $orderItem->getOriginalPrice();
+                                                $priceFinal= $orderItem->getPrice();
+                                                if ($priceFinal < $priceOriginal) {
+                                                $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                                                } else {
+                                                $savePercent = 0;
+                                                }
+                                                if ($savePercent != 0) {
+                                            ?>
+                                            <div class="order-save-price">
+                                                <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                                <span class="price-original"><?= $checkoutHelper->formatPrice($priceOriginal); ?></span>
+                                            </div>
+                                        <?php } ?>
+                                        </div>
+                                        <?php if(false && $isPromoItem){ ?>
+                                        <div class="message-gift">
+                                            <i class="fas fa-gift"></i> <?= __("Gift") ?>
+                                        </div>
+                                        <?php } ?>
+                                        <!-- Sales Price -->
+                                        <div class="sales-price">
+                                            <span class="d-inline-block d-sm-none">
+                                                <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                                            </span>
+                                            <?= $checkoutHelper->formatPrice($orderItem->getRowTotal());  ?>
+                                        </div>
+                                    </div>
+                                <?php }else{ ?>
+                                    <div class="product-item-info">
+                                        <div class="rules-name-mobile">
+                                            <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                            <br>
+                                            <?php if ($salesHelper->hasProductUrl($product)) :?>
+                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                    <span><?= $orderItem->getData('product_name_short'); ?></span>
+                                                </a>
+                                            <?php else :?>
+                                                <span><?= $orderItem->getData('product_name_short'); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>  
+                                <!-- Cart Rules -->
+                                <?php if (!$isPromoItem) { ?>
+                                            <?php if ((!empty($rulesApplied)) && (count($rulesApplied) > 0)) { ?>
+                                                <div class="product-item-rule-mobile clearfix">
+                                                    <div class="promotion-info">
+                                                        <ul class="rules-list">
+                                                            <?php foreach ($rulesApplied as $key => $rules) { ?>
+                                                                <?php if(count($rules['sku']) > 0){ ?>
+                                                                    <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                                        <?php 
+                                                                            $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                                            if (!empty($productData)){
+                                                                                $productId = $productData->getId();
+                                                                                $nameproduct = $productData->getName();
+                                                                                $visibility = $salesHelper->hasProductUrl($productRepository->load($productId));
+                                                                                $urlProduct = $productData->getProductUrl();
+                                                                                $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                                $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int) $orderItem->getQtyOrdered(): '';
+                                                                                $resultString = '('.$qtyGift.$unitProduct.')';
+                                                                        ?>
+                                                                        <li>
+                                                                            <i class="fas fa-gift text-danger"></i><strong><?php echo __('Gift: '); ?></strong><span class="span-product"><?php echo $nameproduct; ?> <?php echo $resultString; ?> </span>
+                                                                            <?php if($visibility){?>
+                                                                                <a class="see-more-rules" target="_blank" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                                    <span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+                                                                                </a>
+                                                                            <?php }?>
+                                                                        </li>
+                                                            <?php }}}} ?>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
+                                <?php } ?>   
+                            <?php } else { ?>
+                                <!-- Desktop View -->
+                                <div class="product-item-photo">
+                                    <div class="img-box">
+                                    <?php if ($product) :?>
+                                        <?php if ($salesHelper->hasProductUrl($product)) :?>
+                                            <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                <div class="img-box">
+                                                    <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                                </div>
+                                            </a>
+                                        <?php else :?>
+                                            <a title="<?= $block->escapeHtml($orderItem->getName()) ?>" target="_blank" tabindex="-1" class="product-item-photo">
+                                                <div class="img-box">
+                                                    <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                                </div>
+                                            </a>
+                                        <?php endif; ?>
+                                    <?php else :?>
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($orderItem->getName()) ?>" />
+                                        </div>
+                                    <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="product-item-info">
+                                    <div class="product-item-details">
+                                        <?php if ($product) :?>
+                                            <?php if ($salesHelper->hasProductUrl($product)) :?>
+                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                    <?php if($isPromoItem){ ?>
+                                                        <!-- Rule Name -->
+                                                        <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                        <br><span><?= $orderItem->getData('product_name_short'); ?></span>
+                                                    <?php }else{ ?>
+                                                        <?= $orderItem->getProductNameLongHtml(); ?>
+                                                    <?php } ?>
+                                                </a>
+                                            <?php else :?>
+                                                    <?php if($isPromoItem){ ?>
+                                                        <!-- Rule Name -->
+                                                        <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                        <br><span><?= $orderItem->getData('product_name_short'); ?></span>
+                                                    <?php }else{ ?>
+                                                        <?= $orderItem->getProductNameLongHtml(); ?>
+                                                    <?php } ?>
+                                            <?php endif; ?>
+                                        <?php else :?>
+                                            <?= $orderItem->getProductNameLongHtml(); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <!-- Brand, Model -->
+                                    <div class="brand-model clearfix">
+                                        <div class="brand-name">
+                                        <?php
+                                            if($product){
+                                                $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                            }else{
+                                                $productBrand = $productBrandHelper->getFirstBrandFromOrderItem($orderItem);
+                                            }
+                                            if ($productBrand){
+                                        ?>
+                                            <span><?php echo __('Brands: '); ?></span>
+                                            <span class="name"><?php echo $productBrand->getName(); ?></span>
+                                        <?php } ?>
+                                        </div>
+                                        <div class="model-name">
+                                        <?php
+                                            if ($productModel) {
+                                        ?>
+                                            <span><?php echo __('Model: '); ?></span>
+                                            <span class="name"><?php echo $productModel; ?></span>
+                                        <?php } ?>
+                                        </div>
+                                    </div>
+                                    <?php if (!$isPromoItem) { ?>
+                                        <!-- Reviews -->
+                                        <?php if (false && $ratingSummary && $product) :?>
+                                        <div class="rating-summary">
+                                            <div class="rating-result" title="<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                                <span style="width:<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                                    <span>
+                                                        <span itemprop="ratingValue"><?= $block->escapeHtml($ratingSummary); ?></span>% of <span itemprop="bestRating">100</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <span class="rating-label">
+                                            <?php if ($ratingCount == 0) {
+                                            echo __('No review on product');
+                                            } else {
+                                            echo __('Have %1 reviews', $ratingCount);
+                                            }
+                                            ?>
+                                            </span>
+                                            <!-- <?php echo __('Have %1 reviews', $block->getReviewsCount()); ?>
+                                            &nbsp;<?= $block->escapeHtml($ratingCount) . ' ' ?><span class="rating-label"><?php if ($ratingCount == 0){
+                                                    echo __("No review on product");
+                                                }else if ($ratingCount == 1){
+                                                    echo $block->escapeHtml(__('review turn'));
+                                                }else{
+                                                    echo $block->escapeHtml(__('review turns'));
+                                                }
+                                                ?></span> -->
+                                        </div>
+                                        <?php endif;?>
+                                        <!-- Guarantee -->
+                                        <?php if ($guaranteeInfo) { ?>
+                                            <div class="guarantee-info">
+                                                <span><?php echo __('Guarantee: '); ?></span>
+                                                <span class="name"><?php echo $guaranteeInfo; ?></span>
+                                            </div>
+                                        <?php } ?>
+                                        <!-- Guarantee -->
+                                        <?php if ($attributesOption) { ?>
+                                            <div class="guarantee-info">
+                                                <?php foreach($attributesOption as $key => $value): ?>
+                                                    <?php
+                                                        $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                        $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                        $labelOptions = '';
+                                                        $valueOptions = '';
+                                                        foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                            $tmp_option = $value_o['values'];
+                                                            if(count($tmp_option) > 0)
+                                                            {
+                                                                foreach ($tmp_option as $tmp) {
+                                                                    if($key_o == $key && $tmp['value_index'] == $value){
+                                                                        $labelOptions = $value_o['store_label'];
+                                                                        $valueOptions = $tmp['label'];
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    ?>
+                                                    <span class="span-options-right"><?php echo $labelOptions; ?>: <?php echo $valueOptions; ?></span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php } ?>
+                                    <!-- Cart Rules -->
+                                    <?php if (!$isPromoItem) { ?>
+                                            <?php if ((!empty($rulesApplied)) && (count($rulesApplied) > 0)) { ?>
+                                                <div class="promotion-info">
+                                                    <ul class="rules-list">
+                                                        <?php foreach ($rulesApplied as $key => $rules) { ?>
+                                                            <?php if(count($rules['sku']) > 0){ ?>
+                                                                <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                                    <?php 
+                                                                        $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                                        if (!empty($productData)){
+                                                                            $productId = $productData->getId();
+                                                                            $nameproduct = $productData->getName();
+                                                                            $visibility = $salesHelper->hasProductUrl($productRepository->load($productId));
+                                                                            $urlProduct = $productData->getProductUrl();
+                                                                            $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                            $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int) $orderItem->getQtyOrdered(): '';
+                                                                            $resultString = '('.$qtyGift.$unitProduct.')';
+                                                                    ?>
+                                                                
+                                                                    <li>
+                                                                        <i class="fas fa-gift text-danger"></i><strong><?php echo __('Gift: '); ?></strong><span class="span-product"><?php echo $nameproduct; ?> <?php echo $resultString; ?> </span>
+                                                                        <?php if($visibility){?>
+                                                                            <a class="see-more-rules" target="_blank" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                                <span class="span-load-more"><?= __('Load more details'); ?> &raquo;</span>
+                                                                            </a>
+                                                                        <?php }?>
+                                                                    </li>
+                                                        <?php }}}} ?>
+                                                    </ul>
+                                                </div>
+                                            <?php } ?>
+                                        <?php } ?>
+                                        <?php if(false && $isPromoItem){ ?>
+                                        <div class="message-gift">
+                                            <i class="fas fa-gift"></i> <?= __("Gift") ?>
+                                        </div>
+                                        <?php } ?>
+                          
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                            </div>
+                            <div class="col-sm-2 hidden-xs item-body p-l-r">
+                                <?php if (!$isPromoItem) { ?>
+                                    <div class="product-price">
+                                        <span class="d-inline-block d-sm-none" >
+                                            <?= $block->escapeHtml(__('Qty')) ?>:&nbsp;
+                                        </span>
+                                        <span class="quantity"><?= (int) $orderItem->getQtyOrdered();  ?></span><span class="price"><?php if($productunit): ?> <?= $productunit;  ?><?php endif; ?></span>
+                                        <br/>
+                                        <?= $checkoutHelper->formatPrice($orderItem->getPrice());  ?>
+                                        <?php
+                                            $priceOriginal = $orderItem->getOriginalPrice();
+                                            $priceFinal= $orderItem->getPrice();
+                                            if ($priceFinal < $priceOriginal) {
+                                                $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                                            } else {
+                                                $savePercent = 0;
+                                            }
+                                            if ($savePercent != 0) {
+                                        ?>
+                                        <div class="order-save-price">
+                                            <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                            <span class="price-original"><?= $checkoutHelper->formatPrice($priceOriginal); ?></span>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <div class="col-sm-2 hidden-xs text-right item-body">
+                                <?php if (!$isPromoItem) { ?>
+                                    <div class="sales-price">
+                                        <span class="d-inline-block d-sm-none">
+                                            <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                                        </span>
+                                        <?= $checkoutHelper->formatPrice($orderItem->getRowTotal());  ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div><!-- ./item-body -->
+                <?php endforeach; ?>
+                <?php }?>
+        </div><!-- /.order-items -->
+        <div class="col-sm-12 order-detail order-<?= $_order->getId() ?>-detail collapse show">
+            <div class="row">
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?= $block->escapeHtml(__('Order summary')) ?></p>
+                        <div class="card">
+                            <div class="card-body">
+                                <p><?= $block->escapeHtml(__('Original Total')) ?>: <span class="float-right" ><?= $checkoutHelper->formatPrice($_order->getOriginalTotal()); ?></span></p>
+                                <?php if((int)$_order->getSavingsAmount() > 0): ?>
+                                    <p><?= $block->escapeHtml(__('Saving amount')) ?>: <span class="float-right" style="color: #ff6000;"><?= $checkoutHelper->formatPrice($_order->getSavingsAmount()); ?></span></p>
+                                <?php endif ?>
+                                <?php if($discountAmount < 0): ?>
+                                    <?php
+                                        if(is_numeric($discountAmount)){
+                                            $discountAmount = $checkoutHelper->formatPrice(ltrim(strval($discountAmount), '-'));
+                                        }
+                                    ?>
+                                    <p><?= __('Discount Amount') ?>:
+                                        <span class="float-right" >
+                                            <?php  echo $discountAmount; ?>
+                                        </span>
+                                    </p>
+                                <?php endif; ?>
+                                <p>
+                                    <?= $block->escapeHtml(__('Shipping & Handling')) ?>:
+                                    <span class="float-right" ><?= $shipping_amount ?></span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <p class="clearfix">
+                                    <span class="grand-total"><?= $block->escapeHtml($grandTotal) ?>:</span>
+                                    <span class="float-right text-right">
+                                        <?= $checkoutHelper->formatPrice($_order->getGrandTotal()); ?>
+                                        <span class="include-vat"><?php echo __('Include VAT') ?></span>
+                                    </span>
+                                </p>
+                                <?php if($couponcode): ?>
+                                    <p class="remove-border-top"><?= __('Discount code'); ?>:
+                                        <span class="float-right text-right">
+                                            <?php
+                                                echo $couponcode;
+                                            ?>
+                                        </span>
+                                    </p>
+                                <?php endif; ?>
+                                <?php
+                                    $name_billing = $billingAddress->getFirstName();
+                                    $tele_billing = $billingAddress->getTelephone();
+                                    $email_billing = $billingAddress->getEmail();
+                                    $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($_order->getAffiliateAccountId());
+                                    $phone_number_aff = $customerObj->getData('phone_number');
+                                ?>
+                               <?php if($codeAffiliate): ?>
+                                    <p class="remove-border-top">
+                                        <?php if($idAffiliate == $customerId): ?>
+                                            <?= __('Affiliate Code To Order');?>:
+                                        <?php else: ?>
+                                            <?= __('Affiliate Code Order');?>:
+                                        <?php endif; ?>
+                                        <span class="float-right text-right">
+                                            <?php
+                                                echo $codeAffiliate;
+                                            ?>
+                                        </span>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <!-- ./order-total order-payment-->
+                <!-- xử lý xuất hóa đơn -->
+                <?php
+                    // $saleHelper = $this->helper('Chottvn\Sales\Helper\Data');
+                    $orderAttributeList = $salesHelper->getOrderAttributesData($_order->getId());
+                    $arr_vat_invoice_required = [];
+                    $arr_note_shipping = [];
+                    foreach($orderAttributeList as $key => $value){
+                        if($key == 'vat_company'  || $key == 'vat_address' || $key == 'vat_number' || $key == 'vat_contact_name' || $key == 'vat_contact_phone_number' || $key == 'vat_contact_email'){
+                            $arr_vat_invoice_required += [$key => $value];
+                        }
+                        if($key == 'note_shipping'){
+                            $arr_note_shipping += [$key => $value];
+                        }
+                    }
+                ?>
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?= $block->escapeHtml(__('Payment method customize')) ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <p><?= $paymentMethodTitle; ?> <?= nl2br($bankTransferNote) ?></p>
+                        <?php if(sizeof($arr_vat_invoice_required) > 0){ ?>
+                                <p class="order-total-title-request"><?php echo __("Invoice Information"); ?></p>
+                                <?php if(isset($arr_vat_invoice_required['vat_company'])): ?>
+                                    <p></span><?= $arr_vat_invoice_required['vat_company']; ?></p>
+                                <?php endif; ?>
+                                <?php if(isset($arr_vat_invoice_required['vat_address'])): ?>
+                                    <p><span><?= __('Address VAT'); ?>: </span><?= $arr_vat_invoice_required['vat_address']; ?></p>
+                                <?php endif; ?>
+                                <?php if(isset($arr_vat_invoice_required['vat_number'])): ?>
+                                    <p><span><?= __('MST'); ?>: </span><?= $arr_vat_invoice_required['vat_number']; ?></p>
+                                <?php endif; ?>
+                                <?php if(isset($arr_vat_invoice_required['vat_contact_name'])): ?>
+                                    <p>
+                                        <span><?= /** @noEscape */$arr_vat_invoice_required['vat_contact_name']; ?></span>
+                                        <?php if(isset($arr_vat_invoice_required['vat_contact_phone_number']) && $arr_vat_invoice_required['vat_contact_phone_number']): ?>
+                                        - <?= $arr_vat_invoice_required['vat_contact_phone_number']; ?>
+                                        <?php endif; ?>
+                                    </p>
+                                <?php endif; ?>
+                                <?php if(isset($arr_vat_invoice_required['vat_contact_email'])): ?>
+                                    <p><span><?= ('Email'); ?>: </span><?= $arr_vat_invoice_required['vat_contact_email']; ?></p>
+                                <?php endif; ?>
+                            <?php }else{ ?>
+                                <p class="order-total-title-request"><?php echo __("Invoice Information"); ?></p>
+                                <p>
+                                <?= $billingAddress->getFirstName(); ?>
+                                </p>
+                                <p><?= $block->escapeHtml(__('Phone number')) ?>: <span class=""><?= $billingAddress->getTelephone();  ?></span></p>
+                                <p><span><?= __('Address VAT'); ?>: </span>
+                                    <span class="">
+                                        <?php
+                                            echo $billingAddress->getStreet()[0];
+                                            echo $billingAddress->getTownship() ? ", ".$billingAddress->getTownship() : "";
+                                            echo $billingAddress->getCity() ? ", ".$billingAddress->getCity() : "";
+                                            echo $billingAddress->getRegion() ? ", ".$billingAddress->getRegion() : "";
+                                        ?>
+                                    </span>
+                                </p>
+                                <?php if($billingAddress->getEmail()){ ?>
+                                    <p><?= $block->escapeHtml(__('Email')) ?>: <span class=""><?= $billingAddress->getEmail();  ?></span></p>
+                                <?php }?>
+                            <?php }?>
+                        </div>
+                    </div>
+                </div><!-- ./order-payment -->
+                <div class="col-md-4 order-totals">
+                    <p class="order-total-title"><?= $block->escapeHtml(__('Customer Information')) ?></p>
+                    <div class="card">
+                        <div class="card-body">
+                            <?php if($name_billing && $tele_billing && (($name_billing != $shippingAddress->getFirstName()) || ($tele_billing != $shippingAddress->getTelephone()))): ?>
+                            <p class="title-infor-cus"><?= $block->escapeHtml(__('Billing Information')) ?>:</p>
+                            <p>
+                                <?= $name_billing; ?> - <?=$tele_billing;  ?>
+                            </p>
+                                <?php if($email_billing): ?>
+                                    <p>
+                                        <?php echo __('Email') ?>: <?= $email_billing; ?>
+                                    </p>
+                                <?php endif; ?>
+                            <p class="title-infor-cus"><?= $block->escapeHtml(__('Shipping Information'))?>:</p>
+                            <p>
+                                <?= $shippingAddress->getFirstName(); ?> - <?= $shippingAddress->getTelephone();  ?>
+                            </p>
+                            <?php else: ?>
+                            <p>
+                                <?= $shippingAddress->getFirstName(); ?>
+                            </p>
+                            <p><?= $block->escapeHtml(__('Phone number')) ?>: <span class=""><?= $shippingAddress->getTelephone();  ?></span></p>
+                                <?php if($email_billing): ?>
+                                    <p>
+                                        <?php echo __('Email') ?>: <?= $email_billing; ?>
+                                    </p>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <p><?= $block->escapeHtml(__('Address')) ?>:
+                                <span class="">
+                                    <?php
+                                        echo $shippingAddress->getStreet()[0];
+                                        echo $shippingAddress->getTownship() ? ", ".$shippingAddress->getTownship() : "";
+                                        echo $shippingAddress->getCity() ? ", ".$shippingAddress->getCity() : "";
+                                        echo $shippingAddress->getRegion() ? ", ".$shippingAddress->getRegion() : "";
+                                    ?>
+                                </span>
+                            </p>
+                            <!-- note shipping -->
+                            <?php if(isset($arr_note_shipping['note_shipping']) && $arr_note_shipping['note_shipping']): ?>
+                                <p><span><?= __('Notes'); ?>: </span><?= $arr_note_shipping['note_shipping']; ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div><!-- ./order-shipping -->
+            </div>
+        </div><!-- /.order-detail -->
+    </div>
+</div>

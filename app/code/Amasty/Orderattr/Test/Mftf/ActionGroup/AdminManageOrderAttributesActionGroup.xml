@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{AdminManageOrderAttributes.url}}" stepKey="navigateAdminManageOrderAttributes"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminManageOASection.AddNewOrderAttribute}}" stepKey="clickAddNewAttribute"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterAddNewAttribute"/>
+        <fillField selector="{{AdminManageOASection.DefaultLabel}}" userInput="{{adminCreateOASettings.DefaultLabel}}"
+                   stepKey="enterOALabel"/>
+        <fillField selector="{{AdminManageOASection.AttributeCode}}" userInput="{{adminCreateOASettings.AttributeCode}}"
+                   stepKey="enterOAAttributeCode"/>
+        <selectOption selector="{{AdminManageOASection.FrontendInputType}}"
+                      userInput="{{adminCreateOASettings.FrontendInputType}}"
+                      stepKey="selectFrontendInputType"/>
+        <selectOption selector="{{AdminManageOASection.ValuesRequired}}"
+                      userInput="{{adminCreateOASettings.ValuesRequired}}"
+                      stepKey="selectValuesRequired"/>
+        <scrollTo selector="{{AdminManageOASection.Position}}" stepKey="scrollToPosition" />
+        <selectOption selector="{{AdminManageOASection.Position}}"
+                      userInput="{{adminCreateOASettings.PositionAtCheckout}}"
+                      stepKey="selectPositionAtCheckout"/>
+        <fillField selector="{{AdminManageOASection.SortOrder}}" userInput="{{adminCreateOASettings.SortOrder}}"
+                   stepKey="inputSorOrder"/>
+        <selectOption selector="{{AdminManageOASection.SaveEnteredValue}}"
+                      userInput="{{adminCreateOASettings.SaveEnteredValue}}"
+                      stepKey="selectSaveEnteredValue"/>
+        <selectOption selector="{{AdminManageOASection.ShowOnAdminGrids}}"
+                      userInput="{{adminCreateOASettings.ShowOnAdminGrids}}"
+                      stepKey="selectShowOnAdminGrids"/>
+        <selectOption selector="{{AdminManageOASection.IncludeIntoHTML}}"
+                      userInput="{{adminCreateOASettings.IncludeIntoHTML}}"
+                      stepKey="selectIncludeIntoHTML"/>
+        <selectOption selector="{{AdminManageOASection.IncludeIntoPDF}}"
+                      userInput="{{adminCreateOASettings.IncludeIntoPDF}}"
+                      stepKey="selectIncludeIntoPDF"/>
+        <selectOption selector="{{AdminManageOASection.IncludeIntoTransactionalEmails}}"
+                      userInput="{{adminCreateOASettings.IncludeIntoTransactionalEmails}}"
+                      stepKey="selectIncludeIntoTransactionalEmails"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsTextField" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <fillField selector="{{AdminManageOASection.DefaultValue(adminOATypeSettings.DefaultValue)}}"
+                   userInput="{{adminOATypeSettings.DefaultValueInput}}" stepKey="inputDefaultValue"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <selectOption selector="{{AdminManageOASection.InputValidation}}"
+                      userInput="{{adminOATypeSettings.InputValidation}}"
+                      stepKey="selectInputValidation"/>
+        <fillField selector="{{AdminManageOASection.MinimumTextLength}}"
+                   userInput="{{adminOATypeSettings.MinimalText}}" stepKey="fillMinimalTextLength"/>
+        <fillField selector="{{AdminManageOASection.MaximumTextLength}}"
+                   userInput="{{adminOATypeSettings.MaximumText}}" stepKey="fillMaximumTextLength"/>
+        <selectOption selector="{{AdminManageOASection.InputOutputFilter}}"
+                      userInput="{{adminOATypeSettings.InputFilter}}"
+                      stepKey="selectInputFilter"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettingsForTextFieldOrderAttribute"/>
+    </actionGroup>
+
+    <actionGroup name="AdminSelectCustomerGroup">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <selectOption selector="{{AdminManageOASection.CustomerGroups}}"
+                      userInput="{{adminCreateOASettings}}" stepKey="selectCustomerGroup1"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsDate" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <fillField selector="{{AdminManageOASection.MinimalValue}}"
+                   userInput="{{adminOATypeSettings.MinimalValue}}" stepKey="fillMinimalValue"/>
+        <fillField selector="{{AdminManageOASection.MaximumValue}}"
+                   userInput="{{adminOATypeSettings.MaximumValue}}" stepKey="fillMaximumValue"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettingsDateOrderAttribute"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsDateWithTime" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <fillField selector="{{AdminManageOASection.MinimalValue}}"
+                   userInput="{{adminOATypeSettings.MinimalValue}}" stepKey="fillMinimalValue"/>
+        <fillField selector="{{AdminManageOASection.MaximumValue}}"
+                   userInput="{{adminOATypeSettings.MaximumValue}}" stepKey="fillMaximumValue"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettingsForDateWithTimeOrderAttribute"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsDropdown" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettingsForDropdownOrderAttribute"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsMultipleSelect" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <fillField selector="{{AdminManageOASection.MultipleSelectSize}}"
+                   userInput="{{adminOATypeSettings.MultipleSelectSize}}" stepKey="fillSize"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveOAMultiple"/>
+    </actionGroup>
+
+    <actionGroup name="AdminAttributeTypeSettingsHtml" extends="AdminCreateOrderAttributeBase">
+        <arguments>
+            <argument name="adminOATypeSettings"/>
+        </arguments>
+        <selectOption selector="{{AdminManageOASection.VisibleOnFrontEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnFrontEnd}}"
+                      stepKey="selectVisibleOnFrontEnd"/>
+        <selectOption selector="{{AdminManageOASection.VisibleOnBackEnd}}"
+                      userInput="{{adminOATypeSettings.VisibleOnBackEnd}}"
+                      stepKey="selectVisibleOnBackEnd"/>
+        <fillField selector="{{AdminManageOASection.DefaultValue(adminOATypeSettings.DefaultValue)}}"
+                   userInput="{{adminOATypeSettings.DefaultValueInput}}" stepKey="inputDefaultValue"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettingsAfterTypeSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+    </actionGroup>
+
+    <actionGroup name="AdminManageConditionsShippingMethods">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{AdminManageOASection.ShippingMethodsTab}}" stepKey="clickShippingMethodsTab"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <selectOption selector="{{AdminManageOASection.ShippingMethods}}"
+                      userInput="{{adminCreateOASettings.ShippingMethod}}" stepKey="selectShippingMethod"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterManageShippingMethods"/>
+    </actionGroup>
+
+    <actionGroup name="AdminManageOptionsForOrderAttribute">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{AdminManageOASection.OptionsTab}}" stepKey="clickOptionsTab"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openManageOptions"
+                          selector="{{AdminManageOASection.ManageOptionsTab}}"
+                          dependentSelector="{{AdminManageOASection.ManageOptionsTabOpen}}"
+                          visible="false"/>
+        <click selector="{{AdminManageOASection.AddOption}}" stepKey="clickAddOption1"/>
+        <waitForElementVisible selector="{{AdminManageOASection.DefaultStoreViewOption1}}"
+                               stepKey="waitForOption1IsVisible1"/>
+        <fillField selector="{{AdminManageOASection.DefaultStoreViewOption1}}"
+                   userInput="{{adminCreateOASettings.Option1}}" stepKey="inputOption1StoreView1"/>
+        <fillField selector="{{AdminManageOASection.AdminOption1}}"
+                   userInput="{{adminCreateOASettings.Option1}}" stepKey="inputOption1Admin1"/>
+        <click selector="{{AdminManageOASection.AddOption}}" stepKey="clickAddOption2"/>
+        <waitForElementVisible selector="{{AdminManageOASection.DefaultStoreViewOption2}}"
+                               stepKey="waitForOption1IsVisible2"/>
+        <fillField selector="{{AdminManageOASection.DefaultStoreViewOption2}}"
+                   userInput="{{adminCreateOASettings.Option2}}" stepKey="inputOption1StoreView2"/>
+        <fillField selector="{{AdminManageOASection.AdminOption2}}"
+                   userInput="{{adminCreateOASettings.Option2}}" stepKey="inputOption1Admin2"/>
+        <click selector="{{AdminManageOASection.AddOption}}" stepKey="clickAddOption3"/>
+        <waitForElementVisible selector="{{AdminManageOASection.DefaultStoreViewOption3}}"
+                               stepKey="waitForOption1IsVisible3"/>
+        <fillField selector="{{AdminManageOASection.DefaultStoreViewOption3}}"
+                   userInput="{{adminCreateOASettings.Option3}}" stepKey="inputOption1StoreView3"/>
+        <fillField selector="{{AdminManageOASection.AdminOption3}}"
+                   userInput="{{adminCreateOASettings.Option3}}" stepKey="inputOption1Admin3"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoadAfterManageOptions"/>
+    </actionGroup>
+
+    <actionGroup name="AdminManageTitlesForOrderAttribute">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{AdminManageOASection.OptionsTab}}" stepKey="clickOptionsTab"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openManageTitles"
+                          selector="{{AdminManageOASection.ManageTitlesTab}}"
+                          dependentSelector="{{AdminManageOASection.ManageTitlesTabOpen}}"
+                          visible="false"/>
+        <fillField selector="{{AdminManageOASection.InputTitleForAttributeDefaultStoreView}}"
+                   userInput="{{adminCreateOASettings.TitleForDefaultStoreView}}" stepKey="inputTitleForDefaultStoreView"/>
+        <fillField selector="{{AdminManageOASection.InputTitleForAttributeCustomStoreView}}"
+                   userInput="{{adminCreateOASettings.TitleForCustomStoreView}}" stepKey="inputTitleForCustomStoreView"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterManageTitles"/>
+    </actionGroup>
+
+    <actionGroup name="AdminManageTooltipForOrderAttribute">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <click selector="{{AdminManageOASection.OptionsTab}}" stepKey="clickOptionsTab"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick stepKey="openManageTooltip"
+                          selector="{{AdminManageOASection.ManageTooltipTab}}"
+                          dependentSelector="{{AdminManageOASection.ManageTooltipTabOpen}}"
+                          visible="false"/>
+        <fillField selector="{{AdminManageOASection.InputTooltipForAttributeDefaultStoreView}}"
+                   userInput="{{adminCreateOASettings.TooltipForDefaultStoreView}}" stepKey="inputTooltipForDefaultStoreView"/>
+        <fillField selector="{{AdminManageOASection.InputTooltipForAttributeAdmin}}"
+                   userInput="{{adminCreateOASettings.TooltipAdmin}}" stepKey="inputTooltipAdmin"/>
+        <fillField selector="{{AdminManageOASection.InputTooltipForCustomStoreView}}"
+                   userInput="{{adminCreateOASettings.TooltipForCustomStoreView}}" stepKey="inputTooltipForCustomStoreView"/>
+        <click selector="{{AdminManageOASection.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterManageTooltip"/>
+    </actionGroup>
+
+    <actionGroup name="AdminDeleteOrderAttribute">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{AdminManageOrderAttributes.url}}" stepKey="navigateAdminManageOrderAttributes"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminManageOASection.EditOrderAttribute(adminCreateOASettings.AttributeCode)}}"
+               stepKey="editOrderAttribute"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterEdit"/>
+        <click selector="{{AdminManageOASection.DeleteAttribute}}" stepKey="clickDelete"/>
+        <waitForPageLoad stepKey="waitForPageLoadClickDelete"/>
+        <wait time="1" stepKey="wait"/>
+        <click selector="{{AdminManageOASection.ConfirmDeleting}}" stepKey="confirmDeleting"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterDeleting"/>
+    </actionGroup>
+
+    <actionGroup name="AdminCreateOrderAttributeRelationBase">
+        <arguments>
+            <argument name="adminCreateOARelation"/>
+        </arguments>
+        <amOnPage url="{{AdminManageOrderAttributeRelations.url}}" stepKey="navigateAdminManageOrderAttributeRelations"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterNavigate"/>
+        <click selector="{{AdminManageOARelations.AddNewRelation}}" stepKey="clickAddNewRelation"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterAdd"/>
+        <fillField selector="{{AdminManageOARelations.RelationName}}" userInput="{{adminCreateOARelation.RelationName}}"
+               stepKey="enterRelationName"/>
+        <selectOption selector="{{AdminManageOARelations.ParentAttribute}}"
+                  userInput="{{adminCreateOARelation.ParentAttribute}}"
+                  stepKey="selectParentAttribute"/>
+        <selectOption selector="{{AdminManageOARelations.AttributeOptions}}"
+                  userInput="{{adminCreateOARelation.AttributeOptions}}"
+                  stepKey="selectAttributeOptions"/>
+        <selectOption selector="{{AdminManageOARelations.DependentAttributes}}"
+                  userInput="{{adminCreateOARelation.DependentAttributes}}"
+                  stepKey="selectDependentAttributes"/>
+        <click selector="{{AdminManageOARelations.SaveAndContinueEdit}}" stepKey="saveSettings"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterSaveSettings"/>
+    </actionGroup>
+
+    <actionGroup name="AdminDeleteOrderAttributeRelation">
+        <arguments>
+            <argument name="adminCreateOASettings"/>
+        </arguments>
+        <amOnPage url="{{AdminManageOrderAttributeRelations.url}}" stepKey="navigateAdminManageOrderAttributeRelations"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterNavigate"/>
+        <click selector="{{AdminManageOARelations.EditOrderAttributeRelations(adminCreateOASettings.DefaultLabel)}}"
+               stepKey="editOrderAttributeRelation"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterEditRelation"/>
+        <click selector="{{AdminManageOARelations.DeleteRelation}}" stepKey="clickDelete"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterClickDelete"/>
+        <wait time="1" stepKey="wait"/>
+        <click selector="{{AdminManageOARelations.ConfirmDeleting}}" stepKey="confirmDeleting"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterDeleting"/>
+    </actionGroup>
+
+</actionGroups>

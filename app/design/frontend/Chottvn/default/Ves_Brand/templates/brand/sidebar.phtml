@@ -1,0 +1,23 @@
+<?php
+$brands = $block->getCustomBrandCollection('all');
+
+if ( $brands->count() ){ 
+?>
+<div class="brands-sidebar">
+  <div class="brands-title">
+    <strong><?php echo __('Brands - Trademarks') ?></strong>
+  </div>
+  <div class="brands-content">
+    <ul>
+      <?php foreach ($brands as $brand) { ?>
+      <li class="brand-item">
+        <a href="<?php echo $brand->getUrl(); ?>" title="<?php echo $brand->getName(); ?>" >
+          <img src="<?php echo $brand->getThumbnailUrl(); ?>" alt="<?php echo $brand->getName(); ?>"/>
+          <span class="brand-name"><?php echo $brand->getName(); ?></span>
+        </a>
+      </li>
+      <?php } ?>
+    </ul>
+  </div>
+</div>
+<?php } ?>

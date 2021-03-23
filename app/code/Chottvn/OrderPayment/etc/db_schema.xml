@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table comment="chottvn_orderpayment_bankaccount Table" engine="innodb" name="chottvn_orderpayment_bankaccount" resource="default">
+		<column comment="Entity Id" identity="true" name="bankaccount_id" nullable="false" padding="6" unsigned="false" xsi:type="smallint"/>
+		<constraint referenceId="PRIMARY" xsi:type="primary">
+			<column name="bankaccount_id"/>
+		</constraint>
+		<column length="255" name="bank_name" nullable="false" xsi:type="varchar"/>
+		<column length="512" name="bank_image" nullable="true" xsi:type="varchar"/>
+		<column length="255" name="bank_branch" nullable="true" xsi:type="varchar"/>
+		<column length="255" name="account_owner" nullable="true" xsi:type="varchar"/>
+		<column length="255" name="account_number" nullable="true" xsi:type="varchar"/>
+		<column name="status" nullable="true" xsi:type="smallint"/>
+		<column name="note" nullable="true" xsi:type="text"/>
+		<column name="order" nullable="true" xsi:type="smallint"/>
+		<column name="created_at" nullable="true" xsi:type="timestamp"/>
+		<column name="updated_at" nullable="true" xsi:type="timestamp"/>
+	</table>
+</schema>

@@ -1,0 +1,189 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$affiliateLevelSource = $objectManager->create('Chottvn\Affiliate\Model\Customer\Attribute\Source\AffiliateLevel');
+$accountHelper = $this->helper("Chottvn\Affiliate\Helper\Account");
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+
+$affiliateLevelOptions = $affiliateLevelSource->getAllOptions();
+$affiliateLevelCurrent = $accountHelper->getAffiliateLevel($this->getCustomerId());
+
+$rewardRules = $this->getRewardRules();
+$dictRewardRulesByAL = $this->getDictRewardRulesByAffiliateLevel();
+
+?>
+<div class="form-group affiliate-group">
+	<label for="staticEmail" class="col-form-label"><?= __("Affiliate Level") ?>:</label>
+	<div class="affiliate-group-select">
+		<?php
+		// sort affiliate level
+		$sorting = array();
+		foreach ($affiliateLevelOptions as $key => $row) {
+			$sorting[$key] = $row['sort'];
+		}
+		array_multisort($sorting, SORT_DESC, $affiliateLevelOptions);
+		?>
+		<select class="form-control" id="affiliate-level-select">
+			<?php foreach ($affiliateLevelOptions as $alo) {
+				$star_level_html = '';
+				if ($alo["value"] != '*') {
+					$percent_level = explode('ctv_', $alo["value"]);
+					if (isset($percent_level[1])) {
+						$percent_level = (int) $percent_level[1] * 100 / 5;
+					} else {
+						$percent_level = 0;
+					}
+
+					$star_level_html = $this->getLayout()
+						->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+						->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+						->setData(['percent_rating' => $percent_level])
+						->toHtml();
+					$star_level_html = str_replace('"', "'", $star_level_html);
+				}
+			?>
+				<option value="<?= $alo["value"] ?>" <?= ($alo["value"] == $affiliateLevelCurrent) ? "selected" : "" ?> <?php if ($alo["value"] != '*') { ?> data-description="<div class='star-ratings-css-lash'> - </div><div class='star-ratings-css-affiliate-label'><?= __('Affiliate Label'); ?></div><?= $star_level_html ?>" <?php } ?>>
+					<?php
+					if ($alo["value"] == '*') {
+						echo $alo["label"];
+					} else {
+						echo __($alo["value"] . ' label group');
+					}
+					?>
+				</option>
+			<?php } ?>
+		</select>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<ul class="nav nav-tabs d-none" id="affiliate-rules-tab">
+	<?php foreach ($affiliateLevelOptions as $alo) { ?>
+		<li><a href="#tab-<?= $alo["value"] ?>" data-toggle="tab"><?= $alo["label"] ?></a></li>
+	<?php } ?>
+</ul>
+<div class="tab-content" id="affiliate-rules-content">
+	<?php foreach ($affiliateLevelOptions as $alo) {
+		$affiliateLevel = $alo["value"];
+	?>
+		<?php
+		// Phuoc update 20200916 - Show level Description
+		$rewardRulesByAL = $dictRewardRulesByAL[$affiliateLevel];
+		$levelRuleDesc = $rewardRulesByAL["level_description"];
+		?>
+		<div class="tab-pane <?= ($affiliateLevel == $affiliateLevelCurrent) ? " show active " : "" ?>" id="tab-<?= $affiliateLevel ?>" role="tabpanel">
+			<div class="level-desc"><?php echo $levelRuleDesc; ?></div>
+			<table class="rules-table">
+				<thead>
+					<tr>
+						<th scope="col">Thương hiệu</th>
+						<th scope="col">Đơn hàng thành công</th>
+						<th scope="col">Mức chiết khấu</th>
+						<th scope="col">Ngày áp dụng</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<?php if (!empty($rewardRulesByAL)) {
+						$dictRewardRulesByProductBrand = $rewardRulesByAL["product_brands"];
+						if (empty($dictRewardRulesByProductBrand)) {
+							break;
+						}
+					?>
+						<?php foreach ($dictRewardRulesByProductBrand as $productBrandId => $rewardRules) {
+						?>
+							<?php if (count($rewardRules) == 0) { ?>
+								<tr>
+									<td><img src="<?= $this->getProductBrandImageUrl($productBrandId) ?>" /></td>
+									<td colspan="3"><strong>0%</strong></td>
+								</tr>
+							<?php } // Case empty Rules
+							?>
+							<?php
+							$idx = 0;
+							foreach ($rewardRules as $rewardRule) {
+							?>
+								<tr>
+									<?php if ($idx == 0) { ?>
+										<td rowspan="<?= count($rewardRules); ?>">
+											<img src="<?= $this->getProductBrandImageUrl($productBrandId) ?>" />
+										</td>
+									<?php } // if Index 0
+									?>
+									<td>
+										<p class="text-center">
+										<?php
+										$producKindCode = $this->getProductKindCodeFromId($rewardRule["product_kind"]);
+										switch ($rewardRule["reward_level"]) {
+											case 'per_item':												
+												switch ($producKindCode) {
+													case 'product':
+														echo "Trên mỗi sản phẩm";
+														break;
+													case 'accessories':
+														echo "Trên mỗi phụ kiện";
+														break;
+													case 'virtual':
+														echo "Trên mỗi phiếu";
+														break;
+												}
+												break;
+											case 'all_items':												
+												switch ($producKindCode) {
+													case 'product':
+														echo "Tổng giá trị sản phẩm";
+														break;
+													case 'accessories':
+														echo "Tổng giá trị phụ kiện";
+														break;
+													case 'virtual':
+														echo "Tổng giá trị phiếu";
+														break;
+												}
+												break;
+										}
+										?>
+										</p>
+									</td>
+									<td><?= $rewardRule["description"]; ?></td>
+									<td class="date">
+										<p class="text-center">
+											<?php $dt = new DateTime($rewardRule["start_date"]);
+														echo $dt->format('d/m/Y');
+														?>
+										</p>
+									</td>
+								</tr>
+							<?php
+								$idx++;
+							}  // Each Rule
+							?>
+						<?php
+						} // Each dictRewardRulesByProductBrand
+						?>
+					<?php } // Not empty rewardRulesByAL
+					?>
+				</tbody>
+			</table>
+		</div><!-- /.tab-pane -->
+	<?php } ?>
+</div>
+
+<script type="text/javascript">
+	require([
+			'jquery',
+			'Magento_Customer/js/customer-data',
+			'mage/translate',
+			'Chottvn_Affiliate/js/ddslick'
+		],
+		function($, customerData, $t) {
+			// load html selector
+			$('#affiliate-level-select').ddslick();
+
+			// event click select option
+			$('#affiliate-level-select a.dd-option').on('click', function(e) {
+				//var level = $(this).val();
+				var level = $('#affiliate-level-select .dd-selected-value').val();
+				$('a[href="#tab-' + level + '"]').tab('show');
+			});
+		});
+</script>

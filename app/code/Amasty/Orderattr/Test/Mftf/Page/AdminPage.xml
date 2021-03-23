@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+
+    <page name="AdminOrderAttrConfigurationPage" url="/admin/system_config/edit/section/amorderattr/" area="admin" module="Amasty_Orderattr">
+        <section name="AdminConfigurationsOASection"/>
+    </page>
+
+    <page name="AdminManageOrderAttributes" url="/amorderattr/attribute/index/" area="admin" module="Amasty_Orderattr">
+        <section name="AdminManageOASection"/>
+    </page>
+
+    <page name="AdminManageOrderAttributeRelations" url="/amorderattr/relation/" area="admin" module="Amasty_Orderattr">
+        <section name="AdminManageOARelations"/>
+    </page>
+
+    <page name="AdminAllOrdersPage" url="/sales/order/" area="admin" module="Amasty_Orderattr">
+        <section name="AdminOrdersGridSection"/>
+    </page>
+
+</pages>

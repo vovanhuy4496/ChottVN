@@ -1,0 +1,20 @@
+{
+    "name": "chottvn/module-notification",
+    "description": "ChottVN Notification",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [{
+        "name": "Huy Vo",
+        "email": "huy.vo@ecepvn.org"
+    }],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\Notification\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

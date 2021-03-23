@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Mageplaza\Blog\Block\Category\Listpost" type="Chottvn\Blog\Block\Category\Listpost" />
+	<preference for="Mageplaza\Blog\Block\Tag\Listpost" type="Chottvn\Blog\Block\Tag\Listpost" />
+	<preference for="Mageplaza\Blog\Block\Post\View" type="Chottvn\Blog\Block\Post\View" />
+	<preference for="Mageplaza\Blog\Model\Post" type="Chottvn\Blog\Model\Post" />
+	<preference for="Mageplaza\Blog\Helper\Data" type="Chottvn\Blog\Helper\Data" />
+</config>

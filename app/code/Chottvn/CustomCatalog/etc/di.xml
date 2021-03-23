@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection" type="Chottvn\CustomCatalog\Model\ResourceModel\Product\Compare\Item\Collection" />	
+	<preference for="Magento\Catalog\Api\Data\ProductInterface" type="Chottvn\CustomCatalog\Model\Product" />
+	<preference for="Magento\Catalog\Model\Product" type="Chottvn\CustomCatalog\Model\Product" />
+	<preference for="Magento\Customer\Controller\Account\Logout" type="Chottvn\CustomCatalog\Rewrite\Magento\Customer\Controller\Account\Logout" />
+	<preference for="Magento\Catalog\Model\Category\Attribute\Backend\Image" type="Chottvn\CustomCatalog\Model\Category\Attribute\Backend\Image" />
+
+	<preference for="Magento\Catalog\Model\Product\Attribute\Source\Countryofmanufacture" type="Chottvn\CustomCatalog\Rewrite\Magento\Catalog\Model\Product\Attribute\Source\Countryofmanufacture" />
+</config>

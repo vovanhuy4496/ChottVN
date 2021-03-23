@@ -1,0 +1,161 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Adminhtml\Edit\Tab\View\PersonalInfo $block */
+
+$lastLoginDateAdmin = $block->getLastLoginDate();
+$lastLoginDateStore = $block->getStoreLastLoginDate();
+
+$createDateAdmin = $block->getCreateDate();
+$createDateStore = $block->getStoreCreateDate();
+$allowedAddressHtmlTags = ['b', 'br', 'em', 'i', 'li', 'ol', 'p', 'strong', 'sub', 'sup', 'ul'];
+?>
+<div class="fieldset-wrapper customer-information">
+    <?php if ($block->validateUniquePhonenumber()) : ?> 
+        <?php if ($block->checkPhoneVerified()) : ?>
+            <div class="custom-action-bar">
+                <?php if ($block->getAffiliateStatus() != 'activated' && $block->getAffiliateStatus() != 'rejected' && $block->getAffiliateStatus() != 'freezed') : ?>
+                    <?php if ($block->getAffiliateStatus() != 'approved') : ?>
+                        <?php if ($block->getAffiliateStatus() != 'processing') : ?>
+                            <form action="<?= $block->getUrlVerifyAffiliate() ?>" method="post">
+                                <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                                <button type="submit"><?= $block->escapeHtml(__('Process')) ?></button>
+                            </form>
+                        <?php endif; ?>
+                        <?php if ($block->getAffiliateStatus() != 're-register') : ?>
+                            <form action="<?= $block->getUrlReRegisterAffiliate() ?>" method="post">
+                                <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                                <button type="submit"><?= $block->escapeHtml(__('Re-register')) ?></button>
+                            </form>
+                        <?php endif; ?>
+                        <form action="<?= $block->getUrlRejectAffiliate() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Reject')) ?></button>
+                        </form>
+                        <form action="<?= $block->getUrlRequestIdentityCard() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Request Identity Card')) ?></button>
+                        </form>
+                        <form action="<?= $block->getUrlApproveAffiliate() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Approve')) ?></button>
+                        </form>
+                    <?php endif; ?>
+                    <?php if ($block->getIsAllowed()) : ?>
+                        <form action="<?= $block->getUrlActiveAffiliate() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Active')) ?></button>
+                        </form>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <!-- #1176 Huy: button freezed/unfreezed -->
+                <!-- activated -> show button freezed 
+                    freezed -> show button unfreezed 
+                    ngoài ra thì ko show  -->
+                <?php if ($block->getAffiliateStatus() == 'activated' || $block->getAffiliateStatus() == 'freezed'): ?>
+                    <?php if ($block->getAffiliateStatus() == 'activated'): ?>
+                        <form action="<?= $block->getUrlFreezedAffiliate() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Freeze')) ?></button>
+                        </form>
+                    <?php else : ?>
+                        <form action="<?= $block->getUrlUnfreezedAffiliate() ?>" method="post">
+                            <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                            <button type="submit"><?= $block->escapeHtml(__('Unfreeze')) ?></button>
+                        </form>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($block->getStatus() != '1'): ?>
+                    <form action="<?= $block->getUrlLock() ?>" method="post">
+                        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                        <input type="hidden" value="affiliate" name="page_action">
+                        <button type="submit"><?= $block->escapeHtml(__('Lock')) ?></button>
+                    </form>
+                <?php else : ?>
+                    <form action="<?= $block->getUrlUnLock() ?>" method="post">
+                        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                        <input type="hidden" value="affiliate" name="page_action">
+                        <button type="submit"><?= $block->escapeHtml(__('UnLock')) ?></button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        <?php else : ?>
+            <?php if ($block->getAffiliateStatus() != 'rejected') : ?>
+                <div id="messages">
+                    <div class="messages">
+                        <div class="message message-notice notice">
+                            <div data-ui-id="messages-message-notice"><?= $block->escapeHtml(__('Phone number is not verified.')) ?></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-action-bar">
+                    <form action="<?= $block->getUrlRejectAffiliate() ?>" method="post">
+                        <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey(); ?>" />
+                        <button type="submit"><?= $block->escapeHtml(__('Reject')) ?></button>
+                    </form>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endif; ?>
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Personal Information')) ?></span>
+    </div>
+    <table class="admin__table-secondary">
+        <tbody>
+            <?= $block->getChildHtml() ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Last Logged In:')) ?></th>
+                <td><?= $block->escapeHtml($lastLoginDateAdmin) ?> (<?= $block->escapeHtml($block->getCurrentStatus()) ?>)</td>
+            </tr>
+            <?php if ($lastLoginDateAdmin != $lastLoginDateStore) : ?>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Last Logged In (%1):', $block->getStoreLastLoginDateTimezone())) ?></th>
+                    <td><?= $block->escapeHtml($lastLoginDateStore) ?> (<?= $block->escapeHtml($block->getCurrentStatus()) ?>)</td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Account Lock:')) ?></th>
+                <td><?= $block->escapeHtml($block->getAccountLock()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Confirmed email:')) ?></th>
+                <td><?= $block->escapeHtml($block->getIsConfirmedStatus()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Account Created:')) ?></th>
+                <td><?= $block->escapeHtml($createDateAdmin) ?></td>
+            </tr>
+            <?php if ($createDateAdmin != $createDateStore) : ?>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Account Created on (%1):', $block->getStoreCreateDateTimezone())) ?></th>
+                    <td><?= $block->escapeHtml($createDateStore) ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Account Created in:')) ?></th>
+                <td><?= $block->escapeHtml($block->getCreatedInStore()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer Group:')) ?></th>
+                <td><?= $block->escapeHtml($block->getGroupName()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Affiliate Code:')) ?></th>
+                <td><?= $block->escapeHtml($block->getAffiliateCode()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Affiliate Status:')) ?></th>
+                <td><?= $block->escapeHtml($block->getAffiliateStatus()) ?></td>
+            </tr>
+        </tbody>
+    </table>
+    <address>
+        <strong><?= $block->escapeHtml(__('Default Billing Address')) ?></strong><br />
+        <?= $block->escapeHtml($block->getBillingAddressHtml(), $allowedAddressHtmlTags) ?>
+    </address>
+
+</div>

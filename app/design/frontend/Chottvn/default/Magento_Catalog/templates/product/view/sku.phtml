@@ -1,0 +1,16 @@
+<?php
+// Get SKU
+if(!empty($block->getProduct())){
+	$product_model = $block->getProduct()->getModel();
+  echo '<div class="product-model">';
+  if($product_model){
+      echo '<div class="product-sku">';
+        echo '<span class="product-sku-label">'. __('Model: ') ."</span>";
+        // echo '<span class="product-sku-name">'. $product_model ."</span>";
+        // echo '<span class="product-sku-label">Mã sản phẩm: </span>';
+        echo '<span class="product-sku-name">'. $product_model ."</span>";
+      echo '</div>';
+  }
+  echo '</div>';
+}
+?>

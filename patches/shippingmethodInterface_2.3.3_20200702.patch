@@ -1,0 +1,28 @@
+--- a/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-07-02 13:41:08.000000000 +0700
++++ b/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-07-02 13:40:53.000000000 +0700
+@@ -63,6 +63,25 @@
+     const KEY_PRICE_INCL_TAX = 'price_incl_tax';
+ 
+     /**
++     * Max Delivery Dates.
++     */
++    const KEY_MAX_DELIVERY_DATES = 'max_delivery_dates';
++    
++    /**
++     * Returns Get Max Delivery Dates.
++     *
++     * @return int Get Max Delivery Dates.
++     */
++    public function getMaxDeliveryDates();
++
++     /**
++     * Returns Set Max Delivery Dates.
++     *
++     * @return int Set Max Delivery Dates.
++     */
++    public function setMaxDeliveryDates($maxDeliveryDates);
++
++    /**
+      * Returns the shipping carrier code.
+      *
+      * @return string Shipping carrier code.

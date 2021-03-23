@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route method="POST" url="/V1/chottvn-finance/request">
+		<service class="Chottvn\Finance\Api\RequestRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::request_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/request/search">
+		<service class="Chottvn\Finance\Api\RequestRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_Finance::request_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/request/:requestId">
+		<service class="Chottvn\Finance\Api\RequestRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_Finance::request_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-finance/request/:requestId">
+		<service class="Chottvn\Finance\Api\RequestRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::request_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-finance/request/:requestId">
+		<service class="Chottvn\Finance\Api\RequestRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_Finance::request_delete"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn-finance/transactiontype">
+		<service class="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transactiontype_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/transactiontype/search">
+		<service class="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transactiontype_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/transactiontype/:transactiontypeId">
+		<service class="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transactiontype_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-finance/transactiontype/:transactiontypeId">
+		<service class="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transactiontype_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-finance/transactiontype/:transactiontypeId">
+		<service class="Chottvn\Finance\Api\TransactionTypeRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transactiontype_delete"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn-finance/transaction">
+		<service class="Chottvn\Finance\Api\TransactionRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transaction_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/transaction/search">
+		<service class="Chottvn\Finance\Api\TransactionRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transaction_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-finance/transaction/:transactionId">
+		<service class="Chottvn\Finance\Api\TransactionRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transaction_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-finance/transaction/:transactionId">
+		<service class="Chottvn\Finance\Api\TransactionRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transaction_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-finance/transaction/:transactionId">
+		<service class="Chottvn\Finance\Api\TransactionRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_Finance::transaction_delete"/>
+		</resources>
+	</route>
+</routes>

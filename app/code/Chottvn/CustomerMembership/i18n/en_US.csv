@@ -1,0 +1,8 @@
+"Customer Level","Level"
+"customer_level","Level"
+"level_member","Member",module,Chottvn_CustomerMembership
+"level_basic","Basic",module,Chottvn_CustomerMembership
+"level_bronze","Bronze",module,Chottvn_CustomerMembership
+"level_silver","Silver",module,Chottvn_CustomerMembership
+"level_gold","Gold",module,Chottvn_CustomerMembership
+"level_platinum","Platinum",module,Chottvn_CustomerMembership

@@ -1,0 +1,26 @@
+--- a/vendor/magento/module-quote/Model/Cart/ShippingMethod.php	2020-07-02 13:38:56.000000000 +0700
++++ b/vendor/magento/module-quote/Model/Cart/ShippingMethod.php	2020-07-02 13:40:05.000000000 +0700
+@@ -15,6 +15,23 @@
+ class ShippingMethod extends \Magento\Framework\Api\AbstractExtensibleObject implements
+     ShippingMethodInterface
+ {
++     /**
++     * Returns Get Max Delivery Dates.
++     *
++     * @return int Get Max Delivery Dates.
++     */
++    public function getMaxDeliveryDates(){
++        return $this->_get(self::KEY_MAX_DELIVERY_DATES);
++    }
++     /**
++     * Returns Set Max Delivery Dates.
++     *
++     * @return int Set Max Delivery Dates.
++     */
++    public function setMaxDeliveryDates($maxDeliveryDates)
++    {
++        return $this->setData(self::KEY_MAX_DELIVERY_DATES, $maxDeliveryDates);
++    }
+     /**
+      * Returns the shipping carrier code.
+      *

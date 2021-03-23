@@ -1,0 +1,26 @@
+<?php
+$_post = $block->getPost();
+// get hashtag ids
+$hashtag_ids = $block->getTagIdsList($_post);
+// get limit items
+$limit = $block->getData('limit') ? $block->getData('limit'):3;
+
+// get data related post
+$related_posts = $_post->getRelatedPostsByHashTagIdsCollection($hashtag_ids,$limit);
+
+if($related_posts !== NULL && sizeof($related_posts)){
+?>
+<div class="post-related-posts-by-hashtag">
+	<ul>
+		<?php
+			foreach ($related_posts as $post) {
+		?>
+			<li><a href="<?php echo $post->getUrl(); ?>" title="<?php echo $block->escapeHtml($post->getName()); ?>">
+                <?php echo $block->escapeHtml($post->getName()); ?>
+            </a></li>
+		<?php
+			}
+		?>
+	</ul>
+</div>
+<?php } ?>

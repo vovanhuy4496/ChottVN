@@ -1,0 +1,102 @@
+.sales-guest-print{
+    //table product
+    .order-details-items.ordered{
+        margin: 0 10px;
+        strong.product-item-name{
+            font-weight: 400;
+            font-size:14px;
+        }
+        a{
+            font-size:14px;
+        }
+        thead{
+            th.qty{
+                text-align:right;
+            }
+        }
+        tbody{
+            td.price{
+                span.price{
+                    font-weight: 400;
+                    font-size:14px;
+                }
+            }
+            td.qty{
+                font-weight: 400;
+                font-size:14px;
+                
+            }
+            td.subtotal{
+                span.price{
+                    font-weight: 400;
+                    font-size:14px;
+                }
+            }
+            .item{
+                text-align: right;
+            }
+        }
+        tfoot{
+            th{
+                font-size: 14px; 
+                font-weight: 400;
+            }
+            tr.grand_total
+            {
+                th{
+                    font-size: 16px; 
+                    font-weight: 600;
+                }
+                td{
+                    font-size: 16px; 
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+    // detail order
+    .block-order-details-view{
+        margin: 0 10px;
+    }
+}
+
+.sales-order-shipment{
+    .order-details-items.shipments{
+        .actions-toolbar{
+            a.print{
+                display: none;
+            }
+        }
+        .order-title{
+            a.print{
+                display: none;
+            }
+        }
+    }
+}
+.sales-order-invoice{
+    .order-details-items.invoice{
+        .actions-toolbar{
+            a.print{
+                display: none;
+            }
+        }
+        .order-title{
+            a.print{
+                display: none;
+            }
+        }
+    }
+}
+.sales-order-history{
+    .table-wrapper.orders-history{
+        #my-orders-table{
+            thead > tr > th.total{
+                text-align: right;
+            }
+            tbody > tr > td.total{
+                text-align: right;
+            }
+        }
+    }
+}

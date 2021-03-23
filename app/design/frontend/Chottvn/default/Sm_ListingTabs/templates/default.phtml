@@ -1,0 +1,309 @@
+<?php
+/**
+ *
+ * SM Listing Tabs - Version 2.5.0
+ * Copyright (c) 2017 YouTech Company. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: YouTech Company
+ * Websites: http://www.magentech.com
+ */
+// create info
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// get data
+$list     = $this->_getList();
+$tag_id   = $this->_tagId();
+$cmsBlock = $this->_getConfig('cmsblock');
+$isHideHeader = $this->_getConfig('is_hide_header');
+$isHideTitle = $this->_getConfig('is_hide_title');
+$viewAllUrl = $this->_getConfig('view_all_url') ?? "";
+$cssClass = $this->_getConfig('css_class');
+$pageClass = $this->_getConfig('page_class') ? $this->_getConfig('page_class') : "ctt-listingtabs";
+$_cfg = $this->_setSerialize($this->_getConfig());
+// Custom Links in ListingTabs
+$type_tabs = $this->_getConfig('type_tabs') ? $this->_getConfig('type_tabs'):"categories";
+$link_tabs = $this->_getConfig('link_tabs') ? json_decode(stripslashes($this->_getConfig('link_tabs'))):"";
+$type_product = $this->_getConfig('type_product');
+
+// icon listingtabs
+$icon_heading = $this->_getConfig('icon_heading') ? $this->_getConfig('icon_heading'):""; $icon_heading_url = "";
+if($icon_heading){ $icon_heading_url = $block->getBaseUrl().$icon_heading; }
+$config_heading = $this->_getConfig('config_heading') ? $this->_getConfig('config_heading') : 'div';
+
+// is show items list
+$is_hide_list_items_on_mobile = $this->_getConfig('is_hide_list_items_on_mobile') ? $this->_getConfig('is_hide_list_items_on_mobile'):"0";
+
+// Get childs category by cate id
+$load_child_cates = $this->_getConfig('load_child_categories') ? $this->_getConfig('load_child_categories'):0;
+// loai bo category nao trong danh sach category
+$without_category_ids = $this->_getConfig('without_category_ids') ? $this->_getConfig('without_category_ids'):'';
+$without_category_ids = explode(',', $without_category_ids);
+// enable/disable custom url category
+$is_enable_custom_url_category = $this->_getConfig('is_enable_custom_url_category') ? $this->_getConfig('is_enable_custom_url_category'):0;
+$storeManager = $_objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$base_url = $storeManager->getStore()->getBaseUrl();
+$child_cates = array();
+if($load_child_cates == 1){
+	$child_cates = $this->_getChildCategoriesByCateId();
+}
+
+// banner helper
+// get banner desktop and banner mobile
+$banner_desktop_id = $this->_getConfig('banner_desktop_id') ? (int)$this->_getConfig('banner_desktop_id') : 0;
+$banner_mobile_id = $this->_getConfig('banner_mobile_id') ? (int)$this->_getConfig('banner_mobile_id') : 0;
+// get banner for desktop and banner for mobile
+$banner_desktop = array(); $banner_mobile = array();
+$banner_helper = $this->helper('Mageplaza\BannerSlider\Helper\Data');
+
+if($banner_desktop_id){
+	$banner_desktop = $banner_helper->getBannerById($banner_desktop_id);
+}
+if($banner_mobile_id){
+	$banner_mobile = $banner_helper->getBannerById($banner_mobile_id);
+}
+
+// get view mode grid or list
+$view_mode = $this->_getConfig('view_mode') ? $this->_getConfig('view_mode') : 'grid';
+
+// detect mobile
+$detectMobile = $_objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+
+// echo '<pre>';
+// print_r($banner_mobile->getImageUrl());
+// print_r($banner_mobile->getData());
+// echo '</pre>';
+// exit;
+
+if (!empty($list)) {
+	// get count list
+	$total_items = '';
+	$first_product = '';
+	$url_accessories_link = '';
+	$product_kind = '';
+	$category_name = '';
+	switch ($type_product) {
+		case 'accessories':
+			// get count 
+			$total_items = 0;
+			foreach ($list as $list_item) {
+				$total_items += $list_item['count'];
+				$accessories_products_list = $list_item['products_list'];
+				$first_product = $accessories_products_list->getFirstItem();
+				$product_kind = $list_item['product_kind'];
+			}
+			$total_items = ' ('.$total_items.')';
+
+			// get url accessories link
+			if($first_product){
+				$arr_accessory_category_id = $first_product->getCategoryIds();
+				$accessory_category_id = $arr_accessory_category_id[count($arr_accessory_category_id)-1];
+				$accessory_category = $_objectManager->create('Magento\Catalog\Model\Category')->load($accessory_category_id);
+    			$accessory_category_link = $accessory_category->getUrl();
+    			$category_name = $accessory_category->getName();
+			}
+			break;
+	}
+
+	// show title page
+	if($product_kind){
+		switch ($product_kind) {
+			case 'accessories':
+				$title_page = $category_name;
+				break;
+			
+			case 'product':
+				$title_page = $this->_getConfig('title', 'Tab Listing');
+				break;
+		}
+	}else{
+		$title_page = $this->_getConfig('title', 'Tab Listing');
+	}
+	?>
+    <div id="<?php echo $tag_id; ?>" class="sm-listing-tabs ltabs-loading-first <?php echo $this->_getConfig('type_show') . 'type'; ?> <?php echo $cssClass; ?> <?php echo $pageClass; ?>">
+    	<div id="ajax_listingtabs_config"  data-ajax-url="<?php echo $this->getAjaxUrl(); ?>"
+										data-config='<?php echo json_encode($_cfg); ?>'></div>
+		<div class="ltabs-loading-css">
+			<div class="loading-content">
+
+			</div>
+		</div>
+
+		<?php if (! $isHideHeader) { ?>
+		<div class="ltabs-head">
+			<?php if (! $isHideTitle) { ?>
+			<div class="title-home-page">
+				<?php if ($icon_heading_url) { ?>
+					<span class="title-home-page-icon"><img src="<?php echo $icon_heading_url ?>" alt="<?php echo $this->_getConfig('title', 'Tab Listing'); ?>" /></span>
+				<?php } ?>
+        <<?php echo $config_heading; ?> class="title-home-page-heading"><?php echo $title_page; ?><?php echo $total_items; ?></<?php echo $config_heading; ?>>
+			</div>
+			<?php } ?>
+			<!--Begin Tabs-->
+			<!-- Custom Links in ListingTabs -->
+			<?php
+				switch ($type_tabs) {
+					case 'links': ?>
+					<div class="llinks-tabs-container">
+						<?php echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData('list', $link_tabs)->setTemplate("Sm_ListingTabs::default_links.phtml")->toHtml();
+						?>
+					</div>
+			<?php
+						break;
+
+					default: ?>
+						<div class="ltabs-tabs-container">
+							<?php echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData('list', $list)->setTemplate("Sm_ListingTabs::default_tabs.phtml")->toHtml();
+							?>
+						</div>
+			<?php
+						break;
+				}
+			?>
+            <!-- End Tabs-->
+            <?php
+				if (! empty($viewAllUrl) ) {
+					switch ($viewAllUrl) {
+						case 'accessories_url':
+							$viewAllUrl = $accessory_category_link;
+							break;
+					}
+			?>
+				<div class="ltabs-view-all">
+					<a href="<?php echo $viewAllUrl; ?>" title="<?php echo __('View all') ?>"><span class="text-view-all"><?php echo __('View all') ?></span> <i class="fas fa-chevron-right"></i></a>
+				</div>
+			<?php } ?>
+		</div>
+		<?php } ?>
+
+		<!-- Banner Image Mobile -->
+		<?php if ($banner_mobile && $detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+			<div class="banner-image-mobile">
+				<a href="<?php echo $banner_mobile->getUrlBanner(); ?>" title="<?php echo trim($banner_mobile->getTitle()); ?>" target="<?= $banner_mobile->getNewtab() == 0 ? '_self':'_blank' ?>">
+					<img src="<?php echo $banner_mobile->getImageUrl(); ?>" alt="<?php echo trim($banner_mobile->getTitle()); ?>" />
+				</a>
+			</div>
+		<?php } ?>
+		<!-- Banner Image Mobile -->
+
+		<!-- Content Child Categories By Category -->
+		<?php
+		if ($child_cates) {
+			echo '<div class="ltabs-children-categories">';
+			foreach ($child_cates as $cate) {
+				$catId = $cate->getId();
+				if(!in_array($catId, $without_category_ids)){
+    				$category = $_objectManager->create('Magento\Catalog\Model\Category')->load($catId);
+    				$cate_link = $category->getUrl();
+    				if($is_enable_custom_url_category){
+    					if($category->getData('chottvn_category_custom_url_attribute') != NULL){
+    						$cate_link = $base_url.$category->getData('chottvn_category_custom_url_attribute');
+    					}
+    				}
+		?>
+			<div class="child-category-item">
+				<a class="category-item-link" href="<?php echo $cate_link; ?>" title="<?php echo $cate->getName(); ?>" target="_self">
+					<?php if($category->getImageUrl()){ ?>
+						<div class="box-image">
+              <img class="category-item-image" src="<?php echo $category->getImageUrl(); ?>" alt="<?php echo $cate->getName(); ?>" />
+            </div>
+					<?php } ?>
+					<h3 class="category-item-title"><?php echo $cate->getName(); ?></h3>
+				</a>
+			</div>
+		<?php
+				}
+			}
+			echo '</div>';
+		}
+		?>
+		<!-- Content Child Categories By Category -->
+
+		<!-- Banner Image Desktop | Tablet -->
+		<?php if ($banner_desktop
+					&& (($detectMobile->isMobile() != true && $detectMobile->isTablet() == false)
+					|| ($detectMobile->isMobile() == true && $detectMobile->isTablet() == true))) { ?>
+			<div class="banner-image-desktop">
+				<a href="<?php echo $banner_desktop->getUrlBanner(); ?>" title="<?php echo trim($banner_desktop->getTitle()); ?>" target="<?= $banner_desktop->getNewtab() == 0 ? '_self':'_blank' ?>">
+					<img src="<?php echo $banner_desktop->getImageUrl(); ?>" alt="<?php echo trim($banner_desktop->getTitle()); ?>" />
+				</a>
+			</div>
+		<?php } ?>
+		<!-- Banner Image Desktop -->
+
+		<?php
+			if(!($detectMobile->isTablet() == false && $detectMobile->isMobile() == true && $is_hide_list_items_on_mobile == 1)
+				){
+		?>
+		<div class="ltabs-wrap">
+			<?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId($cmsBlock)->toHtml(); ?>
+            <!--Begin Items-->
+			<div class="ltabs-items-container">
+				<?php foreach ($list as $items) {
+					$products = isset($items['products_list']) ? $items['products_list'] : '';
+					$cls      = (isset($items['sel'])) ? ' ltabs-items-selected ltabs-items-loaded ' : '';
+					?>
+                    <div class="ltabs-items <?php echo $cls; ?> <?php echo 'ltabs-items-' . $items['id_tab']; ?>">
+						<div class="ltabs-items-inner">
+							<?php if (!empty($products)) {
+								if($view_mode == 'grid'){
+									echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['products' => $products, 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::default_items.phtml")->toHtml();
+								}else{
+									if($detectMobile->isMobile() == true && $detectMobile->isTablet() == false){
+										echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['products' => $products, 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::list_mobile_items.phtml")->toHtml();
+									}else{
+										echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['products' => $products, 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::list_items.phtml")->toHtml();
+									}
+
+								}
+
+							} else {
+								?>
+                                <div class="ltabs-loading">
+									<div class="loading-content">
+
+									</div>
+								</div>
+							<?php } ?>
+						</div>
+						<?php if ($this->_getConfig('type_show') == 'loadmore') { ?>
+							<?php $classloaded = ($this->_getConfig('limitation', 2) < $items['count'] || $this->_getConfig('limitation', 2) == 0) ? '' : 'loaded'; ?>
+                            <div class="ltabs-loadmore"
+                                 data-tab-id="<?php echo $items['id_tab']; ?>"
+                                 data-catids="<?php echo $items['cat_children'] ?>"
+                                 data-rl_start="<?php echo $this->_getConfig('limitation', 2) ?>"
+                                 data-rl_total="<?php echo $items['count'] ?>"
+                                 data-rl_allready="<?php echo __('All ready'); ?>"
+                                 data-rl_load="<?php echo $this->_getConfig('limitation', 2) ?>"
+                                 data-config='<?php echo json_encode($_cfg); ?>'>
+									<div class="ltabs-loadmore-btn <?php echo $classloaded ?>"
+                                         data-label=" <?php echo ($classloaded) ? __('All ready') : __('Load more'); ?>">
+										<span class="ltabs-image-loading"></span>
+										<span class="ltabs-loadmore-label">
+											<?= __('View more') ?> <i class="fa fa-caret-down" aria-hidden="true"></i>
+										</span>
+									</div>
+							</div>
+						<?php } ?>
+					</div>
+				<?php } ?>
+			</div>
+            <!--End Items-->
+		</div>
+		<?php } ?>
+	</div>
+	<?php echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\ListingTabs")->setData(['tagid' => $tag_id, 'config' => $this->_getConfig()])->setTemplate("Sm_ListingTabs::default_js.phtml")->toHtml(); ?>
+	<?php
+} else { ?>
+    <!-- <div class="message info empty"><div><?php /* @escapeNotVerified */
+			echo __('We can\'t find products matching the selection.') ?></div></div> -->
+	<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('products-not-found')->toHtml(); ?>
+	<script type="text/javascript">
+		require([
+		    'jquery',
+		    'mage/mage'
+		], function($){
+			$('.search-index-index .sidebar-bg .sidebar-main').hide();
+		});
+	</script>
+	<?php
+} ?>

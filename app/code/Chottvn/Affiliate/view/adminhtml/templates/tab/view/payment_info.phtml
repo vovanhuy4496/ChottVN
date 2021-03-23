@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Adminhtml\Edit\Tab\View\PersonalInfo $block */
+
+$lastLoginDateAdmin = $block->getLastLoginDate();
+$lastLoginDateStore = $block->getStoreLastLoginDate();
+
+$createDateAdmin = $block->getCreateDate();
+$createDateStore = $block->getStoreCreateDate();
+$allowedAddressHtmlTags = ['b', 'br', 'em', 'i', 'li', 'ol', 'p', 'strong', 'sub', 'sup', 'ul'];
+?>
+<div class="fieldset-wrapper customer-information">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Payment Information')) ?></span>
+    </div>
+    <div class="payment-infos">
+        <?php foreach ($block->getCustomerBankAccountCollection() as $item) : ?>
+            <div class="payment-info">
+                <div class="card">
+                    <div class="card-body">
+                        <p><?= $block->escapeHtml(__('Bank')) ?>: <span class="float-right"><?= $item['bank_name']; ?></span></p>
+                        <p><?= $block->escapeHtml(__('Account Number')) ?>: <span class="float-right"><?= $item['account_number']; ?></span></p>
+                        <p><?= $block->escapeHtml(__('Account Owner')) ?>: <span class="float-right"><?= $item['account_owner']; ?></span></p>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

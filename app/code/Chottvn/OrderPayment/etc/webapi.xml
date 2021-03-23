@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route method="POST" url="/V1/chottvn-orderpayment/bankaccount">
+		<service class="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_OrderPayment::bankaccount_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-orderpayment/bankaccount/search">
+		<service class="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_OrderPayment::bankaccount_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-orderpayment/bankaccount/:bankaccountId">
+		<service class="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_OrderPayment::bankaccount_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-orderpayment/bankaccount/:bankaccountId">
+		<service class="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_OrderPayment::bankaccount_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-orderpayment/bankaccount/:bankaccountId">
+		<service class="Chottvn\OrderPayment\Api\BankAccountRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_OrderPayment::bankaccount_delete"/>
+		</resources>
+	</route>
+</routes>

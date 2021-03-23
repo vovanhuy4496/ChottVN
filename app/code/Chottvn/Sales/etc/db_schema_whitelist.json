@@ -1,0 +1,16 @@
+{
+    "chottvn_log_sales_order": {
+        "column": {
+            "id": true,
+            "order_id": true,
+            "order_status": true,
+            "value": true,
+            "value_old": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

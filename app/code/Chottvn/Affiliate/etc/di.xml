@@ -1,0 +1,65 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Chottvn\Affiliate\Controller\Index\Index">    
+  </type>
+  <type name="Chottvn\Affiliate\Observer\CheckUserLoginObserver">
+      <arguments>
+          <argument name="session" xsi:type="object">Magento\Customer\Model\Session</argument>
+      </arguments>
+  </type>
+  <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+      <arguments>
+          <argument name="collections" xsi:type="array">
+              <item name="affiliate_listing_data_source" xsi:type="string">Chottvn\Affiliate\Model\ResourceModel\Grid\Collection</item>
+          </argument>
+      </arguments>
+  </type>
+  <preference for="Magento\Customer\Block\Account\Dashboard\Info" type="Chottvn\Affiliate\Block\Account\Dashboard\Info" />
+  <preference for="Magento\Review\Block\Customer\ListCustomer" type="Chottvn\Affiliate\Block\Customer\ListCustomer" />
+  <preference for="Magento\Customer\Block\Newsletter" type="Chottvn\Affiliate\Block\Newsletter" />
+  <preference for="Magento\Wishlist\Block\Customer\Wishlist" type="Chottvn\Affiliate\Block\Customer\Wishlist" />
+	<preference for="Chottvn\Affiliate\Api\RewardRuleRepositoryInterface" type="Chottvn\Affiliate\Model\RewardRuleRepository"/>
+	<preference for="Chottvn\Affiliate\Api\Data\RewardRuleInterface" type="Chottvn\Affiliate\Model\Data\RewardRule"/>
+	<preference for="Chottvn\Affiliate\Api\Data\RewardRuleSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Affiliate\Model\ResourceModel\RewardRule\Grid\Collection" type="Chottvn\Affiliate\Ui\Component\DataProvider\SearchResult\RewardRules">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_affiliate_reward_rule</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Affiliate\Model\ResourceModel\RewardRule\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_affiliate_rewardrule_listing_data_source" xsi:type="string">Chottvn\Affiliate\Model\ResourceModel\RewardRule\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+    <!-- Level Rule -->
+	<preference for="Chottvn\Affiliate\Api\LevelRuleRepositoryInterface" type="Chottvn\Affiliate\Model\LevelRuleRepository"/>
+	<preference for="Chottvn\Affiliate\Api\Data\LevelRuleInterface" type="Chottvn\Affiliate\Model\Data\LevelRule"/>
+	<preference for="Chottvn\Affiliate\Api\Data\LevelRuleSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\Affiliate\Model\ResourceModel\LevelRule\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_affiliate_level_rule</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\Affiliate\Model\ResourceModel\LevelRule\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_affiliate_levelrule_listing_data_source" xsi:type="string">Chottvn\Affiliate\Model\ResourceModel\LevelRule\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+
+	<type name="Magento\Sales\Model\ResourceModel\Order">
+    <plugin name="chottvn_affiliate_magento_sales_model_order_plugin"
+         type="Chottvn\Affiliate\Plugin\Magento\Sales\Model\ResourceModel\Order"
+         sortOrder="20" disabled="false"/>
+	</type>
+
+	<type name="Chottvn\Finance\Model\ResourceModel\Transaction">
+    <plugin name="chottvn_affiliate_chottvn_finance_model_transaction_plugin"
+         type="Chottvn\Affiliate\Plugin\Chottvn\Finance\Model\ResourceModel\Transaction"
+         sortOrder="10" disabled="false"/>
+	</type>
+</config>

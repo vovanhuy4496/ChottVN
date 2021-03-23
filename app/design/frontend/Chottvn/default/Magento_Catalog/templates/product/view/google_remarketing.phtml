@@ -1,0 +1,65 @@
+<?php
+// Get SKU
+// {{block class="Magento\Catalog\Block\Product\View\Description" template="Magento_Catalog::product/view/google_remarketing.phtml" ecomm_pagetype="product" google_tag_manager_id="xxxx" is_show_script_event="1" is_show_google_tag_manager="1"}}
+$version_script = $block->getData('version_script') ? $block->getData('version_script') : 'old';
+$event_name = $block->getData('event_name') ? $block->getData('event_name') : 'event';
+$event_content = $block->getData('event_content') ? $block->getData('event_content') : 'page_view';
+$google_tag_manager_id = $block->getData('google_tag_manager_id') ? $block->getData('google_tag_manager_id') : '';
+$google_ads_id = $block->getData('google_ads_id') ? $block->getData('google_ads_id') : '';
+$is_show_script_event = $block->getData('is_show_script_event') ? $block->getData('is_show_script_event') : '0';
+$is_show_google_tag_manager = $block->getData('is_show_google_tag_manager') ? $block->getData('is_show_google_tag_manager') : '0';
+if(!empty($block->getProduct()) && $is_show_script_event){
+	$product_sku = $block->getProduct()->getSku();
+	$final_price = $block->getProduct()->getFinalPrice();
+	$ecomm_pagetype = $this->getData('ecomm_pagetype') ? $this->getData('ecomm_pagetype')  : 'product';
+
+	// check version old or new
+	switch ($version_script) {
+		case 'old':
+			echo "<script>
+				dataLayer = [];
+				dataLayer.push({
+					'".$event_name."': '".$event_content."',
+					'ecomm_prodid': '".$product_sku."',
+					'ecomm_pagetype': '".$ecomm_pagetype."',
+					'ecomm_totalvalue': '".$final_price."'
+				});
+				</script>";
+			break;
+		
+		case 'new':
+			if($google_ads_id){
+				echo "<!-- Global site tag (gtag.js) - Google Ads: ".$google_ads_id." -->";
+				echo "<script async src='https://www.googletagmanager.com/gtag/js?id=".$google_ads_id."'></script>
+				<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".$google_ads_id."');
+				</script>
+				<script>
+					gtag('event', 'page_view', {
+						'send_to': '".$google_ads_id."',
+						'value': '".$final_price."',
+						'items': [{
+							'id': '".$product_sku."',
+							'google_business_vertical': 'retail'
+						}]
+					});
+				</script>";
+			}
+			break;
+	}
+}
+?>
+
+<?php if($google_tag_manager_id && $is_show_google_tag_manager) { ?>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','<?php echo $google_tag_manager_id ?>');</script>
+<!-- Google Tag Manager -->
+<?php } ?>

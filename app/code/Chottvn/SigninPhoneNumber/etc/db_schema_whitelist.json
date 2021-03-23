@@ -1,0 +1,18 @@
+{
+    "chottvn_signinphonenumber_verification": {
+        "column": {
+            "id": true,
+            "customer_id": true,
+            "phone_number": true,
+            "auth_code": true,
+            "verify_status": true,
+            "code_status": true,
+            "requested_times": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_phone_verification": []
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <market>
+	        <product_price>
+	            <round_product_price>3</round_product_price>
+	        </product_price>
+	    </market>
+    </default>
+</config>

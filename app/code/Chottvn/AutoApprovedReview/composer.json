@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-autoapprovedreview",
+    "description": "ChottVN AutoApprovedReview",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tuan Nguyen",
+            "email": "tuan.nguyen@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\AutoApprovedReview\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

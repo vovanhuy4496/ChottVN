@@ -1,0 +1,74 @@
+{
+    "chottvn_affiliate_account": {
+        "column": {
+            "id": true,
+            "customer_id": true,
+            "issue_number": true,
+            "issue_date": true,
+            "issue_place": true,
+            "deposit_margin": true,
+            "tax_code": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_log_affiliate": {
+        "column": {
+            "id": true,
+            "account_id": true,
+            "event": true,
+            "resource_type": true,
+            "resource_id": true,
+            "value": true,
+            "value_old": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_affiliate_reward_rule": {
+        "column": {
+            "id": true,
+            "name": true,
+            "status": true,
+            "start_date": true,
+            "end_date": true,
+            "reward_level": true,
+            "affiliate_level": true,
+            "product_brand_id": true,
+            "product_kind": true,
+            "conditions": true,
+            "description": true,
+            "priority": true,
+            "discard_subsequent_rules": true,
+            "notes": true,
+            "deleted_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_affiliate_level_rule": {
+        "column": {
+            "id": true,
+            "name": true,
+            "status": true,
+            "start_date": true,
+            "end_date": true,
+            "affiliate_level": true,
+            "conditions": true,
+            "description": true,
+            "priority": true,
+            "discard_subsequent_rules": true,
+            "notes": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

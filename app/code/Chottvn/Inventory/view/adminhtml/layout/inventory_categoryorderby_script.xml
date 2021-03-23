@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<page layout="admin-1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <link src="Chottvn_Inventory::css/styles.css"/>
+    </head>
+	<body>
+		<referenceContainer name="content">
+			<block class="Chottvn\Inventory\Block\Adminhtml\CategoryOrderby\Script" name="categoryorderby.script" template="Chottvn_Inventory::categoryorderby/script.phtml"/>
+		</referenceContainer>
+	</body>
+</page>

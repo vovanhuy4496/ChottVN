@@ -1,0 +1,69 @@
+<?php
+$current_brand = $block->getCurrentBrand();
+$current_brand_id = $current_brand->getId();
+$categories = $block->getCategoriesByBrand($current_brand_id,0,3);
+
+if($categories){
+?>
+<div class="brand-categories">
+  <div class="brand-categories-label"><?php echo __('Brand - Product Categories'); ?></div>
+  <ul class="brand-category-list">
+    <?php foreach ($categories as $category) { ?>
+      <li class="brand-category-parent-item">
+        <a href="<?php echo $category['url'].'?product_brand='.$current_brand_id; ?>" title="<?php echo $category['name'] ?>">
+          <?php echo $category['name'] ?>
+        </a>
+      </li>
+      <?php
+        if(isset($category['children'])){
+          foreach ($category['children'] as $child) {
+            echo '<li class="brand-category-child-item">';
+              echo '<a href="'.$child['url'].'?product_brand='.$current_brand_id.'" title="'.$child['name'].'">';
+                echo $child['name'];
+              echo '</a>';
+            echo '</li>';
+          }
+        }
+      ?>
+    <?php } ?>
+  </ul>
+  <div class="clearfix"></div>
+</div>
+
+<script type="text/javascript">
+require(['jquery'], function ($) {
+  var num_cols = 4;
+  var width_w = $(window).width();
+  if(width_w <= 767){
+    num_cols = 2;
+  }
+
+  var container = $('.brand-category-list');
+  var listItem = 'li';
+  var listClass = 'sub-brand-category-list';
+  container.each(function() {
+      var items_per_col = new Array(),
+      items = $(this).find(listItem),
+      max_items_per_col = Math.ceil(items.length / num_cols),
+      difference = (max_items_per_col * num_cols)- items.length;
+      for (var i = 0; i < num_cols; i++) {
+          if (i == num_cols-1) {
+              items_per_col[i] = max_items_per_col - difference;
+          } else {
+              items_per_col[i] = max_items_per_col;
+          }
+      }
+      for (var i = 0; i < num_cols; i++) {
+          $(this).append($('<ul ></ul>').addClass(listClass));
+          for (var j = 0; j < items_per_col[i]; j++) {
+              var pointer = 0;
+              for (var k = 0; k < i; k++) {
+                  pointer += items_per_col[k];
+              }
+              $(this).find('.' + listClass).last().append(items[j + pointer]);
+          }
+      }
+  });
+});
+</script>
+<?php } ?>

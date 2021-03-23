@@ -1,0 +1,40 @@
+  <!--@subject {{trans "Contact customers to quote products"}} {{var created_at}}  @-->
+  {{template config_path="design/email/header_template"}}
+  <table class="stock-email">
+      {{if sku_product}}
+          <tr class="email-intro">
+              <td>
+              Sku: {{var sku_product}}
+              </td>
+          </tr>
+      {{/if}}
+      {{if name_product}}
+      <tr class="email-intro">
+          <td>
+             {{trans "Name product"}} :  <a href="{{var url_product}}">{{var name_product}} </a>
+          </td>
+      </tr>
+      {{/if}}
+      {{if contact_name}}
+      <tr class="email-intro">
+          <td>
+              {{trans "Name customer"}}: {{var contact_name}}
+          </td>
+      </tr>
+      {{/if}}
+      {{if contact_phone_number}}
+      <tr class="email-intro">
+          <td>
+              {{trans "Telephone customer"}}: {{var contact_phone_number}}
+          </td>
+      </tr>
+      {{/if}}
+      {{if created_at}}
+      <tr class="email-intro">
+          <td>
+              {{trans "Date send"}}: {{var created_at}}
+          </td>
+      </tr>
+      {{/if}}
+  </table>
+  {{template config_path="design/email/footer_template"}}

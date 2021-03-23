@@ -1,0 +1,25 @@
+{
+    "chottvn_stockalert_request": {
+        "column": {
+            "id": true,
+            "customer_id": true,
+            "product_id": true,
+            "assignee_id": true,
+            "contact_name": true,
+            "contact_phone_number": true,
+            "contact_email": true,
+            "sms_alert_sent_at": true,
+            "sms_confirmation_sent_at": true,
+            "email_alert_sent_at": true,
+            "email_confirmation_sent_at": true,
+            "status": true,
+            "updated_at": true,
+            "created_at": true,
+            "flag_form": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_stock_available_observer": []
+}

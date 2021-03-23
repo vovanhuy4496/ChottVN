@@ -1,0 +1,45 @@
+<form class="chottvn-admin" id="distributor_export_form" name="distributor-export-form" action="<?php echo $block->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
+    <div class="no-display">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+    </div>
+    <fieldset class="fieldset admin__fieldset " id="base_fieldset">
+        <legend class="admin__legend legend">
+            <span><?= $block->escapeHtml(__('Export Inventory/Price')) ?></span>
+        </legend><br>
+
+        <div class="messages">
+        </div>
+
+        <div class="admin-field field-export-type">
+            <label class="label" for="export_type"><span><?= $block->escapeHtml(__('Export Type')) ?></span></label>
+            <div class="control">
+                <select id="export_type" name="export_type" title="<?= __('Export Type') ?>" class=" select" required="true">
+                    <option value="" selected="selected"><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                    <option value="price"><?= __('Price') ?></option>
+                    <option value="quantity"><?= __('Quantity') ?></option>
+                    <option value="weight"><?= __('Weight') ?></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="admin-field field-distributor">
+            <label class="label" for="distributor"><span><?= $block->escapeHtml(__('Distributor')) ?></span></label>
+            <div class="control">
+                <select id="distributor_id" name="distributor_id" title="Distributor" class=" select" required="true">
+                    <option value="" selected="selected"><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                    <?php
+                    foreach ($block->getDistributorOptions() as $item) :
+                        if ($item['value'] != '') : ?>
+                            <option value="<?= $item['value']; ?>"><?= $item['label']; ?></option>
+                    <?php endif;
+                    endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div class="action-buttons">
+        <button id="distributors-export-btn" class="action-scalable" type="submit"><span><?= $block->escapeHtml(__('Export')) ?></span></button>
+    </div>
+</form>

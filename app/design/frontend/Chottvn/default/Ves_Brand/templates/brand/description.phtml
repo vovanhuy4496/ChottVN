@@ -1,0 +1,12 @@
+<?php if ($_description = $block->getCurrentBrand()->getDescription()): ?>
+	<div class="brand-description">
+    <h1><?php echo __('Brand').' '.$block->getCurrentBrand()->getName() ?></h1>
+		<?php echo $this->helper('Ves\Brand\Helper\Data')->filter($_description) ?>
+	</div>
+<?php endif; ?>
+
+<?php if ($_post_content = $block->getCurrentBrand()->getData('post_content')): ?>
+  <div class="brand-content-description customize-html-content">
+    <?php echo $this->helper('Ves\Brand\Helper\Data')->filter($_post_content) ?>
+  </div>
+<?php endif; ?>

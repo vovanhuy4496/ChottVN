@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table comment="chottvn_rma_rule Table" engine="innodb" name="chottvn_rma_rule" resource="default">
+        <column comment="Id" identity="true" name="id" nullable="false" padding="6" unsigned="true" xsi:type="smallint"/>
+        <constraint referenceId="PRIMARY" xsi:type="primary">
+            <column name="id"/>
+        </constraint>
+        <column length="255" name="name" nullable="false" xsi:type="varchar"/>
+        <column identity="false" name="status" nullable="false" xsi:type="int"/>
+        <column name="start_date" nullable="false" xsi:type="timestamp"/>
+        <column name="end_date" nullable="true" xsi:type="timestamp"/>
+        <column xsi:type="int" name="product_kind" nullable="false" />
+        <column xsi:type="text" name="conditions" nullable="false"  comment="JSON string"/>
+        <column xsi:type="int" name="priority"  unsigned="false" nullable="false" />
+        <column xsi:type="varchar" name="discard_subsequent_rules" nullable="false" />
+    </table>
+    <table comment="chottvn_log_rma Table" engine="innodb" name="chottvn_log_rma" resource="default">
+		<column xsi:type="bigint" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="bigint" name="account_id"  unsigned="true" nullable="true" comment="Rma Account Id"/>
+        <column xsi:type="varchar" name="notification" nullable="true" length="255" comment="Notification Step"/>
+        <column xsi:type="varchar" name="event" nullable="true" length="255" comment="Event"/>
+        <column xsi:type="varchar" name="resource_id" nullable="true" comment="Resource type: Id"/>
+        <column xsi:type="varchar" name="resource_type" nullable="true" comment="Resource type: Class Name"/>
+        <column xsi:type="text" name="value" nullable="false" />
+        <column xsi:type="text" name="value_old" nullable="true" />
+        <column xsi:type="timestamp" default="CURRENT_TIMESTAMP" name="created_at" nullable="true" comment="Created Date"/>
+        <column xsi:type="timestamp" default="CURRENT_TIMESTAMP" name="updated_at" nullable="true" comment="Updated Date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+	</table>
+</schema>

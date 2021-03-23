@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OACheckTextFieldWhileCreatingAnOrderFromBackend">
+        <annotations>
+            <features value="Customize Order Attribute via admin"/>
+            <stories value="Check Order Attribute by Admin"/>
+            <title value="Check Order Attribute by Admin"/>
+            <description value="Check Text Field Order Attribute while Creating an Order from Backend"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="OA-MFTF-30"/>
+            <group value="Amasty"/>
+            <group value="Attributes"/>
+            <group value="Orderattr"/>
+            <group value="CheckTextFieldOA"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="defaultConfiguration"/>
+            <!-- Create Simple Product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="theSimpleProduct1" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Simple US Customer-->
+            <createData entity="Simple_US_Customer_Static_Email" stepKey="createCustomer"/>
+            <!-- Create Text Field Order Attribute-->
+            <actionGroup ref="AdminAttributeTypeSettingsTextField" stepKey="createTextFieldOrderAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+                <argument name="adminOATypeSettings" value="SetOATypeSettingsTextDefault"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Configuration setting-->
+            <actionGroup ref="AdminDefaultConfigurationSettings" stepKey="returnDefaultConfigurationAfterTest"/>
+            <!-- Delete Order Attribute-->
+            <actionGroup ref="AdminDeleteOrderAttribute" stepKey="deleteAttribute">
+                <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+            </actionGroup>
+            <!-- Delete Simple Product-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct1"
+                        stepKey="deleteProduct"/>
+            <!--Delete Simple US Customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Create Order from Backend with Simple US Customer-->
+        <actionGroup ref="AdminCreateOrderWithTextFieldOA" stepKey="createBackendOrder">
+            <argument name="products" value="theSimpleProduct1.sku"/>
+            <argument name="addProductQty" value="_enterQty1"/>
+            <argument name="customerEmail" value="Simple_US_Customer_Static_Email.email"/>
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+            <argument name="shippingMethods" value="_FlatRateMethod"/>
+        </actionGroup>
+        <!-- Check Text Field Order Attribute in Backend-->
+        <actionGroup ref="AdminCheckOAInBackend" stepKey="checkOAViaAdminInBackend">
+            <argument name="adminCreateOASettings" value="SetOATextFieldDefault"/>
+        </actionGroup>
+
+    </test>
+</tests>

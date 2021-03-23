@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-orderpayment",
+    "description": "ChottVN Order Payment module",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [        
+        {
+            "name": "Dan Phan",
+            "email": "dan.phan@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\OrderPayment\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

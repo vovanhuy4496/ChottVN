@@ -1,0 +1,95 @@
+<?php
+/**
+ *
+ * SM Shop By - Version 2.0.0
+ * Copyright (c) 2017 YouTech Company. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: YouTech Company
+ * Websites: http://www.magentech.com
+ */
+?>
+
+<?php if($filter instanceof Magento\CatalogSearch\Model\Layer\Filter\Price ):?>
+<?php $range =  $this->getPriceRange($filter);?>
+<?php if (isset($range['min_standard'])) { ?>
+<div class="price-slider-wrap">
+	<div id="price-slider" data-rate="<?php echo $range['rate']; ?>" data-min-standard="<?php echo $range['min_standard'] ? $range['min_standard']:10000; ?>" data-max-standard="<?php echo $range['max_standard'] ?>" ></div>
+	<div class="price-slider-values">
+		<input  name="price_minimum" id="price_minimum" value="<?php echo $range['min_value'] ? $range['min_value']:10000; ?>" type="text">
+        <span class="filter-currency"><?php echo " ".$range['currency_symbol'] ;?></span>
+		<span class="price-filter-separator">&nbsp;-&nbsp;</span>
+		<input  name="price_maximum" id="price_maximum" value="<?php echo $range['max_value']?>" type="text">
+        <span class="filter-currency"><?php echo " ".$range['currency_symbol'] ;?></span>
+	</div>
+</div>
+<?php } ?>
+<?php else:?>
+<ol class="items">
+    <?php 
+    $_disable = true;
+    $_request_var = '';
+    foreach ($filterItems as $filterItem): 
+        $_request_var = $filterItem->getFilter()->getRequestVar();
+    ?>
+        <li class="my item">
+            <?php if ($filterItem->getCount() > 0): 
+                $_disable = false;
+                $explode_filter_url = explode('?', $filterItem->getUrl());
+                $filter_url = $explode_filter_url[0];
+                $var_filter_url = isset($explode_filter_url[1]) ? $explode_filter_url[1]:'';
+                $array_data_url = array();
+                if(!empty($var_filter_url)){
+                    $var_filter_url = explode('&', $var_filter_url);
+                    foreach ($var_filter_url as $vfl) {
+                        $arr_vfl = explode('=', $vfl);
+                        switch ($arr_vfl[0]) {
+                            case 'config':
+                            case 'type_ajax':
+                                break;
+                            
+                            default:
+                                $array_data_url[] = $vfl;
+                                break;
+                        }
+                    }
+
+                    if(!empty($array_data_url)){
+                        $filter_url .= '?'.implode('&', $array_data_url);
+                    }
+                }
+            ?>
+                <a href="<?php echo $block->escapeUrl($filter_url) ?>">
+                    <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                    <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                        <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
+                            <?php if ($filterItem->getCount() == 1):?> <?php /* @escapeNotVerified */ echo __('item')?><?php else:?> <?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
+                    <?php endif; ?>
+                </a>
+            <?php else:
+                if($filterItem->getCount() > 0){
+            ?>
+                <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
+                <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
+                    <span class="count"><?php /* @escapeNotVerified */ echo $filterItem->getCount()?><span class="filter-count-label">
+                        <?php if ($filterItem->getCount() == 1):?><?php /* @escapeNotVerified */ echo __('item')?><?php else:?><?php /* @escapeNotVerified */ echo __('items') ?><?php endif;?></span></span>
+                <?php endif; ?>
+            <?php } endif; ?>
+        </li>
+    <?php endforeach ?>
+    <?php 
+        if($_disable == true){
+    ?>
+        <script>
+            require([
+                "jquery",
+                "mage/mage"
+            ], function($){
+                $('#<?= $_request_var; ?>').hide();
+                $('#<?= $_request_var; ?>_content').hide();
+            });
+        </script>
+    <?php
+        }
+    ?>
+</ol>
+<?php endif;?>

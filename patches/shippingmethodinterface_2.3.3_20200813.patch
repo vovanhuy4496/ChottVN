@@ -1,0 +1,31 @@
+--- a/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php	2020-08-01 19:48:13.000000000 +0700
++++ b/vendor/magento/module-quote/Api/Data/ShippingMethodInterface.php.new	2020-08-13 13:12:33.000000000 +0700
+@@ -69,21 +69,21 @@
+     /**
+     * Flag.
+     */
+-    const KEY_FLAG = 'flag';
++    const KEY_FLAG_SHIPPING = 'flag_shipping';
+ 
+     /**
+-    * Returns Get Flag.
++    * Returns Get Flag Shipping.
+     *
+-    * @return string Get Flag.
++    * @return string Get Flag Shipping.
+     */
+-    public function getFlag();
++    public function getFlagShipping();
+ 
+     /**
+-    * Returns Set Flag.
++    * Returns Set Flag Shipping.
+     *
+-    * @return string Set Flag.
++    * @return string Set Flag Shipping.
+     */
+-    public function setFlag($flag);
++    public function setFlagShipping($flagshipping);
+     /**
+      * Returns Get Max Delivery Dates.
+      *

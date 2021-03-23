@@ -1,0 +1,27 @@
+{
+  "name": "mageplaza/module-vietnamese-language-pack",
+  "description": "Vietnamese language package for Magento 2",
+  "homepage": "https://www.chotructuyen.co",
+  "require": {
+    
+  },
+  "type": "magento2-language",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": [
+    "MIT"
+  ],
+  "authors": [
+    {
+      "name": "Chotructuyen.co team",
+      "email": "dev@chotructuyen.co",
+      "homepage": "https://www.chotructuyen.co",
+      "role": "Dev"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ]
+  }
+}

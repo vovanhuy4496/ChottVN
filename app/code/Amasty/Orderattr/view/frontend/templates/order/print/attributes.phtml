@@ -1,0 +1,32 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+?>
+<?php
+/**
+ * @var \Amasty\Orderattr\Block\Order\PrintOrder $block
+ */
+?>
+<?php if ($orderAttributeList = $block->getOrderAttributesData()) : ?>
+    <div class="block block-order-details-view">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Additional Info')); ?></strong>
+        </div>
+        <div class="block-content">
+            <?php foreach ($orderAttributeList as $attribute) : ?>
+            <div class="box">
+                <strong class="box-title">
+                    <span><?= $block->escapeHtml(__($attribute['label'])); ?></span>
+                </strong>
+                <div class="box-content">
+                    <?= /** @noEscape */ $attribute['value']; ?>
+                </div>
+            </div>
+            <?php endforeach;?>
+        </div>
+    </div>
+<?php endif; ?>
+

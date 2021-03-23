@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <catalog_price_comparison>
+            <general>
+                <url_api_price_comparison>demo</url_api_price_comparison>
+                <authorization_price_comparison>demo</authorization_price_comparison>
+                <enable_price_comparison>1</enable_price_comparison>
+            </general>
+        </catalog_price_comparison>
+    </default>
+</config>

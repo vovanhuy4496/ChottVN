@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route method="POST" url="/V1/chottvn-paymentaccount/bank">
+		<service class="Chottvn\PaymentAccount\Api\BankRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::bank_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-paymentaccount/bank/search">
+		<service class="Chottvn\PaymentAccount\Api\BankRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::bank_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-paymentaccount/bank/:bankId">
+		<service class="Chottvn\PaymentAccount\Api\BankRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::bank_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-paymentaccount/bank/:bankId">
+		<service class="Chottvn\PaymentAccount\Api\BankRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::bank_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-paymentaccount/bank/:bankId">
+		<service class="Chottvn\PaymentAccount\Api\BankRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::bank_delete"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn-paymentaccount/customerbankaccount">
+		<service class="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::customerbankaccount_save"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-paymentaccount/customerbankaccount/search">
+		<service class="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" method="getList"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::customerbankaccount_view"/>
+		</resources>
+	</route>
+	<route method="GET" url="/V1/chottvn-paymentaccount/customerbankaccount/:customerbankaccountId">
+		<service class="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" method="get"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::customerbankaccount_view"/>
+		</resources>
+	</route>
+	<route method="PUT" url="/V1/chottvn-paymentaccount/customerbankaccount/:customerbankaccountId">
+		<service class="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" method="save"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::customerbankaccount_update"/>
+		</resources>
+	</route>
+	<route method="DELETE" url="/V1/chottvn-paymentaccount/customerbankaccount/:customerbankaccountId">
+		<service class="Chottvn\PaymentAccount\Api\CustomerBankAccountRepositoryInterface" method="deleteById"/>
+		<resources>
+			<resource ref="Chottvn_PaymentAccount::customerbankaccount_delete"/>
+		</resources>
+	</route>
+</routes>

@@ -1,0 +1,123 @@
+<style>
+    .block{
+        display: block;
+        padding-bottom: 10px;
+    }
+    .data-table.admin__table-primary.edit-order-table{
+        margin-bottom: 10px;
+    }
+    .admin__page-section{
+        margin-bottom: 10px;
+    }
+</style>
+<section class="admin__page-section">
+   <div class="admin__page-section-title">
+      <span class="title">Items Request</span>
+   </div>
+   <div class="admin__table-wrapper">
+      <table class="data-table admin__table-primary edit-order-table">
+         <thead>
+            <tr class="headings">
+               <th class="col-product"><span>Product</span></th>
+               <th class="col-discont"><span>Discount Amount</span></th>
+               <th class="col-ordered-qty"><span>Qty</span></th>
+               <th class="col-price"><span>Price</span></th>
+            </tr>
+         </thead>
+         <?php foreach($block->getRequestItems()->getData() as $key => $item){ ?>
+         <tbody>
+            <tr>
+                <?php
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $modelProduct = $objectManager->create('Magento\Catalog\Model\Product');
+                    $product = $modelProduct->load($item['product_id']);
+                    $guaranteeValue = $product->getData('guarantee') ? $product->getData('guarantee'):'';
+                ?>
+               <td class="col">
+                    <div class="block">
+                        <span> <?= $item['name']; ?> </span>
+                    </div>
+                    <div class="block">
+                        Sku:<span> <?= $item['sku']; ?> </span>
+                    </div>
+                    <?php if($guaranteeValue){ ?>
+                        <div class="block">
+                            Bảo hành: <span> <?= $guaranteeValue; ?> </span>
+                        </div>
+                    <?php } ?>
+               </td>
+               <td class="col">
+                    <div class="block">
+                        <span> đ<?= $item['discount_amount']; ?> </span>
+                    </div>
+               </td>
+               <td class="col">
+                    <div class="block">
+                        <span> <?= (int) $item['qty']; ?> </span>
+                    </div>
+               </td>
+               <td class="col">
+                    <div class="block">
+                        <span> đ<?= $item['price']; ?> </span>
+                    </div>
+               </td>
+            </tr>
+         </tbody>
+         <?php } ?>
+      </table>
+   </div>
+</section>
+<!-- total -->
+<section class="admin__page-section">
+   <div class="admin__page-section-title">
+      <span class="title">Total</span>
+   </div>
+   <div class="admin__page-section-content">
+      <div class="admin__page-section-item order-comments-history">
+         
+      </div>
+      <div class="admin__page-section-item order-totals">
+         <div class="admin__page-section-item-title">
+            <span class="title">Totals</span>
+         </div>
+         <table class="data-table admin__table-secondary order-subtotal-table">
+            <tbody>
+               <tr class="col-0">
+                  <td class="label">
+                     Original Total                                                    
+                  </td>
+                  <td>
+                     <span><span class="price">₫<?= $block->getRequest()->getData('original_total'); ?></span></span>
+                  </td>
+               </tr>
+               <?php if($block->getRequest()->getData('savings_amount') > 0){ ?>
+               <tr class="col-0">
+                  <td class="label">
+                     Saving                                                   
+                  </td>
+                  <td>
+                     <span><span class="price"><?= $block->getRequest()->getData('savings_amount'); ?></span></span>
+                  </td>
+               </tr>
+               <?php } ?>
+               <tr class="col-1">
+                  <td class="label">
+                     Shipping &amp; Handling                                                    
+                  </td>
+                  <td>
+                    <span class="price"><?= __($block->getCustomShippingAmount($block->getRequest()->getData('flag_shipping'),$block->getRequest()->getData('shipping_amount'))); ?></span>
+                  </td>
+               </tr>
+               <tr class="col-0">
+                  <td class="label">
+                     Grand Total                                                    
+                  </td>
+                  <td>
+                     <span><span class="price"><?= $block->getRequest()->getData('grand_total'); ?></span></span>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+</section>

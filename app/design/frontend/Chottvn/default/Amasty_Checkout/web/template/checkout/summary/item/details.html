@@ -1,0 +1,169 @@
+<!-- ko fastForEach: getRegion('before_details') -->
+<!-- ko template: getTemplate() -->
+<!-- /ko -->
+<!-- /ko -->
+<!-- ko if: (checkPromoItems($parent))-->
+<div class="col-xl-9 col-lg-12 col-md-12 col-sm-9 col-8 product-item-details">
+    <form action="" method="post" data-role="product-attributes" data-bind="attr: {'data-item-id': $parent.item_id}">
+        <div class="row product-item-inner">
+            <div class="col-12 col-md-8 col-sm-8 product-item-name-block">
+                <!-- ko if: (getDetectMobile() == false)-->
+                <!-- ko if: (getUrlPrd($parent) == null)-->
+                <span class="product-item-name product-item-detail product-item-name-not-link">
+                    <div class="" data-bind="html: getNamePrd($parent)"></div>
+                </span>
+                <!-- /ko -->
+                <!-- ko if: (getUrlPrd($parent))-->
+                <a target="_blank" class="product-item-name product-item-detail" data-bind="click: redirectDetail($parent), attr: { href: getUrlPrd($parent), 'id': 'redirectDetail_' + $parent.item_id }">
+                    <div class="" data-bind="html: getNamePrd($parent)"></div>
+                </a>
+                <!-- /ko -->
+                <div class="product-item-merge-span">
+                    <!-- ko if: (getProductBrand($parent))-->
+                    <span class="product-item-detail" data-bind="text: getProductBrand($parent)"></span>
+                    <!-- /ko -->
+                    <!-- ko if: (getModel($parent))-->
+                    <span class="product-item-detail" data-bind="text: getModel($parent)"></span>
+                    <!-- /ko -->
+                </div>
+                <!-- /ko -->
+                <!-- ko if: (getRatingSummary($parent))-->
+                <div class="product-item-detail" data-bind="html: getRatingSummary($parent)"></div>
+                <!-- /ko -->
+                <!-- ko if: getStockStatusHtml($parent) -->
+                <div style="background: #fdf0d5 none repeat scroll 0 0; padding: 12px; margin-top: 10px" data-bind="html: getStockStatusHtml($parent)" />
+                <!-- /ko -->
+                <!-- ko if: (checkPromotionOrGift($parent)) -->
+                <!-- /ko -->
+                <!-- ko if: (getGuarantee($parent))-->
+                <!-- ko if: (getDetectMobile() == false)-->
+                <span class="product-item-detail" data-bind="text: getGuarantee($parent)"></span>
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+            <div class="col-12 col-md-4 col-sm-4 change-qty-and-price">
+                <!-- ko if: (checkPromotionOrGift($parent))-->
+                <div class="details-qty" data-bind="attr: { 'id': 'disableQty_' + $parent.item_id }">
+
+                    <!-- ko if: (disableQuantityMinus($parent) == null)-->
+                    <span class="quantity-controls quantity-minus pointer-events">-</span>
+                    <!-- /ko -->
+                    <!-- ko if: (disableQuantityMinus($parent))-->
+                    <span class="quantity-controls quantity-minus change-qty" data-bind="click: minusItem.bind($data, $parent)">-</span>
+                    <!-- /ko -->
+
+                    <!-- ko if: (disableQuantityInput($parent) == null)-->
+                    <input class="quantity-controls qty-checkout" name="qty" data-bind="event: { change: changedQty.bind($data, $parent), keypress: enterChangedQty }, value: $parent.qty, attr: {'id': 'inputQty_' + $parent.item_id, 'oldQty': $parent.qty, 'defaultStock': defaultStock($parent)}"
+                        min="1">
+                    <!-- /ko -->
+                    <!-- ko if: (disableQuantityInput($parent))-->
+                    <input class="quantity-controls qty-checkout pointer-events" name="qty" data-bind="value: $parent.qty, attr: {'disabled': true, 'id': 'inputQty_' + $parent.item_id, 'oldQty': $parent.qty, 'defaultStock': defaultStock($parent)}" min="1">
+                    <!-- /ko -->
+
+                    <!-- ko if: (disableQuantityPlus($parent) == null)-->
+                    <span class="quantity-controls quantity-plus pointer-events">+</span>
+                    <!-- /ko -->
+                    <!-- ko if: (disableQuantityPlus($parent))-->
+                    <span class="quantity-controls quantity-plus change-qty" data-bind="click: plusItem.bind($data, $parent)">+</span>
+                    <!-- /ko -->
+
+                    <!-- ko if: (getProductUnit($parent))-->
+                    <span class="for-one-product" data-bind="text: getProductUnit($parent)"></span>
+                    <!-- /ko -->
+                </div>
+
+                <!-- ko if: (checkOutofStock($parent))-->
+                <div class="message-error-out-of-stock" data-bind="html: checkOutofStock($parent), attr: { 'id': 'showMessOutOfStock_' + $parent.item_id }" />
+                <!-- /ko -->
+
+                <div class="message-error" data-bind="attr: { 'id': 'showMessOver_' + $parent.item_id }" />
+                <!-- /ko -->
+
+                <!-- ko if: (checkPromotionOrGift($parent) == null)-->
+                <div class="details-qty">
+                    <span class="qty-checkout" name="qty" data-bind="text: $parent.qty, attr: {'id': 'inputQty_' + $parent.item_id}" />
+                    <!-- ko if: (getProductUnit($parent))-->
+                    <span class="for-one-product" data-bind="text: getProductUnit($parent)"></span>
+                    <!-- /ko -->
+                </div>
+                <!-- /ko -->
+                <div class="summary-price-product">
+                    <div class="detail-price-one-product">
+                        <!-- ko if: (getRowDisplayPriceExclTax($parent))-->
+                        <div class="price-for-one-product" css="'price-for-one-product-mobile' : getDetectMobile() , '' : !getDetectMobile()">
+                            <span class="cart-price-ctt" data-bind="text: getRowDisplayPriceExclTax($parent)"></span>
+                        </div>
+                        <!-- /ko -->
+
+                        <!-- ko if: (getDiscountPercentCTT($parent))-->
+                        <div class="price-additional">
+                            <span class="save-percent btn btn-danger" data-bind="text: getDiscountPercentStringCTT($parent)"></span>
+                            <span class="price-original" data-bind="text: getPriceCTT($parent)"></span>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                    <div class="detail-price-many-product">
+                        <!-- ko fastForEach: getRegion('after_details') -->
+                        <!-- ko template: getTemplate() -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <!-- ko if: (getDetectMobile())-->
+                <!-- ko if: (JSON.parse($parent.options).length > 0)-->
+                <div style="display: none;" class="product options" data-bind="mageInit: {'collapsible':{'openedState': 'active'}}">
+                    <span data-role="title" class="toggle"><!-- ko i18n: 'View Details' --><!-- /ko --></span>
+                    <div data-role="content" class="content">
+                        <strong class="subtitle"><!-- ko i18n: 'Options Details' --><!-- /ko --></strong>
+                        <div class="item-options" data-bind="html: getConfigurableOptions($parent)" />
+                        <div class="item-options" data-bind="html: getCustomOptions($parent)" />
+                    </div>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko if: canShowDeleteButton() -->
+                <!-- ko if: (checkPromotionOrGift($parent))-->
+                <div class="delete" data-bind="click: deleteItem.bind($data, $parent),
+                                attr: { 'id': 'disableDelete_' + $parent.item_id }">
+                    <span data-bind="i18n: 'Delete' "></span>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+
+        <!-- ko fastForEach: getRegion('item_message') -->
+        <!-- ko template: getTemplate() -->
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- ko if: (getDetectMobile() == false)-->
+        <!-- ko if: (JSON.parse($parent.options).length > 0)-->
+        <div data-bind="html: getOptions($parent)"></div>
+        <div style="display: none;" class="product options" data-bind="mageInit: {'collapsible':{'openedState': 'active'}}">
+            <span data-role="title" class="toggle"><!-- ko i18n: 'View Details' --><!-- /ko --></span>
+            <div data-role="content" class="content">
+                <strong class="subtitle"><!-- ko i18n: 'Options Details' --><!-- /ko --></strong>
+                <div class="item-options" data-bind="html: getConfigurableOptions($parent)" />
+                <div class="item-options" data-bind="html: getCustomOptions($parent)" />
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- /ko -->
+
+        <!--ko text: initOptions($parent) -->
+        <!-- /ko -->
+
+        <!-- ko if: (getDetectMobile() == false)-->
+        <!-- ko if: countRuleNames($parent) -->
+        <div class="promotion-info" data-bind="html: getRuleNames($parent)" />
+        <!-- /ko -->
+        <!-- /ko -->
+
+    </form>
+</div>
+<!-- /ko -->
+<!-- ko if: (getDetectMobile())-->
+<!-- ko if: countRuleNames($parent) -->
+<div class="promotion-info" data-bind="html: getRuleNames($parent)" />
+<!-- /ko -->
+<!-- /ko -->

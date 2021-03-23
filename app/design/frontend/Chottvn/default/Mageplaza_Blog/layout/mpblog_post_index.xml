@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+   <update handle="mpblog_design" />
+    <head>
+        <!-- <css src="Mageplaza_Core::css/grid-mageplaza.css"/>
+        <css src="Mageplaza_Core::css/font-awesome.min.css"/> -->
+        <title>Blog</title>
+    </head>
+   <body>
+      <referenceBlock name="breadcrumbs">
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string">Home</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string"  translate="true">Home</item>
+                    <item name="label" xsi:type="string"  translate="true">Home</item>
+                    <item name="link" xsi:type="string">/</item>
+                </argument>
+            </action>
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string">Blog</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string"  translate="true">Blog</item>
+                    <item name="label" xsi:type="string"  translate="true">Blog</item>
+                </argument>
+            </action>
+        </referenceBlock>
+         <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument translate="true" name="title" xsi:type="string">Blog</argument>
+            </action>
+        </referenceBlock>
+
+      <referenceContainer name="content">
+          <container name="div.sidebar.colbig.blog" htmlTag="div" htmlClass="col-lg-8 col-md-8 order-1">
+            <container name="div.sidebar.box.content" htmlTag="div" htmlClass="box-content-additional">
+               <!-- slide -->
+               <!-- <block class="Mageplaza\Blog\Block\Listpost" name="mpblog.post.slideblog" template="Mageplaza_Blog::post/slide.phtml"/> -->
+               <!-- tin tuc moi nhat -->
+               <!-- <block name="mpblog.post.listnew" template="Mageplaza_Blog::post/listnew.phtml"/> -->
+               <!-- tin tuc theo cate -->
+               <block name="mpblog.post.listnewcate" template="Mageplaza_Blog::post/listnewcate.phtml"/>
+            </container>
+         </container>
+      </referenceContainer>
+      <move element="div.sidebar.colbig.blog" destination="div.sidebar.row.blog"  before="-"/>
+      <referenceBlock name="mpblog.post.list" remove="true" />
+   </body>
+</page>

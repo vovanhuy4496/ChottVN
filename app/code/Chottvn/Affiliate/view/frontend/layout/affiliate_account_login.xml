@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Affiliate Login</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <!-- customer.form.login.extra -->
+            <container name="customer.login.container" label="Customer Login Container" htmlTag="div" htmlClass="login-container">
+                <block class="Chottvn\Affiliate\Block\Form\Login" name="customer_form_login" template="Chottvn_Affiliate::form/login.phtml">
+                    <container name="form.additional.info" as="form_additional_info"/>
+                </block>
+            </container>
+            <block class="Magento\Cookie\Block\RequireCookie" name="require-cookie" template="Magento_Cookie::require_cookie.phtml">
+                <arguments>
+                    <argument name="triggers" xsi:type="array">
+                        <item name="loginButton" xsi:type="string">.action.login</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="form.additional.info">
+            <block class="Magento\Captcha\Block\Captcha" name="login-captcha" as="login.captcha" after="-">
+                <action method="setFormId">
+                    <argument name="formId" xsi:type="string">user_login</argument>
+                </action>
+                <action method="setImgWidth">
+                    <argument name="width" xsi:type="string">230</argument>
+                </action>
+                <action method="setImgHeight">
+                    <argument name="width" xsi:type="string">50</argument>
+                </action>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="form_additional_info_customer" template="Magento_Customer::additionalinfocustomer.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

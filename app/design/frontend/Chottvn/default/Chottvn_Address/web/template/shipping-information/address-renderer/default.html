@@ -1,0 +1,30 @@
+<if args="visible()">
+    <!-- <text args="address().prefix" /> <text args="address().firstname" /><br/> -->
+    <!-- <a if="address().telephone" attr="'href': 'tel:' + address().telephone" text="address().telephone"></a><br/> -->
+    <!-- <if args="address().email">
+        <text args="address().email" /><br/>
+    </if> -->
+    <text args="_.values(address().street).join(', ')" />,
+    <if args="address().extension_attributes">
+        <text args="address().extension_attributes.township " />,
+    </if>
+    <text args="address().city " />, <span text="address().region"></span>
+
+    <!-- <each args="data: address().customAttributes, as: 'element'">
+        <each args="data: Object.keys(element), as: 'attribute'">
+            <if args="typeof element[attribute] === 'object'">
+                <if args="element[attribute].label">
+                    <text args="element[attribute].label"/>
+                </if>
+                <ifnot args="element[attribute].label">
+                    <if args="element[attribute].value">
+                        <text args="element[attribute].value"/>
+                    </if>
+                </ifnot>
+            </if>
+            <if args="typeof element[attribute] === 'string'">
+                <text args="element[attribute]"/>
+            </if><br/>
+        </each>
+    </each> -->
+</if>

@@ -1,0 +1,299 @@
+<?xml version="1.0" ?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_finance_transaction_form.transaction_form_data_source</item>
+		</item>
+		<item name="label" translate="true" xsi:type="string">General Information</item>
+		<item name="template" xsi:type="string">templates/form/collapsible</item>
+	</argument>
+	<settings>
+		<buttons>
+			<button class="Chottvn\Finance\Block\Adminhtml\Transaction\Edit\BackButton" name="back"/>
+			<button class="Chottvn\Finance\Block\Adminhtml\Transaction\Edit\DeleteButton" name="delete"/>
+			<button class="Chottvn\Finance\Block\Adminhtml\Transaction\Edit\SaveButton" name="save"/>
+			<button class="Chottvn\Finance\Block\Adminhtml\Transaction\Edit\SaveAndContinueButton" name="save_and_continue"/>
+		</buttons>
+		<namespace>chottvn_finance_transaction_form</namespace>
+		<dataScope>data</dataScope>
+		<deps>
+			<dep>chottvn_finance_transaction_form.transaction_form_data_source</dep>
+		</deps>
+	</settings>
+	<dataSource name="transaction_form_data_source">
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+		<settings>
+			<submitUrl path="*/*/save"/>
+		</settings>
+		<dataProvider class="Chottvn\Finance\Model\Transaction\DataProvider" name="transaction_form_data_source">
+			<settings>
+				<requestFieldName>transaction_id</requestFieldName>
+				<primaryFieldName>transaction_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<fieldset name="general">
+		<settings>
+			<label>General</label>
+		</settings>
+		<field name="account_id" sortOrder="150">
+			<argument name="data" xsi:type="array">
+				<item name="options" xsi:type="object">Chottvn\Finance\Model\AccountId</item>
+				<item name="config" xsi:type="array">
+					<item name="label" xsi:type="string" translate="true">Account ID</item>
+					<item name="componentType" xsi:type="string">field</item>
+					<item name="formElement" xsi:type="string">select</item>
+					<item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>
+					<item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+					<item name="dataScope" xsi:type="string">account_id</item>
+					<item name="filterOptions" xsi:type="boolean">true</item>
+					<item name="showCheckbox" xsi:type="boolean">true</item>
+					<item name="chipsEnabled" xsi:type="boolean">true</item>
+					<item name="disableLabel" xsi:type="boolean">true</item>
+					<item name="multiple" xsi:type="boolean">false</item>
+					<item name="sortOrder" xsi:type="number">20</item>
+					<item name="listens" xsi:type="array">
+						<item name="newOption" xsi:type="string">toggleOptionSelected</item>
+					</item>
+					<item name="required" xsi:type="boolean">true</item>
+					<item name="source" xsi:type="string">conditions</item>
+					<item name="validation" xsi:type="array">
+						<item name="required-entry" xsi:type="boolean">false</item>
+					</item>
+				</item>
+			</argument>
+		</field>
+		<field name="request_id" sortOrder="160">
+			<argument name="data" xsi:type="array">
+				<item name="options" xsi:type="object">Chottvn\Finance\Model\RequestID</item>
+				<item name="config" xsi:type="array">
+					<item name="label" xsi:type="string" translate="true">Request ID</item>
+					<item name="componentType" xsi:type="string">field</item>
+					<item name="formElement" xsi:type="string">select</item>
+					<item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>
+					<item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+					<item name="dataScope" xsi:type="string">request_id</item>
+					<item name="filterOptions" xsi:type="boolean">true</item>
+					<item name="showCheckbox" xsi:type="boolean">true</item>
+					<item name="chipsEnabled" xsi:type="boolean">true</item>
+					<item name="disableLabel" xsi:type="boolean">true</item>
+					<item name="multiple" xsi:type="boolean">false</item>
+					<item name="sortOrder" xsi:type="number">20</item>
+					<item name="listens" xsi:type="array">
+						<item name="newOption" xsi:type="string">toggleOptionSelected</item>
+					</item>
+					<item name="required" xsi:type="boolean">true</item>
+					<item name="source" xsi:type="string">conditions</item>
+					<item name="validation" xsi:type="array">
+						<item name="required-entry" xsi:type="boolean">false</item>
+					</item>
+				</item>
+			</argument>
+		</field>
+		<field formElement="select" name="transaction_type_id" sortOrder="20">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+					<item name="component" xsi:type="string">Chottvn_Finance/js/form/element/transaction</item>
+            		<item name="elementTmpl" xsi:type="string">Chottvn_Finance/form/element/transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Transaction Type ID</label>
+				<dataScope>transaction_type_id</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Finance\Model\TransactionType\TransactionType"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="select" name="transaction_rate" sortOrder="30">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Transaction Rate</label>
+				<dataScope>transaction_rate</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Finance\Model\TransactionType\TransactionRate"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="input" name="amount" sortOrder="180">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Amount</label>
+				<dataScope>amount</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="rate" sortOrder="190">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+					<item name="visible" xsi:type="boolean">false</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Rate</label>
+				<dataScope>rate</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="date" name="start_date" sortOrder="200">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="class" xsi:type="string">Chottvn\Finance\Ui\Component\Form\Element\DateCurent</item>
+					<item name="dataScope" xsi:type="string">start_date</item>
+					<item name="source" xsi:type="string">Transaction</item>
+					<item name="visible" xsi:type="boolean">true</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Start Date</label>
+				<dataScope>start_date</dataScope>
+				<validation>
+					<!-- <rule name="required-entry" xsi:type="boolean">false</rule> -->
+				</validation>
+			</settings>
+		</field>
+		<field formElement="date" name="end_date" sortOrder="210">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+					<item name="visible" xsi:type="boolean">true</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">End Date</label>
+				<dataScope>end_date</dataScope>
+				<validation>
+					<!-- <rule name="required-entry" xsi:type="boolean">false</rule> -->
+				</validation>
+			</settings>
+		</field>
+		<field formElement="date" name="transaction_date" sortOrder="220">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+					<item name="visible" xsi:type="boolean">false</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Transaction Date</label>
+				<dataScope>transaction_date</dataScope>
+				<validation>
+					<!-- <rule name="required-entry" xsi:type="boolean">false</rule> -->
+				</validation>
+			</settings>
+		</field>
+		<field formElement="select" name="status" sortOrder="221">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Status</label>
+				<dataScope>status</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+			<formElements>
+				<select>
+					<settings>
+						<options class="Chottvn\Finance\Model\Transaction\Status"/>
+						<caption translate="true">-- Please Select --</caption>
+					</settings>
+				</select>
+			</formElements>
+		</field>
+		<field formElement="textarea" name="note" sortOrder="230">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Note</label>
+				<dataScope>note</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="document_code" sortOrder="240">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">Transaction</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Document Code</label>
+				<dataScope>document_code</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+		<field formElement="input" name="processed_by" sortOrder="250">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="visible" xsi:type="boolean">false</item>
+					<item name="source" xsi:type="string">Request</item>
+					<item name="class" xsi:type="string">Chottvn\Finance\Ui\Component\Form\Element\ProcessedBy</item>
+					<item name="dataScope" xsi:type="string">processed_by</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Processed By</label>
+				<dataScope>processed_by</dataScope>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">false</rule>
+				</validation>
+			</settings>
+		</field>
+	</fieldset>
+</form>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="chottvn_log_sales_order">
+        <column xsi:type="bigint" name="id"  identity="true" unsigned="true" nullable="false" comment="Id"/>
+        <column xsi:type="bigint" name="order_id"  unsigned="true" nullable="true" comment="Order Id"/>
+        <column xsi:type="varchar" name="order_status" nullable="true" length="255"/>
+        <column xsi:type="text" name="value" nullable="false" />
+        <column xsi:type="text" name="value_old" nullable="true" />
+        <column xsi:type="timestamp" name="created_at" nullable="true" comment="Created Date"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="true" comment="Updated Date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

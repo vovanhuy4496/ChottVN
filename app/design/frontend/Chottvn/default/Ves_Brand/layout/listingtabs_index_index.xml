@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="listingtabs.default">
+            <block class="Ves\Brand\Block\Product\View" name="product.brand" template="Ves_Brand::product/view/logo.phtml" ifconfig="vesbrand/product_view_page/enable_brand_info"/>
+        </referenceContainer>
+    </body>
+</page>

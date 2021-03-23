@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="savings_amount" instance="Chottvn\Sales\Model\Total\Quote\SavingsAmount" sort_order="300"/>
+            <item name="original_total" instance="Chottvn\Sales\Model\Total\Quote\OriginalTotal" sort_order="300"/>
+        </group>
+    </section>
+</config>

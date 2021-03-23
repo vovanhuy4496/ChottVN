@@ -1,0 +1,100 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+// get helper
+$helper = $this->helper('Chottvn\Frontend\Helper\Data');
+$brand_helper = $this->helper('Ves\Brand\Helper\ProductBrand');
+
+// {{block class="Chottvn\Frontend\Block\AccountMenu" template="Chottvn_Frontend::menu_items.phtml" title="aaa" name="aaaa" css_class="category-header-menu" entity_type="catalog_product" attribute_code="spraying_pressure_bar_filter" url="/may-xit-rua.html"}}
+
+// get config
+$cssClass = $this->getData('css_class') ? ' ' . $this->getData('css_class')  : '';
+$entityType = $this->getData('entity_type') ? $this->getData('entity_type')  : '';
+$attributeCode = $this->getData('attribute_code') ? $this->getData('attribute_code')  : '';
+$url = $this->getData('url') ? $this->getData('url') : '';
+$categoryId = $this->getData('category_id') ? $this->getData('category_id') : 2;
+$urlAttributeDisplay = false;
+
+// get by code
+$eavConfig = $objectManager->create('Magento\Eav\Model\Config');
+$attribute = $eavConfig->getAttribute($entityType, $attributeCode);
+
+// get category by id
+$categoryId = explode(',', $categoryId);
+if (count($categoryId) > 1) {
+	$urlAttributeDisplay = true;
+}
+
+// get name
+$frontend_label = $attribute->getStoreLabel();
+$title = $this->getData('title') ? $this->getData('title')  : $frontend_label;
+$showData = false;
+$htmlAttributeMenu = '<div class="sm_megamenu_title"><p class="'.$cssClass.'">'.$title.'</p></div>';
+$arrayData = array();
+
+// get options by category
+foreach ($categoryId as $cateId) {
+	$category = $helper->getCategory($cateId);
+
+	if($attribute && $category){
+		$showData = true;
+		$totalCountItems = $helper->countProductsByAttribute($attributeCode);
+		// get list option value
+		$options = $attribute->getSource()->getAllOptions();
+		$attributeIds = $helper->getFilterableAttributeByCategoryId($category->getId());
+
+		if($totalCountItems > 0 && in_array($attribute->getId(), $attributeIds)){
+			if($options){
+				foreach ($options as $option) {
+					$countItems = $helper->countProductsByAttribute($attributeCode, $option['value'], $category->getId());
+					if($option['value'] && $countItems > 0){
+						$arrayData[] = $option;
+					}
+				}
+			}
+		}
+	}
+}
+
+// sort data before get options by category
+$arrOptions = array_unique($arrayData, SORT_REGULAR);
+switch ($attributeCode) {
+	case 'product_brand':
+		sort($arrOptions);
+		break;
+}
+
+// display html if have data
+foreach ($arrOptions as $option) {
+	switch ($attributeCode) {
+		case 'product_brand':
+			$brand_detail = $brand_helper->getBrandById($option['value']);
+			$image_url = $brand_detail->getThumbnailUrl();
+			if($urlAttributeDisplay){
+				$brand_url = $brand_detail->getUrl().'?product_kind=accessories';
+			}else{
+				$brand_url = $category->getUrl().'?'.$attributeCode.'='.$option['value'];
+			}
+			$htmlAttributeMenu .= '<div class="sm_megamenu_title">
+					<a class="sm_megamenu_nodrop sm_megamenu_subcate product_brand"
+						 href="'.$brand_url.'">
+						<span class="sm_megamenu_image_lv-3"><img src="'.$image_url.'" alt="'.$option['label'].'"></span> - <span class="sm_megamenu_title_lv-3">'.$option['label'].'</span>
+					</a>
+				</div>';
+			break;
+		
+		default:
+			$htmlAttributeMenu .= '<div class="sm_megamenu_title">
+					<a class="sm_megamenu_nodrop sm_megamenu_subcate"
+						 href="'.$category->getUrl().'?'.$attributeCode.'='.$option['value'].'">
+						<span class="sm_megamenu_title_lv-3">'.$option['label'].'</span>
+					</a>
+				</div>';
+			break;
+	}
+}
+
+// return data
+if($showData){
+	echo $htmlAttributeMenu;
+}
+?>

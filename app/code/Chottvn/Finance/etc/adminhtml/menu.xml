@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>	
+		<add id="Chottvn_Finance::finance"
+      title="Chottvn Finance"
+      module="Amasty_Orderattr"
+			sortOrder="9999"             
+      parent="Magento_Customer::customer"
+      resource="Magento_Backend::admin"/>
+		<add action="chottvn_finance/request/index" 
+			id="Chottvn_Finance::chottvn_finance_request" 
+			module="Chottvn_Finance" 
+			parent="Chottvn_Finance::finance" 
+			resource="Chottvn_Finance::request" 
+			sortOrder="9999" 
+			title="Request"/>
+		<add action="chottvn_finance/transactiontype/index" 
+			id="Chottvn_Finance::chottvn_finance_transactiontype" 
+			module="Chottvn_Finance" 
+			parent="Chottvn_Finance::finance" 
+			resource="Chottvn_Finance::transactiontype" 
+			sortOrder="9999" 
+			title="TransactionType"/>
+		<add action="chottvn_finance/transaction/index" 
+			id="Chottvn_Finance::chottvn_finance_transaction" 
+			module="Chottvn_Finance" 
+			parent="Chottvn_Finance::finance" 
+			resource="Chottvn_Finance::transaction" 
+			sortOrder="9999" 
+			title="Transaction"/>
+	</menu>
+</config>

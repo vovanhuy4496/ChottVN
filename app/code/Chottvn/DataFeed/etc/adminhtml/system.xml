@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Config/etc/system_file.xsd">
+    <system>
+        <section id="datafeed_configuration" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <tab>catalog</tab>
+            <resource>Chottvn_DataFeed::config</resource>
+            <label>DataFeed Configuration</label>
+            <group id="google_datafeed_cron" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>DataFeed Schedule</label>
+                <field id="schedule" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cron schedule</label>
+                    <comment>Format: * * * * *</comment>
+                </field>
+                <field id="data_config" translate="label" type="textarea" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Data Config</label>
+                </field>
+                <field id="host_config" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Host FTP</label>
+                </field>
+                <field id="username_config" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Username FTP</label>
+                </field>
+                <field id="password_config" translate="label" type="password" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Password FTP</label>
+                </field>
+                <field id="directory_config" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Directory FTP</label>
+                </field>
+                <field id="execute_config" translate="label" type="textarea" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Execute Config</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

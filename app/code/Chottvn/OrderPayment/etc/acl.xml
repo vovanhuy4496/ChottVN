@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Chottvn_OrderPayment::bankaccount" sortOrder="10" title="BankAccount">
+					<resource id="Chottvn_OrderPayment::bankaccount_save" sortOrder="10" title="Save BankAccount"/>
+					<resource id="Chottvn_OrderPayment::bankaccount_delete" sortOrder="20" title="Delete BankAccount"/>
+					<resource id="Chottvn_OrderPayment::bankaccount_update" sortOrder="30" title="Update BankAccount"/>
+					<resource id="Chottvn_OrderPayment::bankaccount_view" sortOrder="40" title="View BankAccount"/>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

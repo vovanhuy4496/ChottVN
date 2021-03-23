@@ -1,0 +1,9 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<div class="order-date">
+    <span class="label"> <?= __("Order Date:") ?></span> <date><?= $block->formatDate($block->getOrder()->getCreatedAt(), \IntlDateFormatter::LONG) ?></date>
+</div>

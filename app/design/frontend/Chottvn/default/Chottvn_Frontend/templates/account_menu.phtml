@@ -1,0 +1,111 @@
+<?php
+/**
+ * @var $block \Chottvn\Frontend\Block\AccountMenu
+ */
+
+  $customerMembershipHelperData = $this->helper('Chottvn\CustomerMembership\Helper\Data');
+  if ($block->isLoggedIn()){
+    $orderTrackingUrl = "/sales/order/history/";
+  }else{
+    $orderTrackingUrl = "/sales/guest/form/";
+  }
+
+  $currentCustomer = $block->getCustomer();
+?>
+<?php $availableSocials = $block->getAvailableSocials(); ?>
+
+<div class="account-menus">
+  <!-- <a class="account-menu-item tracking-order" href="<?= $orderTrackingUrl ?>">
+    <span class="icon image">
+      <i class="fa fa-truck"></i>
+       <img class="tracking" src="<?= $this->getViewFileUrl('images/icon_tracking_order.png');  ?>" alt="Order Tracking"/>
+    </span>
+    <span class="text d-none d-sm-none d-md-block d-lg-block"> <?= __("Tracking"); ?><br/><?= __("Order"); ?></span>
+  </a> -->
+  <?php if (! $block->isLoggedIn()){ ?>
+    <div class="account-menu-item account">
+      <div class="dropdown-toggle">
+        <span class="icon image">
+          <!-- <i class="fa fa-user" aria-hidden="true"></i> -->
+          <img src="<?= $customerMembershipHelperData->getCustomerLevelImageUrl($block->getCustomer()->getId()) ?>" alt="Account"/>
+        </span>
+        <span class="text">
+            <span class="sign-in-label"><a class="social-login-btn" href="#input-login" title="<?= __("Sign in / Sign up"); ?>"><?php echo $block->getSayHiAccountLabel(); ?></a></span>
+            <span class="sign-in-info"><a class="social-login-btn"  href="#input-create" title="<?= __("Sign up"); ?>"><?php echo $block->getAccountLabel(); ?></a></span>
+        </span>
+      </div>
+    </div>
+  <?php } else { ?>
+    <div class="account-menu-item account dropdown">
+      <div class="dropdown-toggle" type="" id="dropdown-account-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="icon image">
+          <!-- <i class="fa fa-user" aria-hidden="true"></i> -->
+          <?php 
+            if($currentCustomer->getGroupId() == 4){
+          ?>
+            <img src="<?= $this->getViewFileUrl('images/icon_cong_tac_vien-01.png');  ?>" alt="Affiliate Account"/>
+          <?php }else{ ?>
+            <img src="<?= $customerMembershipHelperData->getCustomerLevelImageUrl($block->getCustomer()->getId()) ?>" alt="Account"/>
+          <?php } ?>
+        </span>
+        <span class="text">
+          <?php 
+            if($currentCustomer->getGroupId() == 4){
+              // echo '<pre>';
+              // print_r($currentCustomer->getData());
+              // echo '</pre>';exit;
+              $affiliate_code = $currentCustomer->getAffiliateCode();
+          ?>
+            <span class="sign-in-label"><?php echo $block->getAccountLabel(); ?></span>
+            <span class="sign-in-info"><?php echo $affiliate_code; ?></span>
+          <?php }else{ ?>
+            <span class="sign-in-label"><?php echo $block->getSayHiAccountLabel(); ?></span>
+            <span class="sign-in-info"><?php echo $block->getAccountLabel(); ?></span>
+          <?php } ?>
+        </span>
+      </div>
+      <div class="dropdown-menu" aria-labelledby="dropdown-account-menu">
+        <?php if (! $block->isLoggedIn()){ ?>
+          <div class="dropdown-item  ">
+            <a class="social-login-btn btn btn-primary w-100" href="#input-login">
+              <?= __("Sign in"); ?>
+            </a>
+          </div>
+          <div class="dropdown-item  ">
+            <a class="social-login-btn btn btn-secondary w-100"  href="#input-create">
+              <?= __("Sign up"); ?>
+            </a>
+          </div>
+
+          <?php foreach ($availableSocials as $key => $social) : ?>
+            <div class="dropdown-item social-btn <?= $key ?>-login">
+                <a class="btn btn-block btn-social btn-<?= $block->getBtnKey($key) ?>"
+                   data-mage-init='{"socialProvider": {"url": "<?= $social['login_url'] ?>", "label": "<?= __('Login By %1', $social['label']) ?>"}}'>
+                    <span class="fa fa-<?= $block->getBtnKey($key) ?>"></span>
+                    <?= __('Sign in with %1', $social['label']) ?>
+                </a>
+            </div>
+          <?php endforeach; ?>
+
+
+        <?php } else { ?>
+          <div class="account-navigation-header-menu">
+            <?php
+              echo $this->getLayout()
+              ->createBlock('Magento\Cms\Block\Block')
+              ->setBlockId('account-navigation')
+              ->toHtml();
+            ?>
+          </div>
+          <!-- <a class="dropdown-item" href="/sales/order/history/" title="<?= __("My Orders"); ?>">aaaaaaa</a>
+          <a class="dropdown-item" href="/sales/order/history/" title="<?= __("My Orders"); ?>"><?= __("My Orders"); ?></a>
+          <a class="dropdown-item" href="/customer/account/" title="<?= __("My Account"); ?>"><?= __("My Account"); ?></a>
+          <a class="dropdown-item" href="/wishlist/" title="<?= __("My Wishlists"); ?>"><?= __("My Wishlists"); ?></a>
+          <a class="dropdown-item" href="/review/customer/" title="<?= __("My Product Reviews"); ?>"><?= __("My Product Reviews"); ?></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href= "/customer/account/logout" title="<?= __("Sign out"); ?>"><?= __("Sign out"); ?></a>-->
+        <?php }  ?>
+      </div>
+    </div>
+  <?php }  ?>
+</div>

@@ -1,0 +1,406 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var Magento\Review\Block\Product\View\ListView $block */
+$displayedCollection = $block->getReviewsCollection();
+$_items = $block->getReviewsCollection()->getItems();
+$format = $block->getDateFormat() ?: \IntlDateFormatter::SHORT;
+
+/** @var \Amasty\AdvancedReview\Helper\BlockHelper $advancedHelper */
+$advancedHelper = $block->getData('advanced-review-helper');
+
+$isFilterApplied = $displayedCollection->getFlag(\Amasty\AdvancedReview\Model\Toolbar\Applier::COLLECTION_FLAG);
+?>
+
+<?php
+
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+    $product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+
+    $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+    $currentStoreId = $storeManager->getStore()->getId();
+    $rating = $objectManager->get("Magento\Review\Model\ResourceModel\Review\CollectionFactory");
+
+    $reviewsCollection = $rating->create()->addStoreFilter(
+        $currentStoreId
+    )->addStatusFilter(
+        \Magento\Review\Model\Review::STATUS_APPROVED
+    )->addEntityFilter(
+        'product',
+        $product->getId()
+    )->setDateOrder()
+    ->addRateVotes();
+
+    $result = $items = $starData = [];
+
+    foreach ($reviewsCollection->getItems() as $_review) {
+        foreach ($_review->getRatingVotes() as $_vote) {
+            $rating = [];
+
+            $percent = $_vote->getPercent();
+            $star = ($percent/20);
+            $typeReview = $_vote->getRatingCode();
+
+            $rating['percent']   = $percent;
+            $rating['star']      = $star;
+            $rating['name']      = $typeReview;
+
+            $items[] = $rating;
+            $starData[$star][] = $rating;
+        }
+    }
+
+    if(count($items) > 0) {
+
+        if(isset($starData[1]))
+            $result[1] = count($starData[1]);
+        else
+            $result[1] = 0;
+
+        if(isset($starData[2]))
+            $result[2] = count($starData[2]);
+        else
+            $result[2] = 0;
+
+        if(isset($starData[3]))
+            $result[3] = count($starData[3]);
+        else
+            $result[3] = 0;
+
+        if(isset($starData[4]))
+            $result[4] = count($starData[4]);
+        else
+            $result[4] = 0;
+
+        if(isset($starData[5]))
+            $result[5] = count($starData[5]);
+        else
+            $result[5] = 0;
+
+        $sum = $startSum = 0;
+
+        foreach($result as $number => $count) {
+            $sum += $number * $count;
+            $startSum +=  $count;
+        }
+
+        $avg =  $sum/$startSum;
+        $avg = floor($avg * 2) / 2;
+
+        $result['all'] = count($items);
+        $result['avg'] = number_format($avg, 1, '.', ' ');
+        $result['percent'] = round($avg/5*100);
+
+        $biggest_number = max($result[1], $result[2], $result[3], $result[4], $result[5]);
+    }
+?>
+<!-- Detail sunmmary -->
+<?php if (count($_items) || $isFilterApplied) { ?>
+    <div class="block review-list" id="customer-reviews">
+        <?php if(count($_items)){ ?>
+        <h2 class="detail-heading"><?= $block->escapeHtml(__('Customer Reviews')) ?> <?php echo __('There is %1 reviewer',$result['all']) ?></h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 col-sm-12 div-summary-review">
+                    <div class="rating-block">
+                        <div class="rating-summary">
+                            <?php //for($i=0; $i<$result['avg']; $i++): ?>
+                                <!-- <span style="color: #ffb400; font-size: 25px;" class="fa fa-star checked"></span> -->
+                            <?php //endfor ?>
+                            <div class="star-container">
+                                <?php
+                                    // get star reviews
+                                    echo $this->getLayout()
+                                        ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                                        ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                                        ->setData(['percent_rating' => $result['percent']])
+                                        ->toHtml();
+                                ?>
+                            </div>
+                        </div>
+                        <div class="star-label"><?= $block->escapeHtml(__('AVG Summary Review')) ?></div>
+                        <div class="star-avg"><?php echo $result['avg']; ?></div>
+                    </div>
+                </div>
+                <div class="col-md-7 col-sm-12 div-summary-detail">
+                    <?php for($i=5; $i>0; $i--): ?>
+                        <?php $width = ($result[$i] * 100) / $biggest_number; ?>
+                        <div class="pull-left">
+                            <div class="pull-left summary-detail-star">
+                                <div class="summary-detail-star-detail">
+                                    <?php echo $i; ?>
+                                    <span><i class="fas fa-star"></i></span>
+                                </div>
+                            </div>
+                            <div class="pull-left width-progress">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="<?php echo $i; ?>" aria-valuemin="0" aria-valuemax="5" style="width: <?php echo $width; ?>%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pull-right review-count">
+                                <p>
+                                    <?php echo __('There is %1 review',$result[$i]) ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endfor ?>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+        <div id="block-form-custom">
+            <?php
+                echo $this->getLayout()
+                ->createBlock('Magento\Review\Block\Form')
+                ->setTemplate('Magento_Review::form.phtml')
+                ->toHtml();
+            ?>
+        </div>
+        <script>
+            require([
+                'jquery'
+            ], function($){
+                jQuery(document).ready(function(e){
+                    $('#block-form-custom .block.review-add.box.box-primary').show();
+                });
+            });
+        </script>
+        <?php if(count($_items)){ ?>
+        <div class="block-content">
+            <div class="toolbar review-toolbar">
+                <?= $block->getChildHtml('toolbar') ?>
+            </div>
+            <ol class="items review-items" id ="id-review-custom">
+            <?php foreach ($_items as $_review) : ?>
+                <!-- <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review"> -->
+                <li class="item review-item amreview-review-wrapper"
+                        data-amreview-js="review-entity"
+                        data-amreview-id="<?= (int)$_review->getId() ?>"
+                        itemscope itemprop="review"
+                        itemtype="http://schema.org/Review">
+                    <div class="img-author-ratings">
+                        <div class="img-author-review">
+                            <?php $rating = 0; ?>
+                            <?php $count_num_rating = count($_review->getRatingVotes()); ?>
+
+                            <?php if (count($_review->getRatingVotes())) : ?>
+                                <?php foreach ($_review->getRatingVotes() as $_vote) : ?>
+                                    <?php $rating = $rating + (int)$_vote->getPercent(); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <?php $rating = @($rating / (($count_num_rating > 0) ? $count_num_rating : 0)); ?>
+
+                            <?php
+                                $nickname = nl2br($block->escapeHtml($_review->getNickname())) != "" ? nl2br($block->escapeHtml($_review->getNickname())):"Default";
+                                $nickname = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", "a", $nickname);
+                                $nickname = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", "e", $nickname);
+                                $nickname = preg_replace("/(ì|í|ị|ỉ|ĩ)/", "i", $nickname);
+                                $nickname = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", "o", $nickname);
+                                $nickname = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", "u", $nickname);
+                                $nickname = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", "y", $nickname);
+                                $nickname = preg_replace("/(đ)/", "d", $nickname);
+                                $nickname = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", "A", $nickname);
+                                $nickname = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", "E", $nickname);
+                                $nickname = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", "I", $nickname);
+                                $nickname = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", "O", $nickname);
+                                $nickname = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", "U", $nickname);
+                                $nickname = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", "Y", $nickname);
+                                $nickname = preg_replace("/(Đ)/", "D", $nickname);
+
+                                $words = explode(" ", $nickname);
+                                $avatarChar = '';
+                                if(count($words) > 1){
+                                   $firstWord = $words[count($words)-1];
+                                   $secondWord = $words[count($words)-2];
+                                   $avatarChar = $secondWord[0].$firstWord[0];
+                                }else{
+                                   $firstWord = $words[0];
+                                   $avatarChar = $firstWord[0];
+                                }
+
+                                echo '<span>'.$avatarChar.'</span>';
+                            ?>
+
+                        </div>
+                        <div class="author-ratings">
+                            <div class="review-author" itemprop="author">
+                                <?= /* @noEscape */ nl2br($block->escapeHtml($_review->getNickname())) ?>
+                            </div>
+                            <?php if (count($_review->getRatingVotes())) : ?>
+                                <div class="review-ratings">
+                                    <?php foreach ($_review->getRatingVotes() as $_vote) : ?>
+                                        <div class="rating-summary item item-ratings" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                                            <span class="label rating-label"><span><?= $block->escapeHtml($_vote->getRatingCode()) ?></span></span>
+                                            <div class="rating-result" title="<?= $block->escapeHtmlAttr($_vote->getPercent()) ?>%">
+                                                <?php
+                                                    // get star reviews
+                                                    echo $this->getLayout()
+                                                        ->createBlock('Chottvn\Frontend\Block\ReviewSummary')
+                                                        ->setTemplate("Chottvn_Frontend::review/review_stars.phtml")
+                                                        ->setData(['percent_rating' => $block->escapeHtmlAttr($_vote->getPercent())])
+                                                        ->toHtml();
+                                                ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="amreview-description-wrap" data-amreview-js="description-wrap">
+                        <div class="review-details">
+                            <span class="review-details-title" itemprop="name">
+                                <?= $block->escapeHtml($_review->getTitle()) ?>
+                            </span>
+                            <span class="review-content">
+                                <p class="review-details-value" itemprop="description"><?= $block->escapeHtml($_review->getDetail()) ?></p>
+                            </span>
+                        </div>
+
+                        <?php $like = $_review->getData('like_about'); ?>
+                        <?php $disLike = $_review->getData('not_like_about'); ?>
+                        <?php if ($advancedHelper->isProsConsEnabled() && ($like || $disLike)) : ?>
+                            <div class="amreview-proscons-container">
+                                <?php if ($like) : ?>
+                                    <p class="amreview-proscons -like">
+                                        <?= /* @noEscape */ nl2br($block->escapeHtml($like)); ?>
+                                    </p>
+                                <?php endif; ?>
+                                <?php if ($disLike) : ?>
+                                    <p class="amreview-proscons -dislike">
+                                        <?= /* @noEscape */ nl2br($block->escapeHtml($disLike)); ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="amrev-comment-toolbar <?= !$advancedHelper->isCommentsAllowed() ? '-nocomments' : '' ?>">
+                            <?php if ($advancedHelper->isCommentsAllowed()) : ?>
+                                <div class="amrev-reply">
+                                    <button class="amrev-repbtn" data-amreview-js="reply">
+                                        <?= $block->escapeHtml(__('Reply')); ?>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+                            <?= $advancedHelper->getHelpfulHtml($_review) ?>
+                            <?php if ($advancedHelper->isCommentsAllowed()) : ?>
+                                <div class="amrev-comment">
+                                    <button class="amrev-combtn" data-amreview-js="comments">
+                                        <?= $block->escapeHtml(__('Comments')); ?>
+                                        (<span data-review-js="comment-qty">0</span>)
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="review-date">
+                                <?php
+                                    $now = new DateTime;
+                                    $ago = new DateTime($_review->getCreatedAt());
+                                    $diff = $now->diff($ago);
+
+                                    $diff->w = floor($diff->d / 7);
+                                    $diff->d -= $diff->w * 7;
+
+                                    $string = array('y' => __('year'),'m' => __('month'),'w' => __('week'),'d' => __('day'),'h' => __('hour'),'i' => __('minute'),'s' => __('second'));
+                                    foreach ($string as $k => &$v) {
+                                        if ($diff->$k) {
+                                            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? '' : '');
+                                        } else {
+                                            unset($string[$k]);
+                                        }
+                                    }
+
+                                    $string = array_slice($string, 0, 1);
+                                    $string = '- '.implode(', ', $string) . __(' ago');
+                                    echo $string;
+                                ?>
+                                <!-- <time class="review-details-value" itemprop="datePublished" datetime="<?= $block->escapeHtmlAttr($block->formatDate($_review->getCreatedAt(), $format)) ?>"><?= $block->escapeHtml($block->formatDate($_review->getCreatedAt(), $format)) ?></time> -->
+                            </div>
+                        </div>
+
+                        <?php $answer = $advancedHelper->getReviewAnswerHtml($_review);
+                        ?>
+                        <?php if ($answer) :
+
+                            // get name updated by
+                            $store_updated_by = $_review->getData('ctt_updated_by') ? $_review->getData('ctt_updated_by'):__('Response from store');
+                            // get name updated at
+                            $now_updated = new DateTime;
+                            $ago_updated = new DateTime($_review->getData('ctt_updated_at'));
+                            $diff_updated = $now_updated->diff($ago_updated);
+
+                            $diff_updated->w = floor($diff_updated->d / 7);
+                            $diff_updated->d -= $diff_updated->w * 7;
+
+                            $string_updated = array('y' => __('year'),'m' => __('month'),'w' => __('week'),'d' => __('day'),'h' => __('hour'),'i' => __('minute'),'s' => __('second'));
+                            foreach ($string_updated as $k => &$v) {
+                                if ($diff_updated->$k) {
+                                    $v = $diff_updated->$k . ' ' . $v . ($diff_updated->$k > 1 ? '' : '');
+                                } else {
+                                    unset($string_updated[$k]);
+                                }
+                            }
+
+                            $string_updated = array_slice($string_updated, 0, 1);
+                            $string_updated = implode(', ', $string_updated) . __(' ago');
+                            ?>
+                            <div class="amreview-adminanswer-block">
+                                <p class="amreview-title">
+                                    <img class="avatar-short" src="<?= $this->getViewFileUrl('images/logo-cho-truc-tuyen-short.png');  ?>" alt="Chợ Trưc Tuyến"/>
+                                    <span class="updated-by-name">
+                                        <b><?= $store_updated_by ?></b><br/>
+                                        <span class="updated-at-date"><?= __('Comment at ').$block->escapeHtml($string_updated); ?></span>
+                                    </span>
+                                </p>
+                                <div class="amreview-text review-details">
+                                    <?= /* @noEscape */ nl2br($block->escapeHtml($answer)); ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="amrev-comment-block"
+                             data-amreview-js="comment-block-review-id-<?= (int)$_review->getId() ?>">
+                        </div>
+                    </div>
+                </li>
+            <?php endforeach; ?>
+            </ol>
+            <div class="box-more-see"><button class="load-more-review"><?php echo __("Load more review"); ?></button></div>
+            <div class="toolbar review-toolbar">
+                <?= $block->getChildHtml('toolbar') ?>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+<?php }else{ ?>
+<div id="block-form-custom">
+    <?php
+        echo $this->getLayout()
+        ->createBlock('Magento\Review\Block\Form')
+        ->setTemplate('Magento_Review::form.phtml')
+        ->toHtml();
+    ?>
+</div>
+<?php } ?>
+<!-- script: product information & desc -->
+<script type="text/javascript">
+        require([ 'jquery', 'jquery/ui'], function($) {
+            if ($('#id-review-custom li').length > 2) {
+                $('#id-review-custom li').slice(0,2).show();
+                $('.load-more-review').show();
+            }else{
+                $('#id-review-custom li').show();
+            }
+            $('.load-more-review').on('click', function() {
+                $('#id-review-custom li').show();
+                $('.load-more-review').hide();
+            });
+        });
+    </script>
+<!-- close -->

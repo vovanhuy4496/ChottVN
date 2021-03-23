@@ -1,0 +1,35 @@
+{
+    "chottvn_rma_rule": {
+        "column": {
+            "id": true,
+            "name": true,
+            "status": true,
+            "start_date": true,
+            "end_date": true,
+            "product_kind": true,
+            "conditions": true,
+            "priority": true,
+            "discard_subsequent_rules": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_log_rma": {
+        "column": {
+            "id": true,
+            "account_id": true,
+            "notification": true,
+            "event": true,
+            "resource_id": true,
+            "resource_type": true,
+            "value": true,
+            "value_old": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

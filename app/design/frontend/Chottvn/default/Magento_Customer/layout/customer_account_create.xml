@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Block\Form\Register" name="customer_form_register" template="Chottvn_SigninPhoneNumber::form/register.phtml">
+            	<arguments>
+                    <argument name="attribute_data" xsi:type="object">Magento\Customer\Block\DataProviders\AddressAttributeData</argument>
+                </arguments>
+                <container name="form.additional.info" as="form_additional_info"/>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="form.additional.info">
+            <block class="Magento\Captcha\Block\Captcha" name="social-create-captcha" as="create.captcha" after="-">
+                <action method="setFormId">
+                    <argument name="formId" xsi:type="string">user_create</argument>
+                </action>
+                <action method="setImgWidth">
+                    <argument name="width" xsi:type="string">230</argument>
+                </action>
+                <action method="setImgHeight">
+                    <argument name="width" xsi:type="string">50</argument>
+                </action>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="form_additional_info_customer" template="Magento_Customer::additionalinfocustomer.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

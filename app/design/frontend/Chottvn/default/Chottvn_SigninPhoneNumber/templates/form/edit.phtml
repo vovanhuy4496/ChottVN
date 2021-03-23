@@ -1,0 +1,433 @@
+<?php
+/**
+ * @see \Magento\Customer\Block\Form\Edit
+ * @var \Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Block\Form\Edit $block
+ * 
+ * @codingStandardsIgnoreFile
+ */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$grCustomer = $customerSession->getCustomerGroupId();
+
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$region_id = ''; $city_id = ''; $township_id = ''; $street = ''; $firstname = ''; $phone_number = ''; $dob = ''; $customer_group_id = 0;$affiliate_status = '';$customerId =''; $bankCustomer = [];
+if($customerSession->isLoggedIn()) {
+    $customerId = $customerSession->getCustomer()->getId();
+    $billingAddressId = $customerSession->getCustomerData()->getDefaultBilling();
+    $addressFactory = $objectManager->create('Magento\Customer\Model\Address');
+    $addressCustomer = $addressFactory->load($billingAddressId);
+    // billing address
+    $region_id = $addressCustomer->getData('region_id') ? $addressCustomer->getData('region_id'):'';
+    $city_id = $addressCustomer->getData('city_id') ? $addressCustomer->getData('city_id'):'';
+    $township_id = $addressCustomer->getData('township_id') ? $addressCustomer->getData('township_id'):'';
+    $street = $addressCustomer->getData('street') ?  $addressCustomer->getData('street'):'';
+    $firstname = $customerSession->getCustomerData()->getFirstname();
+    $phone_number = $customerSession->getCustomerData()->getCustomAttribute('phone_number')->getValue();
+    $dob = $customerSession->getCustomerData()->getDob() ? $customerSession->getCustomerData()->getDob():'';
+}
+?>
+<style>
+    .legend.customer-legend{
+        font-size: 20px !important;
+        font-weight: normal !important;
+        color: #3e3e3e !important;
+    }
+    .field.choice{
+        display: inline;
+        padding-right: 30px !important;
+    }
+    .radio{
+        position: relative !important;
+        top: 5px;
+    }
+</style>
+<style>
+    #bank_id-error,#email-error,#bank_number-error,#city-error,#region_id-error,#city_id-error,#gender-option-error-message-container,#township_id-error,#street_1-error{
+        display: none !important;
+    }
+</style>
+<?php if($grCustomer == 4) {?>
+
+    <?php echo $this->getLayout()->createBlock("Chottvn\SigninPhoneNumber\Rewrite\Magento\Customer\Block\Form\Edit")->setTemplate("Chottvn_Affiliate::edit.phtml")->toHtml() ?>
+
+<?php }else{ ?>
+    <form class="form create account" action="<?= $block->escapeUrl($block->getUrl('customer/account/editPost')) ?>" method="post" id="form-edit-customer" enctype="multipart/form-data" autocomplete="off">
+    <?= /* @noEscape */ $block->getBlockHtml('formkey'); ?>
+    <!-- Thông tin cá nhân -->
+    <fieldset class="fieldset info">
+        <!-- <legend class="legend customer-legend"><span><?= $block->escapeHtml(__('Account Customer')) ?></span></legend><br> -->
+        <?php $_dob = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob') ?>
+        <?php $_taxvat = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Taxvat') ?>
+        <?php $_gender = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Gender') ?>
+        <!-- FIRSTNAME && LASTNAME -->
+        <div class="field field-name-lastname" style="display: none;">
+            <label class="label" for="lastname"><span>Họ</span></label>
+            <div class="control">
+                <input type="text" id="lastname" name="lastname" value="-" title="Họ" class="input-width-50 input-text">
+            </div>
+        </div>
+        <div class="field field-name-firstname required">
+                <label class="label custom-width-label" for="firstname"><span><?= $block->escapeHtml(__('Aff Fullname')) ?></span></label>
+                <div class="control custom-width-control">
+                    <input readonly="true" type="text" id="firstname" name="firstname" value="<?= $firstname ?>" title="<?= $block->escapeHtml(__('Aff Fullname')) ?>" placeholder="<?= $block->escapeHtml(__('Aff Input Fullname')) ?>" class="input-width-50 input-text required-entry" data-validate="{'required-firstname':true}" autocomplete="off" aria-required="true">
+                </div>
+        </div>
+        <!-- PHONE -->
+        <?php if ($block->isEnabled()):?>
+            <div class="field phone-number required">
+                <!-- <div class="field field-phone-number"> -->
+                    <label class="label custom-width-label" for="phone-number"><span><?= $block->escapeHtml(__('Phone Number')) ?></span></label>
+                    <div class="control custom-width-control">
+                        <input 
+                            readonly="true"
+                            type="text" 
+                            data-validate="{'validate-phone-VN': true, 'required-phone': true}"
+                            name="phone_number" 
+                            placeholder="<?= __('Input Phone number') ?>"
+                            id="phone-number" 
+                            data-input="change-phone-number" 
+                            value="<?= $block->escapeHtmlAttr($block->getPhoneNumber()) ?>" 
+                            title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>" 
+                            class="input-text input-width-50"/>
+                    </div>
+                <!-- </div> -->
+            </div>
+        <?php endif; ?>
+        <!-- EMAIL -->
+        <div class="field email" data-container="change-address-email">
+            <label class="label custom-width-label" for="email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+            <div class="control custom-width-control">
+                <input type="email" name="email" id="email" placeholder="<?= __('Input Email') ?>" autocomplete="email" data-input="change-address-email" value="<?= $block->escapeHtmlAttr($block->getCustomer()->getEmail()) ?>" title="<?= $block->escapeHtmlAttr(__('Email')) ?>" class="input-width-50 input-text" data-validate="{'validate-email':true}" />
+            </div>
+        </div>
+        <!-- GENDER -->
+        <?php if ($_gender->isEnabled()): ?>
+            <?= $_gender->setGender($block->getCustomer()->getGender())->toHtml() ?>
+        <?php endif ?>
+        <!-- Date of birth -->
+        <?php $_dob = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob') ?>
+        <?php if ($_dob->isEnabled()): ?>
+            <?= $_dob->setDate($dob)->toHtml() ?>
+        <?php endif ?>
+    </fieldset>                                     
+    <!-- Địa chỉ liên hệ -->
+    <fieldset class="fieldset address">
+        <!-- <legend class="legend"><span><?= $block->escapeHtml(__('Address contact')) ?></span></legend><br> -->
+            <input type="hidden" name="create_address" value="1" />
+            <input type="hidden" id="primary_billing" name="default_billing" value="1">
+            <input type="hidden" id="primary_shipping" name="default_shipping" value="1">
+            <div class="control" style="display: none;">
+                <select name="country_id" id="country" class="required-entry" title="Quốc gia" data-validate="{'validate-select':true}"><option value="VN" selected="selected">Việt Nam</option></select>
+            </div>
+
+            <div class="field region required">
+                <label class="label custom-width-label" for="region_id">
+                    <span><?= $block->escapeHtmlAttr(__('Aff Region')) ?></span>
+                </label>
+                <div class="control custom-width-control form-group-required">
+                    <select id="region_id" name="region_id"
+                            title="<?= $block->escapeHtmlAttr(__('Aff Region')) ?>"
+                            class="select-width-50 validate-select"
+                            autocomplete="off"
+                            data-validate="{'validate-select':true}"
+                            >
+                        <option value=""><?= $block->escapeHtml(__('Please select a region, state or province.')) ?></option>
+                    </select>
+                    <input type="text"
+                        id="region"
+                        name="region"
+                        title="region"
+                        value="<?= $block->escapeHtml($region_id) ?>"
+                        class="input-width-50 input-text validate-not-number-first <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('region')) ?>"<?= !$block->getConfig('general/region/display_all') ? ' disabled="disabled"' : '' ?>
+                        style="display: none;"
+                        autocomplete="off"/>
+                </div>
+            </div>
+
+            <div class="field city required">
+                <label class="label custom-width-label" for="city"><span><?= $block->escapeHtmlAttr(__('Aff City')) ?></span></label>
+                <div class="control custom-width-control form-group-required">
+                    <select id="city_id" name="city_id"
+                            title="<?= $block->escapeHtmlAttr(__('Aff City')) ?>"
+                            class="select-width-50 validate-select"
+                            autocomplete="off"
+                            data-validate="{'validate-select':true}"
+                            >
+                        <option value=""><?= $block->escapeHtml(__('Please select a city.')) ?></option>
+                    </select>
+                    <input type="text"
+                            name="city"
+                            value="<?= $block->escapeHtml($city_id) ?>"
+                            placeholder="<?= __('Aff Input City') ?>"
+                            title="<?= $block->escapeHtmlAttr(__('City')) ?>"
+                            class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('city')) ?>"
+                            id="city"
+                            style="display: none;"
+                            autocomplete="off"/>
+                </div>
+            </div>
+
+            <div class="field township _required">
+                <label class="label custom-width-label" for="township_id">
+                    <label class="label" for="township"><span><?= $block->escapeHtmlAttr(__('Aff Township')) ?></span></label>
+                </label>
+                <div class="control custom-width-control form-group-required">
+                    <select id="township_id" name="township_id"
+                            title="<?= $block->escapeHtmlAttr(__('Aff Township')) ?>"
+                            class="select-width-50 validate-select required-entry"
+                            autocomplete="off"
+                            data-validate="{'validate-select':true}"
+                            >
+                        <option value=""><?= $block->escapeHtml(__('Please select a township.')) ?></option>
+                    </select>
+                    <input type="text"
+                            id="township"
+                            placeholder="<?= __('Aff Input Township') ?>"
+                            name="township"
+                            value="<?= $block->escapeHtml($township_id) ?>"
+                            title="<?= $block->escapeHtmlAttr(__('Aff Input Township')) ?>"
+                            class="input-width-50 input-text <?= $block->escapeHtmlAttr($this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('township')) ?>"
+                            style="display: none;"
+                            autocomplete="off" />
+                </div>
+            </div>
+
+            <div class="field street _required">
+                <label for="street_1 " class="label custom-width-label">
+                    <span>Địa chỉ</span>
+                </label>
+                <div class="control custom-width-control form-group-required">
+                    <input type="text"
+                            name="street[]"
+                            placeholder="<?= __('Input Delivery Address') ?>"
+                            value="<?= ($street != 'N/A') ? $block->escapeHtml($street): ''; ?>"
+                            title="Địa chỉ"
+                            id="street_1"
+                            class="input-width-50 input-text"
+                            data-validate="{'required-firstname':true}"
+                            autocomplete="off"/>
+                </div>
+            </div>   
+    </fieldset>
+    <fieldset class="fieldset create account">
+        <div class="field choice ">
+            <label class="label custom-width-label"></label>
+            <input type="checkbox" name="change_password" id="change-password" data-role="change-password" value="1" title="<?= $block->escapeHtmlAttr(__('Change Password')) ?>"<?php if ($block->getChangePassword()): ?> checked="checked"<?php endif; ?> class="checkbox" />
+            <label class="label custom-width-label" for="change-password"><span><?= $block->escapeHtml(__('Change Password')) ?></span></label>
+        </div>
+    </fieldset>
+    <fieldset class="fieldset password" data-container="change-email-password">
+            <!-- <legend class="legend"><span data-title="change-email-password"><?= $block->escapeHtml(__('Change Email and Password')) ?></span></legend><br> -->
+            <div class="field password current required">
+            <label class="label custom-width-label" for="current-password"><span><?= $block->escapeHtml(__('Current Password')) ?></span></label>
+                <div class="control custom-width-control form-group-required">
+                    <input type="password" class="input-text input-width-50" placeholder="<?= __('Input Current Password') ?>" name="current_password" id="current-password" data-input="current-password" autocomplete="off" />
+                </div>
+            </div>
+            <div class="field new password required" data-container="new-password">
+                <label class="label custom-width-label" for="password"><span><?= $block->escapeHtml(__('New Password')) ?></span></label>
+                <div class="control custom-width-control form-group-required">
+                    <input type="password" class="input-text input-width-50" name="password" id="password"
+                        data-password-min-length="<?= $block->escapeHtml($block->getMinimumPasswordLength()) ?>"
+                        data-password-min-character-sets="<?= $block->escapeHtml($block->getRequiredCharacterClassesNumber()) ?>"
+                        data-input="new-password"
+                        data-validate="{required:true, 'validate-customer-password':true}"
+                        placeholder="<?= __('Input New Password') ?>"
+                        autocomplete="off" />
+                    <div id="password-strength-meter-container" data-role="password-strength-meter" aria-live="polite">
+                        <div id="password-strength-meter" class="password-strength-meter">
+                            <?= $block->escapeHtml(__('Password Strength')) ?>:
+                            <span id="password-strength-meter-label" data-role="password-strength-meter-label">
+                                <?= $block->escapeHtml(__('No Password')) ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="field confirm password required" data-container="confirm-password">
+                <label class="label custom-width-label" for="password-confirmation"><span><?= $block->escapeHtml(__('Confirm New Password')) ?></span></label>
+                <div class="control custom-width-control form-group-required">
+                    <input type="password" class="input-text input-width-50" name="password_confirmation" id="password-confirmation"
+                        data-input="confirm-password"
+                        placeholder="<?= __('Input Confirm New Password') ?>"
+                        autocomplete="off" />
+                </div>
+            </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="custom-width-label"></div>
+        <div class="primary custom-width-control">
+            <button type="submit" class="action submit primary" id="submit-edit" title="<?= $block->escapeHtmlAttr(__('Update an Account')) ?>"><span><?= $block->escapeHtml(__('Update an Account')) ?></span></button>
+        </div>
+    </div>
+</form>
+
+<script type="text/x-magento-init">
+    {
+        "[data-role=change-email], [data-role=change-password]": {
+            "changeEmailPassword": {
+                "titleChangeEmail": "<?= $block->escapeJs($block->escapeHtml(__('Change Email'))) ?>",
+                "titleChangePassword": "<?= $block->escapeJs($block->escapeHtml(__('Change Password'))) ?>",
+                "titleChangeEmailAndPassword": "<?= $block->escapeJs($block->escapeHtml(__('Change Email and Password'))) ?>"
+            }
+        },
+        "[data-container=new-password]": {
+            "passwordStrengthIndicator": {
+                "formSelector": "form.form-edit-account"
+            }
+        }
+    }
+</script>
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "addressValidation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?= /* @noEscape */ $block->getConfig('general/region/display_all') ? 'true' : 'false' ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getRegionJson() ?>,
+                "defaultRegion": "<?= (int) $region_id ?>",
+                "countriesWithOptionalZip": <?= /* @noEscape */ $this->helper(\Magento\Directory\Helper\Data::class)->getCountriesWithOptionalZip(true) ?>
+            }
+        },
+        "#region_id": {
+            "cityUpdater": {
+                "cityListId": "#city_id",
+                "cityInputId": "#city",
+                "form": "#form-validate",
+                "cityJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getCityJson() ?>,
+                "defaultCity": "<?= (int) $city_id ?>"
+            }
+        },
+        "#city_id": {
+            "townshipUpdater": {
+                "townshipListId": "#township_id",
+                "townshipInputId": "#township",
+                "form": "#form-validate",
+                "townshipJson": <?= /* @noEscape */ $this->helper(\Chottvn\Address\Helper\Data::class)->getTownshipJson() ?>,
+                "defaultTownship": "<?= (int) $township_id ?>"
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+require(['jquery','mage/translate','mage/validation'], function($,$t){
+	var dataForm = $('#form-edit-customer');
+	dataForm.mage('validation', {});
+    var current_password  =  $("#current-password");
+    var street_1  =  $("#street_1");
+    // street_1.on("keyup", function(){
+    //     if(!validateTextbox(street_1.val())){
+    //         street_1.attr('style', 'border-color:#ff6000 !important;');
+    //         street_1.focus();
+    //     }else{
+    //         street_1.attr('style', 'border-color:#e0e0e0 !important;');
+    //     }
+    // });
+
+    // current_password.on("keyup", function(){
+    //     if(!validateTextbox(current_password.val())){
+    //         current_password.attr('style', 'border-color:#ff6000 !important;');
+    //         current_password.focus();
+    //     }else{
+    //         current_password.attr('style', 'border-color:#e0e0e0 !important;');
+    //     }
+    // });
+    $('.input-text').on("keyup", function () {
+        $('.input-text').css('border-color', '#e0e0e0');
+    });
+    function validateTextbox(value){
+        return value.length > 0 && !$.mage.isEmptyNoTrim(value);
+    }
+    $('#form-edit-customer').submit(function (e) {
+			e.preventDefault();
+            var isValid = true;
+			var status = dataForm.validation('isValid'); //validates form and returns boolean
+			if(status){
+				console.log('form is validated'); //form is valid
+				$.ajax({
+                    url: "/customer/account/editPost/",
+                    data: $('#form-edit-customer').serialize(),
+                    type: 'POST',
+                    dataType: 'json',
+					beforeSend: function() {
+						// show some loading icon
+					},
+					success: function(data, status, xhr) {
+						if(data.status == 'error'){
+							$.toaster({ title: $t('Notice'), priority: 'danger', message: data.message });
+						}else{
+							window.location.href = data.redirect_url;
+						}
+					},
+					error: function (xhr, status, errorThrown) {
+						$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Error happens. Try again.'); ?>' });
+					}
+				});
+			}else{
+				$.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('This is the required case'); ?>' });
+			}
+            $(".form-group-required").find('input').each(function( index, element ) {
+				if ($(this).val().trim() == '') {
+					isValid = false;
+					$(this).attr('style', 'border-color:#ff6000 !important;');
+				}
+			})    
+			$(".form-group-required" ).find('select').each(function( index, element ) {
+                if ($(this).val().trim() == '') {
+					isValid = false;
+						$("input[name='city']").hide();
+						$("#city_id").show();
+						$("input[name='township']").hide();
+						$("#township_id").show();
+					$(this).attr('style', 'border-color:#ff6000 !important;');
+				}else{
+					$(this).attr('style', 'border-color:#f5f5f5 !important;');
+				}
+            })  
+            return isValid;
+    });
+});
+</script>
+<style>
+    #region{
+        display: none;
+    }
+</style>
+<?php }?>
+<!-- Huy: Bug #1120 [Địa chỉ] Reset lại Dropdown Quận/ Huyện, Phường/ Xã khi thay đổi giá trị trên dropdown Tỉnh / TP -->
+<script type="text/javascript">
+    require(['jquery','mage/translate','mage/validation'], function($, $t) {
+        $(document).on('change', 'select[name="region_id"]', function() {
+            if($('select[name="region_id"]').val() == ''){
+                $('select[name="city_id"]').val('');
+                $('input[name="city"]').val('');
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+			if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+        $(document).on('change', 'select[name="city_id"]', function() {
+            $('input#township').val('');
+            $('select[name="township_id"]').val('');
+            if ($('select[name="city_id"]').val() == '') {
+                $('select[name="township_id"]').hide();
+                $('select[name="township_id"]').val('');
+                $('input#township').show();
+                $('input#township').val('');
+            }
+        });
+    });
+</script>

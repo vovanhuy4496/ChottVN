@@ -1,0 +1,386 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+// detect mobile
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$allRequest = $block->getResult();
+$checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$FormKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); 
+$index = 0;
+?>
+
+<?php if ($allRequest && count($allRequest)):
+    $index = 0;
+    ?>
+<div class="orders-history">
+   <?php foreach($allRequest as $key => $value):?>
+      <?php 
+          $showDetail = false;
+          if($index == 0){
+              $showDetail = true;
+          }
+         $amount_value = $block->getTotalAmount($key);
+         $qty = $block->getQty($key);
+         $requestQuote = $block->getCollectionRequest($key);
+         $originalTotal = $requestQuote->getData('original_total');
+         $savingsAmount = $requestQuote->getData('savings_amount');
+         $shippingAmount = $requestQuote->getData('shipping_amount');
+         $couponcode = $requestQuote->getData('counpon_code');
+         $grandTotal = $requestQuote->getData('grand_total');
+         $company_name = $requestQuote->getData('company_name');         
+         $company_address = $requestQuote->getData('company_address');         
+         $company_vat_number = $requestQuote->getData('company_vat_number');         
+         $contact_name = $requestQuote->getData('contact_name');         
+         $contact_phone_number = $requestQuote->getData('contact_phone_number');         
+         $contact_email = $requestQuote->getData('contact_email');    
+
+         $created_at = $requestQuote->getData('created_at');  
+      ?>
+
+      <div class="row order">
+         <div class="col-sm-12 order-summary">
+            <div class="row">
+               <div class="col-sm-6 order-summary-left">
+                  <span class="order-label">
+                     <?= $company_name; ?>
+                  </span>
+                  <br>
+                  <span class="items-value">
+                    <?= __('Date request price quote') ?>: <?= $block->formatDate($created_at); ?>
+                  </span>
+               </div>
+               <div class="col-sm-6 order-summary-right">
+                  <span class="amount-value"><span class="price"><?= $checkoutHelper->formatPrice($amount_value);  ?></span></span>
+                  <br>
+                  <span class="items-value"><?= (int) $qty ? (int)$qty : 0;  ?> sản phẩm</span>
+               </div>
+            </div>
+         </div>
+         <!-- /.order-progress -->
+         <div class="col-sm-12 order-items">
+            <div class="row">
+               <!-- OrderItems-Header -->
+               <div class="col-sm-8 item-head">
+                  Thông tin sản phẩm                                                   
+               </div>
+               <div class="col-sm-2 hidden-xs item-head p-l-r" style="white-space: nowrap;">
+                  Số lượng x đơn giá                    
+               </div>
+               <div class="col-sm-2 hidden-xs text-right item-head">
+                  Thành tiền                    
+               </div>
+            </div>
+            <!-- ./item-header -->
+            <!-- OrderItems-List -->
+            <?php foreach($value as $item): ?>
+               <!-- dữ liệu -->
+               <?php
+                  $productId = $item['product_id']; 
+                  $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+                  $messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+                  $isPromoItem = $item['product_type'];
+                  $productRepositoryFactory = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterfaceFactory');
+                  $product = $productRepositoryFactory->create()->getById($productId);
+                  $objectManager =\Magento\Framework\App\ObjectManager::getInstance();
+                  $helperImport = $objectManager->get('\Magento\Catalog\Helper\Image');
+                  $thumbnail = $helperImport->init($product, 'product_page_image_small')->setImageFile($product->getSmallImage())->getUrl();
+                  $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                  $guaranteeInfo = $productResource->getData('guarantee');
+                  $saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+                  $rulesApplied = $saleRuleFactory->create()->addFieldToFilter('rule_id', array('in' => json_decode($item['applied_rule_ids'])) )->addFieldToSelect('name');
+                  // đơn vị tính /cái
+                  $productunit = $productResource->getData('product_unit');
+               ?>
+               <div class="row">
+                  <div class="col-sm-8 item-body clearfix">
+                  <?php if ($detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+                     <!-- Mobile View -->
+                     <div class="product-item-details-mobile clearfix">
+                              <?php if ($block->hasProductUrl($productResource)) : ?>
+                                 <a href="<?= $block->escapeUrl($block->getProductUrl($productResource)) ?>" title="<?= $block->escapeHtml($item['name']) ?>">
+                                    <?= $isPromoItem == 'virtual' ? $messages_prefix : "" ?>
+                                    <?= $productResource->getNameLongHtml(); ?>
+                                 </a>
+                              <?php else : ?>
+                                 <?= $isPromoItem == 'virtual' ? $messages_prefix : "" ?>
+                                 <?= $productResource->getNameLongHtml(); ?>
+                              <?php endif; ?>
+                     </div>
+                     <!-- Brand, Model -->
+                     <div class="brand-model-mobile clearfix">
+                        <div class="brand-name">
+                              <?php
+                              if ($productBrand){
+                              ?>
+                                <span><?php echo __('Brands: '); ?></span>
+                                <span class="name"><?php echo $productBrand->getName(); ?></span>
+                            <?php } ?>
+                        </div>
+                        <div class="model-name">
+                            <?php
+                                $productModel = $productResource->getData('model') ? $productResource->getData('model'): '';
+                                if ($productModel) {
+                            ?>
+                                <span><?php echo __('Model: '); ?></span>
+                                <span class="name"><?php echo $productModel; ?></span>
+                            <?php } ?>
+                        </div>
+                     </div>
+                     <div class="product-item-photo mobile-view">
+                           <div class="img-box">
+                                 <?php if ($block->hasProductUrl($productResource)) : ?>
+                                    <a href="<?= $block->escapeUrl($block->getProductUrl($productResource)) ?>" title="<?= $block->escapeHtml($item['name']) ?>">
+                                       <img src="<?= $thumbnail; ?>" alt="<?= $block->escapeHtml($item['name']) ?>">
+                                    </a>
+                                 <?php else : ?>
+                                    <img src="<?= $thumbnail; ?>" alt="<?= $block->escapeHtml($item['name']) ?>">
+                                 <?php endif; ?>
+                           </div>
+                     </div>
+                     <div class="product-item-info">
+                        <!-- Reviews -->
+                        <!-- Cart Rules -->
+                        <?php if ($isPromoItem !== 'virtual'){ ?>
+                              <div class="promotion-info">
+                                 <ul class="rules-list">
+                                       <?php foreach ($rulesApplied as $rule) {
+                                          echo '<li><i class="fas fa-gift"></i> <span>'.$rule->getName().'</span></li>';
+                                       } ?>
+                                 </ul>
+                              </div>
+                           <?php } ?>
+                        <!-- Guarantee -->   
+                        <!-- Product Price -->
+                             <div class="product-price">
+                                 <?= $block->escapeHtml(__('Qty')) ?>:&nbsp;<span class="quantity"><?= (int) $item['qty'];  ?></span>
+                                <br/>
+                                <?= $checkoutHelper->formatPrice($item['price']);  ?><span class="price"><?php if($productunit): ?>/<?= $productunit;  ?><?php endif; ?></span>
+                                 <?php
+                                       $priceOriginal = $productResource->getPrice();
+                                       $priceFinal= $item['price'];
+                                       if ($priceFinal < $priceOriginal) {
+                                       $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                                       } else {
+                                       $savePercent = 0;
+                                       }
+                                       if ($savePercent != 0) {
+                                 ?>
+                                 <div class="order-save-price">
+                                       <span class="price-original"><?= $checkoutHelper->formatPrice($priceOriginal); ?></span>
+                                       <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                 </div>
+                              <?php } ?>
+                            </div>
+                        <!-- Sales Price -->
+                         <div class="sales-price">
+                                <span class="d-inline-block d-sm-none">
+                                    <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                                </span>
+                                <?= $checkoutHelper->formatPrice($item['row_total']);  ?>
+                            </div>
+                        <!-- Guarantee -->
+                        <?php if ($guaranteeInfo) { ?>
+                            <div class="guarantee-info">
+                                <span><?php echo __('Guarantee: '); ?></span>
+                                <span class="name"><?php echo $guaranteeInfo; ?></span>
+                            </div>
+                            <?php } ?>
+                     </div>
+                  <?php } else { ?>
+                     <!-- Desktop View -->
+                     <div class="product-item-photo">
+                        <div class="img-box">
+                           <div class="img-box">
+                              <?php if ($block->hasProductUrl($productResource)) : ?>
+                                 <a href="<?= $block->escapeUrl($block->getProductUrl($productResource)) ?>" title="<?= $block->escapeHtml($item['name']) ?>">
+                                    <img src="<?= $thumbnail; ?>" alt="<?= $block->escapeHtml($item['name']) ?>">
+                                 </a>
+                              <?php else : ?>
+                                 <img src="<?= $thumbnail; ?>" alt="<?= $block->escapeHtml($item['name']) ?>">
+                              <?php endif; ?>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="product-item-info">
+                        <div class="product-item-details">
+                              <?php if ($block->hasProductUrl($productResource)) : ?>
+                                 <a href="<?= $block->escapeUrl($block->getProductUrl($productResource)) ?>" title="<?= $block->escapeHtml($item['name']) ?>">
+                                    <?= $isPromoItem == 'virtual' ? $messages_prefix : "" ?>
+                                    <?= $productResource->getNameLongHtml(); ?>
+                                 </a>
+                              <?php else : ?>
+                                 <?= $isPromoItem == 'virtual' ? $messages_prefix : "" ?>
+                                 <?= $productResource->getNameLongHtml(); ?>
+                              <?php endif; ?>
+                        </div>
+                        <!-- Brand, Model -->
+                        <div class="brand-model clearfix">
+                           <div class="brand-name">
+                              <?php
+                              if ($productBrand){
+                              ?>
+                                <span><?php echo __('Brands: '); ?></span>
+                                <span class="name"><?php echo $productBrand->getName(); ?></span>
+                            <?php } ?>
+                           </div>
+                           <div class="model-name">
+                            <?php
+                                $productModel = $productResource->getData('model') ? $productResource->getData('model'): '';
+                                if ($productModel) {
+                            ?>
+                                <span><?php echo __('Model: '); ?></span>
+                                <span class="name"><?php echo $productModel; ?></span>
+                            <?php } ?>
+                            </div>
+                        </div>
+                        <!-- Reviews -->
+                        <!-- Cart Rules -->
+                        <!-- <?php if ($isPromoItem !== 'virtual'){ ?> -->
+                              <div class="promotion-info">
+                                 <ul class="rules-list">
+                                       <?php foreach ($rulesApplied as $rule) {
+                                          echo '<li><i class="fas fa-gift"></i> <span>'.$rule->getName().'</span></li>';
+                                       } ?>
+                                 </ul>
+                              </div>
+                           <?php } ?>
+                        <!-- Guarantee -->
+                        <?php if ($guaranteeInfo) { ?>
+                        <div class="guarantee-info">
+                           <span><?php echo __('Guarantee: '); ?></span>
+                           <span class="name"><?php echo $guaranteeInfo; ?></span>
+                        </div>
+                        <?php } ?>
+                     </div>
+                     <?php } ?>
+                  </div>
+                  <div class="col-sm-2 hidden-xs item-body p-l-r">
+                     <div class="product-price">
+                           <span class="d-inline-block d-sm-none" >
+                              <?= $block->escapeHtml(__('Qty')) ?>:&nbsp;
+                          </span>
+                          <span class="quantity"><?= (int) $item['qty'];  ?></span>
+                          <br/>
+                        <?= $checkoutHelper->formatPrice($item['price']);  ?><span class="price"><?php if($productunit): ?>/<?= $productunit;  ?><?php endif; ?></span>
+                          <?php
+                              $priceOriginal = $productResource->getPrice();
+                              $priceFinal= $item['price'];
+                              if ($priceFinal < $priceOriginal) {
+                                $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                              } else {
+                                $savePercent = 0;
+                              }
+                              if ($savePercent != 0) {
+                          ?>
+                          <div class="order-save-price">
+                              <span class="price-original"><?= $checkoutHelper->formatPrice($priceOriginal); ?></span>
+                              <span class="save-percent">-<?= $savePercent; ?>%</span>
+                          </div>
+                        <?php } ?>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 hidden-xs text-right item-body">
+                        <div class="sales-price">
+                            <span class="d-inline-block d-sm-none">
+                                <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                            </span>
+                            <?= $checkoutHelper->formatPrice($item['row_total']);  ?>
+                        </div>
+                  </div>
+               </div>
+            <?php endforeach;?>
+            <!-- ./item-body -->
+         </div>
+         <!-- /.order-items -->
+         <div class="col-sm-12 order-detail order-<?= $key ?>-detail collapse <?= $showDetail ? "" : ""; ?>" >
+    
+            <div class="row">
+               <div class="col-md-4 order-totals">
+               </div>
+               <div class="col-md-4 order-totals">
+                     <p class="order-total-title"><?= $block->escapeHtml(__('Company Information')); ?></p>
+                     <div class="card">
+                        <!-- <div class="card-header"></div> -->
+                        <div class="card-body">
+                           <p class="remove-border-top"><?= $company_name; ?></p>
+                           <p class="remove-border-top"><?= $company_address; ?></p>
+                           <p class="remove-border-top"><?= $company_vat_number; ?></p>
+                           <?php if($contact_name):?>
+                              <p class="remove-border-top"><?= $contact_name; ?></p>
+                           <?php endif; ?>
+                           <?php if($contact_phone_number):?>
+                              <p class="remove-border-top"><?= $contact_phone_number; ?></p>
+                           <?php endif; ?>
+                           <?php if($contact_email):?>
+                              <p class="remove-border-top"><?= $contact_email; ?></p>
+                           <?php endif; ?>
+                        </div>
+                     </div>
+               </div><!-- ./order-total order-payment-->    
+               <div class="col-md-4 order-totals">
+                     <p class="order-total-title"><?= $block->escapeHtml(__('Order summary')) ?></p>
+                     <div class="card">
+                        <!-- <div class="card-header"></div> -->
+                        <div class="card-body">
+                        <p>
+                           <?= $block->escapeHtml(__('Subtotal')) ?>: <span class="float-right"><?= $checkoutHelper->formatPrice($originalTotal);  ?></span>
+                        </p>
+                        <?php if((int)($savingsAmount) > 0): ?>
+                           <p><?= $block->escapeHtml(__('Saving amount')) ?>:
+                              <span class="float-right">
+                                    <?php
+                                       if(is_numeric($savingsAmount)){
+                                          echo $checkoutHelper->formatPrice($savingsAmount);
+                                       }else{
+                                          echo $savingsAmount;
+                                       }
+                                    ?>
+                              </span>
+                           </p>
+                        <?php endif; ?>
+                        <p>
+                           <?= $block->escapeHtml(__('Shipping & Handling(temp)')) ?>: <span class="float-right"><?= $block->getCustomShippingAmount($key,$requestQuote->getData('flag_shipping'),$requestQuote->getData('shipping_amount')); ?></span>
+                        </p>
+                        </div>
+                        <div class="card-footer">
+                           <?php if($grandTotal): ?>
+                                 <p class="clearfix"><span class="grand-total"><?= $block->escapeHtml(__('Grand Total')) ?>: <span class="float-right text-right"><?= $checkoutHelper->formatPrice($grandTotal);  ?><span class="include-vat">
+                                 <?php echo __('Include VAT') ?>
+                           </span></span></p>
+                           <?php endif; ?>
+                           <?php if($couponcode): ?>
+                                 <p class="remove-border-top"><?= __('Discount code'); ?>:
+                                 <span class="float-right text-right">
+                                    <?php
+                                       echo $couponcode;
+                                    ?>
+                                 </span>
+                                 </p>
+                           <?php endif; ?>
+                           <form method="POST" action="<?php echo $block->getUrl('price_quote/cart/add'); ?>" class="form-send">
+                              <input type="hidden" name="request_id" value="<?php echo $key; ?>" />
+                              <input name="form_key" type="hidden" value="<?php echo $FormKey->getFormKey();?>">
+                              <input type="submit" value="Tiến hành đặt hàng" id="order-here">
+                           </form>
+                        </div>
+                     </div>
+               </div><!-- ./order-total order-payment-->           
+            </div>
+         </div>
+         <!-- /.order-detail -->
+         <div class="col-sm-12 order-actions text-right">
+                <a class="btn-ce-detail <?= $showDetail ? "collapsed" : "collapsed"; ?>"  data-toggle="collapse" data-target=".order-<?= $key ?>-detail" aria-expanded="true" aria-controls="">
+                    <span class="label-expand"><?= __("View price quote details") ?> <i class="fas fa-chevron-down"></i></span>
+                    <span class="label-collapse"><?= __("Collapse") ?> <i class="fas fa-chevron-up"></i></span>
+                </a>
+         </div>
+      </div>
+   <?php 
+    $index++;
+      endforeach;?>
+</div>
+<?php else: ?>
+    <?php
+         echo '<div class="message-order-history"><i class="fas fa-list-alt fa-fw"></i><br/><span>'.__('You have placed no request price quote.').'</span></div>';
+    ?>
+<?php endif ?>

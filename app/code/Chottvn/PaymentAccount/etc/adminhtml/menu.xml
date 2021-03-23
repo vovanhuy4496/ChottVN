@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+		<!-- <add id="Chottvn::top_level" module="Chottvn_PaymentAccount" resource="Magento_Backend::content" sortOrder="9999" title="Chottvn"/> -->
+		<add action="chottvn_paymentaccount/bank/index" 
+			id="Chottvn_PaymentAccount::chottvn_paymentaccount_bank"
+			module="Chottvn_PaymentAccount" 
+			parent="Magento_Sales::sales" 
+			resource="Chottvn_PaymentAccount::bank_view" 
+			sortOrder="9999" title="Banks"/>
+		<add action="chottvn_paymentaccount/customerbankaccount/index" 
+			id="Chottvn_PaymentAccount::chottvn_paymentaccount_customerbankaccount" 
+			module="Chottvn_PaymentAccount" 
+			parent="Magento_Sales::sales" 
+			resource="Chottvn_PaymentAccount::customerbankaccount_view" 
+			sortOrder="9999" 
+			title="Customer Bank Accounts"/>
+	</menu>
+</config>

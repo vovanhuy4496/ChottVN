@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_SocialLogin
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+?>
+<div class="social-login block-container forgot" style="display:none">
+    <!-- <div class="social-login-title">
+        <p class="forgot-pass-title"><?= __('Forgot Password') ?></p>
+    </div> -->
+    <div class="block col-mp mp-12">
+        <div class="block-title">
+            <span id="block-customer-login-heading" role="heading" aria-level="2"><i class="fas fa-lock"></i> <?= __('Forgot Password') ?></span>
+        </div>
+        <div class="block-content">
+            <form class="form-password-forget" id="social-form-password-forget" data-mage-init='{"validation":{}}'>
+                <fieldset class="fieldset forgot" data-hasrequired="<?= __('* Required Fields') ?>">
+                    <div class="field note"><?= __('Please enter your phone number and full name below to receive a password reset OTP code.') ?></div>
+                    <div class="field required">
+                        <label for="full_name_forgot" class="label"><span><?= __('Firstname') ?></span></label>
+                        <div class="control">
+                            <input type="text" name="full_name" alt="<?= __('Input First name') ?>" id="full_name_forgot" class="input-text" placeholder="<?= __('Input First name') ?>" data-validate="{'required-firstname': true, required:true}" />
+                        </div>
+                    </div>
+                    <div class="field required">
+                        <label for="phone_number_forgot" class="label"><span><?= __('Phone Number') ?></span></label>
+                        <div class="control">
+                            <input type="tel" name="phone_number" alt="<?= __('Input Phone number') ?>" id="phone_number_forgot" class="input-text" placeholder="<?= __('Input Phone number') ?>" data-validate="{'validate-phone-VN': true, required:true, 'validate-number':true}" />
+                        </div>
+                    </div>
+                    <?= $block->getChildHtml('form_additional_info') ?>
+                </fieldset>
+                <!-- <p><?=/* @escapeNotVerified */ __('*: Information required to enter') ?></p> -->
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button type="button" id="bnt-social-login-forgot" class="action send primary">
+                            <span><?= __('Submit') ?></span>
+                        </button>
+                    </div>
+                    <div class="secondary">
+                        <a class="action back" href="#"><span><i class="fas fa-backward"></i> <?= __('Back') ?></span></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

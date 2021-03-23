@@ -1,0 +1,514 @@
+<?php
+   $total = $block->getItems()->getSize();
+   $productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+   $_config            = $this->helper('Sm\Market\Helper\Data');
+
+   // object manager
+   $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+   // get rules
+   $blockRules = $objectManager->create('Chottvn\Frontend\Block\Rules');
+
+   // get limit page
+   // Get limit desktop = 3, tablet = 3, mobile = 2
+   // Get compare products configuration
+   $compareConfig = $objectManager->get('\Chottvn\Frontend\Helper\Compare')->getCompareProductsConfiguration();
+   $limitProducts = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+   $templateType    = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+
+   if($limitProducts->isMobile() == true && $limitProducts->isTablet() == false){
+      $num_limit_products = $compareConfig->mobile;
+   }elseif($limitProducts->isTablet() == true){
+      $num_limit_products = $compareConfig->tablet;
+   }else{
+      $num_limit_products = $compareConfig->desktop;
+   }
+
+   // get first item
+   if($total > 0){
+      $first_product = $block->getItems()->getFirstItem();
+      $first_categories = $first_product->getCategoryIds();
+
+      // get info category
+      $category = $first_categories[count($first_categories)-1];
+      $cate = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+   }
+
+   // cate url = current category url
+   // if not url = homepage url
+   $cate_url = !empty($cate) ? $cate->getUrl() : $block->getBaseUrl();
+   ?>
+<?php if ($total): ?>
+<div class="table-wrapper comparison">
+   <?php
+      // check limit & total products
+      // to show link
+      if($total < $num_limit_products){
+   ?>
+      <div class="add-more-compare">
+         <p class="float-right"><a href="<?php echo $cate_url; ?>"><?php echo __('+ Compare more products'); ?></a></p>
+      </div>
+   <?php
+      }
+   ?>
+   <table class="data table table-comparison" id="product-comparison" data-mage-init='{"compareList":{
+      "windowPrintSelector":".action.print",
+      "productsInRow":"5",
+      "selectors":{
+      "productAddToCartSelector":"button.action.tocart"}
+      }}'>
+      <caption class="table-caption">
+         <?=$block->escapeHtml(__('Compare Products')) ?>
+      </caption>
+      <tbody>
+      <!-- <thead>
+       <tr>
+                    <?php $index = 0 ?>
+                    <?php foreach ($block->getItems() as $item) :?>
+                        <?php if ($index++ == 0) :?>
+                            <th scope="row" class="cell label remove"><span><?= $block->escapeHtml(__('Remove Product')) ?></span></th>
+                        <?php endif; ?>
+                        <td class="cell remove product hidden-print">
+                            <?php $compareHelper = $this->helper(Magento\Catalog\Helper\Product\Compare::class);?>
+                            <a href="#" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>'
+                               class="action delete" title="<?= $block->escapeHtmlAttr(__('Remove Product')) ?>">
+                                <span><?= $block->escapeHtml(__('Remove Product')) ?></span>
+                            </a>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+         </thead> -->
+         <tr class="grid products-grid even">
+            <!-- loop product -->
+            <?php $index = 0; ?>
+            <?php $helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+            <?php
+               /** @var $item \Magento\Catalog\Model\Product */ ?>
+            <?php foreach ($block->getItems() as $item):
+               $product = $objectManager->create('Magento\Catalog\Model\Product')->load($item->getId());
+               $ampromo_items_1n = $blockRules->getCartRuleIdsConditionSimpleActionByProductCTT($product,'ampromo_items','1');
+               // $ampromo_items_1n = array();
+            ?>
+            <?php if ($index++ == 0): ?>
+            <th scope="row" class="cell label product col-heading">
+               <span>
+               <?=$block->escapeHtml(__('Product')) ?>
+               </span>
+            </th>
+            <?php
+               endif; ?>
+            <td data-th="
+               <?=$block->escapeHtmlAttr(__('Product')) ?>" class="cell product info">
+
+                  <div class="item product product-item">
+                     <div class="product-item-info" data-container="product-grid">
+                        <div class="item-inner">
+                           <div class="box-image">
+
+                              <!-- image -->
+                              <a class="product-item-photo" href="
+                                 <?=$block->escapeUrl($block->getProductUrl($item)) ?>" title="
+                                 <?= /* @noEscape */
+                                    $block->stripTags($item->getName(), null, true) ?>">
+                              <?=$block->getImage($item, 'product_comparison_list')->toHtml() ?>
+                              </a>
+
+                              <!--LABEL PRODUCT-->
+                              <?php
+                              $specialprice         = $item->getSpecialPrice();
+                              $specialPriceFromDate = $item->getSpecialFromDate();
+                              $specialPriceToDate   = $item->getSpecialToDate();
+
+                              $today = time();
+
+                              if ($specialprice && $_config->getAdvanced('show_salelabel')) {
+                                 if ($today >= strtotime($specialPriceFromDate) && $today <= strtotime($specialPriceToDate) || $today >= strtotime($specialPriceFromDate) && is_null($specialPriceToDate)) { ?>
+                                             <div class="label-product label-sale">
+                                             <span class="sale-product-icon">
+                                                <?php echo __('Sale'); ?>
+                                             </span>
+                                          </div>
+                                 <?php }
+                              }
+                              ?>
+
+
+
+                              <?php
+                              $status_labels = '[{"label_attribute":"best_seller","label_name":"Bán chạy","label_css":"best-seller"},{"label_attribute":"is_new_arrival","label_name":"Mới","label_css":"is-new-arrival"}]';
+                              $status_labels = json_decode($status_labels);
+                              $config = array();
+
+                              echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\Ajax")->setData(['product' => $product, 'config' => $config, 'status_labels' => $status_labels])->setTemplate("Sm_ListingTabs::status_labels.phtml")->toHtml();
+
+                              ?>
+
+
+                                       <!--END LABEL PRODUCT-->
+                           </div>
+                           <div class="product details product-item-details box-info">
+                              <!-- brand -->
+                              <!-- <div class="product-action-bar">
+                                 <?php
+                                    // Show Brand
+                                    $productBrand = $productBrandHelper->getFirstBrandByProduct($item);
+                                    if ($productBrand) {
+                                    ?>
+                                 <div class="brand-info">
+                                    <div class="brand-name">
+                                       <a href="
+                                          <?php echo $productBrand->getUrl(); ?>">
+                                       <?php echo $productBrand->getName(); ?>
+                                       </a>
+                                    </div>
+                                 </div>
+                                 <?php
+                                    } ?>
+                                 <div class="bottom-action"> -->
+                                    <!-- button Add to Wish List-->
+                                    <!-- <?php if ($this->helper(Magento\Wishlist\Helper\Data::class)->isAllow()): ?>
+                                    <div class="secondary-addto-links actions-secondary" data-role="add-to-links">
+                                       <a href="#" data-post='
+                                          <?=
+                                             /* @noEscape */
+                                             $block->getAddToWishlistParams($item) ?>' class="action towishlist btn-action link-wishlist" data-action="add-to-wishlist">
+                                       <span>
+                                       <?=$block->escapeHtml(__('Add to Wish List')) ?>
+                                       </span>
+                                       </a>
+                                    </div>
+                                    <?php
+                                       endif; ?>
+                                 </div>
+                              </div> -->
+
+                              <?php
+                                 echo $this->getLayout()
+                                    ->createBlock('Chottvn\Frontend\Block\Rules')
+                                    ->setTemplate("Magento_Catalog::product/view/cartrules.phtml")
+                                    ->setData([
+                                             'item_product' => $item,
+                                             'price_rules' => 'gift',
+                                             'display_style' => 'icon',
+                                             'rule_type' => 'ampromo_items',
+                                             'css_class' => 'viewed-products-icon'
+                                          ])
+                                    ->toHtml();
+                              ?>
+                              <!-- name -->
+                              <h2 class="product name product-item-name product-name">
+                                 <a href="
+                                    <?=$block->escapeUrl($block->getProductUrl($item)) ?>"
+                                    title="
+                                    <?= /* @noEscape */
+                                       $block->stripTags($item->getName(), null, true) ?>" class="product-item-link">
+                                 <?=
+                                    /* @noEscape */
+                                    $helper->productAttribute($item, $item->getName(), 'name') ?>
+                                 </a>
+                              </h2>
+                              <!-- price -->
+                              <?=/* @noEscape */$block->getProductPrice($item, '-compare-list-top') ?>
+
+                              <?php echo $block->getReviewsSummaryHtml($item, $templateType, true); ?>
+
+                              <div class="product-item-actions hidden-print">
+                                 <!-- button order product -->
+                                 <div class="actions-primary">
+                                    <?php if ($product->getIsSalable() && $product->getFinalPrice() > 0): ?>
+                                    <form data-role="tocart-form" action="
+                                       <?=$block->escapeUrl($this->helper(Magento\Catalog\Helper\Product\Compare::class)->getAddToCartUrl($item)) ?>" method="post">
+                                       <?=$block->getBlockHtml('formkey') ?>
+                                       <?php 
+                                          if(
+                                             ($product->getTypeId() == 'configurable')
+                                             || !empty($ampromo_items_1n)
+                                          ){ 
+                                       ?>
+                                          <a class="btn-cart-shop-now-configurable" href="<?php echo $product->getProductUrl(false); ?>" title="<?php echo $product->getName(); ?>"><span><?=$block->escapeHtml(__('Order here')) ?></span></a>
+                                       <?php }else{ ?>
+                                          <button type="submit" class="action tocart primary" data-action="shopnow">
+                                          <span>
+                                          <?=$block->escapeHtml(__('Order here')) ?>
+                                          </span>
+                                          </button>
+                                       <?php } ?>
+                                    </form>
+                                    <?php
+                                       else: ?>
+                                    <?php if ($product->getIsSalable() && $product->getFinalPrice()==0): ?>
+                                    <div class="">
+                                       <!-- <span>
+                                       <?=$block->escapeHtml(__('In stock')) ?>
+                                       </span> -->
+                                       <a href="<?php echo $product->getProductUrl(false).'#stockalert'; ?>" title="<?php echo $product->getName(); ?>"><button title="<?php echo __('Form Contact Price') ?>" class="stock unavailable btn-action btn-cart"><span><?php echo __('Form Contact Price') ?></span></button></a>
+                                    </div>
+                                    <?php
+                                       else: ?>
+                                    <div class="stock unavailable">
+                                       <!-- <span>
+                                       <?=$block->escapeHtml(__('Out of stock')) ?>
+                                       </span> -->
+                                       <a href="<?php echo $product->getProductUrl(false).'#stockalert'; ?>" title="<?php echo $product->getName(); ?>"><button title="<?php echo __('Contact when stock is available') ?>" class="stock unavailable btn-action btn-cart"><span><?php echo __('Contact when stock is available') ?></span></button></a>
+                                    </div>
+                                    <?php
+                                       endif; ?>
+                                    <?php
+                                       endif; ?>
+                                 </div>
+                                 <!-- remove product compare -->
+                                    <?php $compareHelper = $this->helper(Magento\Catalog\Helper\Product\Compare::class);?>
+                                    <div class="box-remove-product">
+                                       <a href="#" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>'
+                                       class="action delete tag-remove" title="<?= $block->escapeHtmlAttr(__('Remove Product')) ?>"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                    </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+            </td>
+            <?php
+               endforeach; ?>
+         </tr>
+      </tbody>
+      <tbody>
+         <?php
+         $count = 0;
+         foreach ($block->getAttributes() as $attribute):
+         ?>
+         <?php $index = 0; ?>
+         <?php if ($block->hasAttributeValueForProducts($attribute)): ?>
+         <tr class="<?= (++$count%2 ? "odd" : "even") ?>">
+            <?php foreach ($block->getItems() as $item): ?>
+            <?php if ($index++ == 0): ?>
+            <th scope="row" class="cell label col-heading">
+               <span class="attribute label">
+               <?=$block->escapeHtml($attribute->getStoreLabel() ? $attribute->getStoreLabel() : __($attribute->getFrontendLabel())) ?>
+               </span>
+            </th>
+            <?php
+               endif; ?>
+            <td class="cell product attribute">
+               <div class="attribute value">
+                  <?php switch ($attribute->getAttributeCode()) {
+                     case "price": ?>
+                  <?=
+                     /* @noEscape */
+                     $block->getProductPrice($item, '-compare-list-' . $attribute->getCode())
+                     ?>
+                  <?php
+                     break;
+                     case "small_image": ?>
+                  <?php $block->getImage($item, 'product_small_image')->toHtml(); ?>
+                  <?php
+                     break;
+                     default: ?>
+                  <?php if (is_string($block->getProductAttributeValue($item, $attribute))): ?>
+                  <?= /* @noEscape */
+                     $helper->productAttribute($item, $block->getProductAttributeValue($item, $attribute), $attribute->getAttributeCode()) ?>
+                  <?php
+                     endif; ?>
+                  <?php
+                     break;
+                     } ?>
+               </div>
+            </td>
+            <?php
+               endforeach; ?>
+         </tr>
+         <?php
+            endif; ?>
+         <?php
+            endforeach; ?>
+      </tbody>
+      <tbody>
+         <tr class="grid products-grid <?= (++$count%2 ? "odd" : "even") ?>">
+            <!-- loop product -->
+            <?php $index = 0; ?>
+            <?php $helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+            <?php
+               /** @var $item \Magento\Catalog\Model\Product */ ?>
+            <?php foreach ($block->getItems() as $item):
+               $product = $objectManager->create('Magento\Catalog\Model\Product')->load($item->getId());
+               $ampromo_items_1n = $blockRules->getCartRuleIdsConditionSimpleActionByProductCTT($product,'ampromo_items','1');
+               //$ampromo_items_1n = array();
+            ?>
+            <?php if ($index++ == 0): ?>
+            <th scope="row" class="cell label product col-heading">
+
+            </th>
+            <?php
+               endif; ?>
+            <td data-th="
+               <?=$block->escapeHtmlAttr(__('Product')) ?>" class="cell product info">
+
+                  <div class="item product product-item">
+                     <div class="product-item-info" data-container="product-grid">
+                        <div class="item-inner">
+                           <div class="box-image">
+
+                              <!-- image -->
+                              <a class="product-item-photo" href="
+                                 <?=$block->escapeUrl($block->getProductUrl($item)) ?>" title="
+                                 <?= /* @noEscape */
+                                    $block->stripTags($item->getName(), null, true) ?>">
+                              <?=$block->getImage($item, 'product_comparison_list')->toHtml() ?>
+                              </a>
+
+                              <!--LABEL PRODUCT-->
+                              <?php
+                              $specialprice         = $item->getSpecialPrice();
+                              $specialPriceFromDate = $item->getSpecialFromDate();
+                              $specialPriceToDate   = $item->getSpecialToDate();
+
+                              $today = time();
+
+                              if ($specialprice && $_config->getAdvanced('show_salelabel')) {
+                                 if ($today >= strtotime($specialPriceFromDate) && $today <= strtotime($specialPriceToDate) || $today >= strtotime($specialPriceFromDate) && is_null($specialPriceToDate)) { ?>
+                                             <div class="label-product label-sale">
+                                             <span class="sale-product-icon">
+                                                <?php echo __('Sale'); ?>
+                                             </span>
+                                          </div>
+                                 <?php }
+                              }
+                              ?>
+
+                              <?php
+                              $status_labels = '[{"label_attribute":"best_seller","label_name":"Bán chạy","label_css":"best-seller"},{"label_attribute":"is_new_arrival","label_name":"Mới","label_css":"is-new-arrival"}]';
+                              $status_labels = json_decode($status_labels);
+                              $config = array();
+
+                              echo $this->getLayout()->createBlock("Sm\ListingTabs\Block\Ajax")->setData(['product' => $product, 'config' => $config, 'status_labels' => $status_labels])->setTemplate("Sm_ListingTabs::status_labels.phtml")->toHtml();
+
+                              ?>
+
+
+                                       <!--END LABEL PRODUCT-->
+                           </div>
+                           <div class="product details product-item-details box-info">
+
+                              <?php
+                                 echo $this->getLayout()
+                                    ->createBlock('Chottvn\Frontend\Block\Rules')
+                                    ->setTemplate("Magento_Catalog::product/view/cartrules.phtml")
+                                    ->setData([
+                                             'item_product' => $item,
+                                             'price_rules' => 'gift',
+                                             'display_style' => 'icon',
+                                             'rule_type' => 'ampromo_items',
+                                             'css_class' => 'viewed-products-icon'
+                                          ])
+                                    ->toHtml();
+                              ?>
+                              <!-- name -->
+                              <h2 class="product name product-item-name product-name">
+                                 <a href="
+                                    <?=$block->escapeUrl($block->getProductUrl($item)) ?>"
+                                    title="
+                                    <?= /* @noEscape */
+                                       $block->stripTags($item->getName(), null, true) ?>" class="product-item-link">
+                                 <?=
+                                    /* @noEscape */
+                                    $helper->productAttribute($item, $item->getName(), 'name') ?>
+                                 </a>
+                              </h2>
+                              <!-- price -->
+                              <?=/* @noEscape */$block->getProductPrice($item, '-compare-list-top') ?>
+
+                              <?php echo $block->getReviewsSummaryHtml($item, $templateType, true); ?>
+
+                              <div class="product-item-actions hidden-print">
+                                 <!-- button order product -->
+                                 <div class="actions-primary">
+                                    <?php if ($product->getIsSalable() && $product->getFinalPrice() > 0): ?>
+                                    <form data-role="tocart-form" action="
+                                       <?=$block->escapeUrl($this->helper(Magento\Catalog\Helper\Product\Compare::class)->getAddToCartUrl($item)) ?>" method="post">
+                                       <?=$block->getBlockHtml('formkey') ?>
+                                       <?php 
+                                          if(
+                                             ($product->getTypeId() == 'configurable')
+                                             || !empty($ampromo_items_1n)
+                                          ){ 
+                                       ?>
+                                          <a class="btn-cart-shop-now-configurable" href="<?php echo $product->getProductUrl(false); ?>" title="<?php echo $product->getName(); ?>"><span><?=$block->escapeHtml(__('Order here')) ?></span></a>
+                                       <?php }else{ ?>
+                                          <button type="submit" class="action tocart primary" data-action="shopnow">
+                                          <span>
+                                          <?=$block->escapeHtml(__('Order here')) ?>
+                                          </span>
+                                          </button>
+                                       <?php } ?>
+                                    </form>
+                                    <?php
+                                       else: ?>
+                                    <?php if ($product->getIsSalable() && $product->getFinalPrice()==0): ?>
+                                    <div class="">
+                                       <!-- <span>
+                                       <?=$block->escapeHtml(__('In stock')) ?>
+                                       </span> -->
+                                       <a href="<?php echo $product->getProductUrl(false).'#stockalert'; ?>" title="<?php echo $product->getName(); ?>"><button title="<?php echo __('Form Contact Price') ?>" class="stock unavailable btn-action btn-cart"><span><?php echo __('Form Contact Price') ?></span></button></a>
+                                    </div>
+                                    <?php
+                                       else: ?>
+                                    <div class="stock unavailable">
+                                       <!-- <span>
+                                       <?=$block->escapeHtml(__('Out of stock')) ?>
+                                       </span> -->
+                                       <a href="<?php echo $product->getProductUrl(false).'#stockalert'; ?>" title="<?php echo $product->getName(); ?>"><button title="<?php echo __('Contact when stock is available') ?>" class="stock unavailable btn-action btn-cart"><span><?php echo __('Contact when stock is available') ?></span></button></a>
+                                    </div>
+                                    <?php
+                                       endif; ?>
+                                    <?php
+                                       endif; ?>
+                                 </div>
+                                 <!-- remove product compare -->
+                                    <?php $compareHelper = $this->helper(Magento\Catalog\Helper\Product\Compare::class);?>
+                                    <div class="box-remove-product">
+                                       <a href="#" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>'
+                                       class="action delete tag-remove" title="<?= $block->escapeHtmlAttr(__('Remove Product')) ?>"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                    </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+            </td>
+            <?php
+               endforeach; ?>
+         </tr>
+      </tbody>
+   </table>
+</div>
+<?php if (!$block->isRedirectToCartEnabled()): ?>
+<script type="text/x-magento-init">
+   { "[data-role=tocart-form]": { "catalogAddToCart": {} } }
+</script>
+<?php
+   endif; ?>
+<?php
+   else: ?>
+<div class="message info empty">
+   <div>
+      <?=$block->escapeHtml(__('You have no items to compare.')) ?>
+   </div>
+   <script type="text/javascript">
+      // get url previous
+      var oldURL = document.referrer;
+
+      // if have old url => run back old url
+      // if dont old url => redirect to
+      if(typeof oldURL != 'undefined' && oldURL){
+         window.history.back();
+      }else{
+         var backURL = '<?php echo $block->getBaseUrl(); ?>';
+         window.location.replace(backURL);
+      }
+
+   </script>
+</div>
+<?php
+   endif; ?>

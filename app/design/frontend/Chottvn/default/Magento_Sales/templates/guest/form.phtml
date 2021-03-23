@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<div class="chottvn-ui-v2">
+    <div class="block block-form">
+        <form class="form form-orders-search" id="oar-widget-orders-and-returns-form" data-mage-init='{"ordersReturns":{}, "validation":{}}' action="<?= /* @escapeNotVerified */ $block->getActionUrl() ?>" method="post" name="guest_post">
+            <fieldset class="fieldset">
+                <h1>
+                    <span><i class="fa fa-first-order"></i> <?= /* @escapeNotVerified */ __('Input Order Information') ?></span>
+                </h1>
+
+                <div class="field id required">
+                    <label class="label" for="oar-order-id"><span><?= /* @escapeNotVerified */ __('ID Order') ?></span></label>
+
+                    <div class="control">
+                        <input type="number" class="input-text" id="oar-order-id" name="oar_order_id" data-validate="{required:true}" data-msg-required="<?= __('Please input order code.') ?>" placeholder="<?= /* @escapeNotVerified */ __('Input ID Order') ?>" />
+                    </div>
+                </div>
+
+                <div id="oar-email-telephone" class="field email-telephone required">
+                    <label class="label" for="oar_email_telephone"><span><?= /* @escapeNotVerified */ __('Telephone') ?></span></label>
+
+                    <div class="control">
+                        <input type="tel" class="input-text" id="oar_email_telephone" name="oar_email_telephone" data-validate="{required:true, 'validate-phone-VN':true}" data-msg-required="<?= __('Please input phone number.') ?>" placeholder="<?= /* @escapeNotVerified */ __('Input Telephone') ?>" />
+                    </div>
+                </div>
+            </fieldset>
+            <p class="remind-text"><?=/* @escapeNotVerified */ __('Note: Enter the phone number in the delivery information of the order') ?></p>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button type="submit" title="<?= /* @escapeNotVerified */ __('Check information') ?>" class="action submit primary">
+                        <span><?= /* @escapeNotVerified */ __('Check information') ?></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

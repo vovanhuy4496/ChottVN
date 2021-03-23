@@ -1,0 +1,56 @@
+<?php
+
+// Get current product && get list categories id
+$currentProduct = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Registry')->registry('current_product');
+$categories = $currentProduct->getCategoryIds();
+$lastSubCates = array();
+$withoutProductIds = array($currentProduct->getId());
+
+// get last item in array
+$categorySubId = $categories[count($categories)-1];
+
+// Check item have parent_id?
+// If count > 0, add to lastest sub-cats
+// code cu chay sai cho truong hop sub level 3-4...
+// foreach ($categories as $categoryId) {
+//    $countCates = 0;
+//    $object_manager = \Magento\Framework\App\ObjectManager::getInstance();
+//    $subCategory = $object_manager->create('Magento\Catalog\Model\Category')->load($categoryId);
+//    $parentCates = $subCategory->getParentIds();
+//    $countCates = count(array_intersect($categories, $parentCates));
+//    if($countCates > 0){
+//        $lastSubCates[] = $categoryId;
+//    }
+// }
+// class="Sm\ListingTabs\Block\Ajax" template="Sm_ListingTabs::ajax.phtml"
+// slideby_matched_items="1" multi_order_by="[{\"order_by\":\"is_new_arrival\",\"order_dir\":\"desc\"},{\"order_by\":\"viewed_count\",\"order_dir\":\"desc\"}]"
+$listingBlock = $this->getLayout()
+          ->createBlock('Sm\ListingTabs\Block\Ajax')
+          ->setTemplate('Sm_ListingTabs::ajax.phtml');
+$listingBlock->setData([
+     'title' => __("Similar Products"),
+     'type_show' => 'slider',
+     'type_listing' => 'all',
+     'display_countdown' => 0,
+     'type_filter' => 'categories',
+     'category_tabs' => $categorySubId,
+     'limitation'=> 20,
+     'without_product_ids' => $withoutProductIds,
+     'config_heading' => 'h2',
+     'responsive_items' => '2,2,2,4,5',
+     'is_show_product_action_bar' => '0',
+     'css_class' => 'ltabs-promotion ltabs-line-clamping-2',
+     'slideby_matched_items' => 1,
+     'multi_order_by' => 'multi_order_by="[{\"order_by\":\"is_new_arrival\",\"order_dir\":\"desc\"},{\"order_by\":\"viewed_count\",\"order_dir\":\"desc\"}]"'
+]);
+// $listingBlock->_setConfig('title', 'Sản phẩm cùng loại');
+// $listingBlock->_setConfig('type_show', 'slider');
+// $listingBlock->_setConfig('type_listing', 'all');
+// $listingBlock->_setConfig('display_countdown', 0);
+// $listingBlock->_setConfig('type_filter', 'categories');
+// $listingBlock->_setConfig('category_tabs', '154,155,121,157');
+// $listingBlock->_setConfig('limitation', 20);
+
+echo $listingBlock->toHtml();
+
+?>

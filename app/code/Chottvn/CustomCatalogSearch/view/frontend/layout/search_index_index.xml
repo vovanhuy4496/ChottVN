@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceContainer name="content">
+        <block class="Chottvn\CustomCatalogSearch\Block\Search" name="search_index_index" template="Chottvn_CustomCatalogSearch::search.phtml">
+        	<container name="div.category.search.products" htmlTag="div" label="Catalog Search Product Container" htmlClass="box-div-category-search-products">
+                <block class="Magento\Cms\Block\Block" name="category.search.products.using.listingtabs">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">category-search-products-using-listingtabs</argument>
+                    </arguments>
+                </block>
+            </container>
+        </block>
+    </referenceContainer>
+    <referenceContainer name="sidebar.main">
+        <block class="Magento\LayeredNavigation\Block\Navigation\Category" name="catalog.leftnav" before="-" template="Magento_LayeredNavigation::layer/view.phtml">
+            <block class="Magento\LayeredNavigation\Block\Navigation\State" name="catalog.navigation.state" as="state" />
+            <block class="Magento\LayeredNavigation\Block\Navigation\FilterRenderer" name="catalog.navigation.renderer" as="renderer" template="Magento_LayeredNavigation::layer/filter.phtml"/>
+        </block>
+    </referenceContainer>
+</page>

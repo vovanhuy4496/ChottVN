@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Chottvn Offline Shipping
+ * Copyright (C) 2020 Chottvn
+ *
+ * This file included in Chottvn Offline Shipping is licensed under OSL 3.0
+ *
+ * reference https://github.com/blackbird-agency
+ * Please see LICENSE.txt for the full text of the OSL 3.0 license
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Preference for Reverse Dependency -->
+    <preference for="Chottvn\OfflineShipping\Api\Data\TablerateInterface" type="Chottvn\OfflineShipping\Model\Tablerate"/>
+    <preference for="Chottvn\OfflineShipping\Api\TablerateRepositoryInterface" type="Chottvn\OfflineShipping\Model\TablerateRepository"/>
+    <!-- Overrides -->
+    <!-- <preference for="Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CSV\RowParser" type="Chottvn\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CSV\RowParser"/> -->
+    <preference for="Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CSV\RowParser" type="Chottvn\OfflineShipping\Rewrite\Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate\CSV\RowParser"/>
+    <!-- <preference for="Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate" type="Chottvn\OfflineShipping\Model\ResourceModel\Carrier\Tablerate"/> -->
+    <preference for="Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate" type="Chottvn\OfflineShipping\Rewrite\Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate"/>
+    <!-- <preference for="Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid" type="Chottvn\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid"/> -->
+    <preference for="Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid" type="Chottvn\OfflineShipping\Rewrite\Magento\OfflineShipping\Block\Adminhtml\Carrier\Tablerate\Grid"/>
+
+</config>

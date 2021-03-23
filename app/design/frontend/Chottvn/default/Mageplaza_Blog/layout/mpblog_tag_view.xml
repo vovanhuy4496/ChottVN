@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="mpblog_design" />
+    <body>
+        <referenceContainer name="content">
+            <container name="div.sidebar.colbig.blog.detail" htmlTag="div" htmlClass="left-blog-container col-lg-8 col-md-8 col-12 order-1">
+                 <block class="Mageplaza\Blog\Block\Tag\Listpost" name="mpblog.tag.post.list" template="Mageplaza_Blog::post/listtag.phtml" />
+          </container>
+        </referenceContainer>
+        <move element="div.sidebar.colbig.blog.detail" destination="div.sidebar.row.blog"  before="-"/>
+        <referenceBlock name="page.main.title" remove="true" />
+    </body>
+</page>

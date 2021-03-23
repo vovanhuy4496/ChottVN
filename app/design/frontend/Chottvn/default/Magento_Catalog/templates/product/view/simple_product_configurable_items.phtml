@@ -1,0 +1,130 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperImport = $objectManager->get('\Magento\Catalog\Helper\Image');
+$helperProductAttribute = $objectManager->get('\Chottvn\CustomCatalog\Helper\ProductAttribute');
+$currentProduct = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+$priceHelper = $objectManager->create('\Chottvn\PriceDecimal\Helper\Data');
+// get parent product ids
+$parentIds = $objectManager->get('Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable')->getParentIdsByChild($currentProduct->getId());
+
+
+if(isset($parentIds[0])){
+  // get list simple product by parent product ids
+  $parent_product_id = $parentIds[0];
+  $parent_product = $objectManager->create('Magento\Catalog\Model\Product')->load($parent_product_id);
+  $simple_products = $parent_product->getTypeInstance()->getChildrenIds($parent_product->getId());
+
+  // get attributes by parent product
+  $productAttributeOptions = $parent_product->getTypeInstance()->getConfigurableAttributesAsArray($parent_product);
+
+  // create initialize data
+  $attributeCurrentProductValues = array();
+  $i = 0;
+  foreach ($productAttributeOptions as $productAttribute) {
+    $attributeCurrentProductValues[$i]['attribute'] = $productAttribute['attribute_code'];
+    $attributeCurrentProductValues[$i]['eq'] = $currentProduct->getData($productAttribute['attribute_code']);
+    $i++;
+  }
+?>
+<div class="simple-products-configurable">
+  <?php
+  $i = 0;
+  foreach ($productAttributeOptions as $productAttribute) {
+    $eavConfig = $objectManager->get('\Magento\Eav\Model\Config');
+    $attribute = $eavConfig->getAttribute('catalog_product', $productAttribute['attribute_code']);
+
+    $attr_additional_data = json_decode($attribute->getData('additional_data'));
+    $attr_swatch_input_type = isset($attr_additional_data->swatch_input_type) ? $attr_additional_data->swatch_input_type : 'dropdown';
+
+    // get attribute code
+    $attribute_code = $productAttribute['attribute_code'];
+    $attributeOptions = array();
+      foreach ($productAttribute['values'] as $attribute) {
+          $attributeOptions[$attribute_code][$attribute['value_index']] = $attribute['store_label'];
+      }
+
+    $attributeCurrentProduct = $currentProduct->getData($attribute_code);
+  ?>
+    <div class="config-items">
+      <div class="item-label"><?php echo $productAttribute['store_label']; ?></div>
+      
+        <?php
+        $tempAttributeArrayControl = $attributeCurrentProductValues;
+
+        foreach ($tempAttributeArrayControl as $index => $tmpData) {
+            if ($tmpData['attribute'] == $attribute_code) {
+                unset($tempAttributeArrayControl[$index]);
+            }
+        }
+
+        $simpleProductCollection = $objectManager->create('Magento\Catalog\Model\ResourceModel\Product\Collection');
+        if($tempAttributeArrayControl){
+          $simpleProductCollection->addFieldToFilter($tempAttributeArrayControl);
+        }
+        $simpleProductCollection->addFieldToFilter('entity_id', array('in' => $simple_products));
+
+        // show image product
+        $is_show_data = ['is_show_image'=>1,'is_show_price'=>1];
+
+        switch ($attr_swatch_input_type) {
+          case 'dropdown':
+          	// is show data
+          	$is_show_data = ['is_show_image'=>0,'is_show_price'=>0];
+          	echo '<div class="simple-items dropdown-input-type">';
+          		echo '<select class="form-control" id="select-dropdown-'.$attribute_code.'">';
+                foreach ($attributeOptions[$attribute_code] as $keyOption => $valueOption) {
+                  echo $helperProductAttribute->getHtmlAttributeBySwatchInputTypeReverse($attr_swatch_input_type, $simpleProductCollection, $attribute_code, $attributeCurrentProduct, $keyOption, $valueOption, $is_show_data);
+                }
+		        	echo '</select>';
+           	echo '</div>';
+           	echo '<script type="text/javascript">
+							require([
+									\'jquery\',
+									\'Magento_Customer/js/customer-data\',
+									\'mage/translate\',
+									\'Chottvn_Affiliate/js/ddslick\'
+								],
+								function($, customerData, $t) {
+									// load html selector
+									$(\'#select-dropdown-'.$attribute_code.'\').ddslick();
+
+									// event click select option
+									$(\'#select-dropdown-'.$attribute_code.' a.dd-option\').on(\'click\', function(e) {
+										var href_click = $(\'#select-dropdown-'.$attribute_code.' .dd-selected-value\').val();
+										$(location).attr(\'href\', href_click);
+									});
+								});
+						</script>';
+            break;
+          
+          case 'text':
+          	// is show data
+          	$is_show_data = ['is_show_image'=>0,'is_show_price'=>0];
+            echo '<div class="simple-items text-input-type">';
+            foreach ($attributeOptions[$attribute_code] as $keyOption => $valueOption) {
+              echo $helperProductAttribute->getHtmlAttributeBySwatchInputTypeReverse($attr_swatch_input_type, $simpleProductCollection, $attribute_code, $attributeCurrentProduct, $keyOption, $valueOption, $is_show_data);
+            }
+           	echo '</div>';
+            break;
+
+          case 'visual':
+          	// is show data
+          	$is_show_data = ['is_show_image'=>1,'is_show_price'=>0];
+          	echo '<div class="simple-items visual-input-type">';
+            foreach ($attributeOptions[$attribute_code] as $keyOption => $valueOption) {
+              echo $helperProductAttribute->getHtmlAttributeBySwatchInputTypeReverse($attr_swatch_input_type, $simpleProductCollection, $attribute_code, $attributeCurrentProduct, $keyOption, $valueOption, $is_show_data);
+            }
+           	echo '</div>';
+            break;
+        }
+        ?>
+      
+    </div>
+  <?php
+  $i++;
+  }
+  ?>
+</div>
+<?php
+}
+?>

@@ -1,0 +1,540 @@
+// #form-validate input:read-only {
+// 	opacity: 0.4;
+// 	cursor: not-allowed;
+// }
+.amrules-index-index{
+	.column.main{
+		.table.table-rules{
+			border: 1px solid #dee2e6;
+		}
+
+		.fieldset{
+			display: inline-block;
+			h2.legend{
+				font-size: xx-large;
+    			margin: 10px 0px;
+			}
+		}
+	}
+
+}
+.customer-account-edit{
+	.fieldset .field .label, .fieldset .field .control{
+		display: inline-block !important;
+	}
+	.fieldset .field input, .fieldset .field select {
+		border-color: @color_theme_line !important;
+	}
+	.fieldset .field select {
+		height: 35px;
+	}
+	.fieldset .field{
+		margin-bottom: 15px !important;
+		padding: 0;
+	}
+	.fieldset .field .label.custom-width-label{
+		width: 20% !important;
+		margin-bottom: 0px;
+	}
+	.fieldset .field .control.custom-width-control{
+		width: 50% !important;
+		
+	}
+	#submit-edit{
+		border-radius: 8px;
+		background: @color_theme_primary;
+		text-transform: none;
+		margin-top: 15px;
+		padding: 0 45px !important;
+	}
+	.actions-toolbar{
+		display: flex;
+	}
+	.actions-toolbar .custom-width-label{
+		width: 20% !important;
+	}
+	.fieldset .field .control.custom-width-control input, .fieldset .field .control.custom-width-control select{
+		/* border-radius: 4px; */
+	}
+	.fieldset .field .control.custom-width-control-date input, .fieldset .field .control.custom-width-control-date select{
+		/* border-radius: 4px; */
+	}
+	.fieldset .field .control.custom-width-control-date{
+		width: 12% !important;
+		padding-right: 10px;
+	}
+	.fieldset{
+		margin: 0;
+	}
+	.fieldset .legend{
+		margin-bottom: 15px;
+		font-size: 14px;
+		color: @color_theme_primary;
+		font-weight: bold;
+	}
+	fieldset .field .customer-dob button.ui-datepicker-trigger.v-middle {
+		position: absolute;
+		right: 0;
+		top: 0;
+		padding-right: 0px !important;
+		padding-left: 0px !important;
+		margin-top: -3px;
+	}
+	.field.date.field-dob label{
+		width: 20% !important;
+	}
+	
+	#password-strength-meter-container{
+		display: none;
+	}
+	#password-error,#current-password-error,#password-confirmation-error{
+		display: none !important;
+	}
+}
+#form-validate.custom-form-edit-account-address input.input-width-50 {
+    width: 50% !important;
+}
+#form-validate.custom-form-edit-account-address #password-strength-meter {
+    width: 50% !important;
+}
+#form-validate.custom-form-edit-account-address .customer-name-prefix .fieldset-fullname .field-name-firstname {
+	margin: 0 !important;
+}
+@media screen and (max-width: 768px) {
+    #form-validate.custom-form-edit-account-address input.input-width-50 {
+        width: 100% !important;
+    }
+    #form-validate.custom-form-edit-account-address #password-strength-meter {
+        width: 100% !important;
+    }
+    #form-validate.custom-form-edit-account-address .field.gender .control {
+        display: flex;
+	}
+	#form-validate.custom-form-edit-account-address .dob-datepicker #dob {
+		width: 90%;
+	}
+	#form-validate.custom-form-edit-account-address .select-width-50 {
+		width: 100% !important;
+	}
+	#form-validate.custom-form-edit-account-address #country {
+		width: 100% !important;
+	}
+}
+
+#form-validate.custom-form-edit-account-address select {
+	height: 35px;
+}
+
+#form-validate.custom-form-edit-account-address .select-width-50 {
+	width: 50% !important;
+	border-radius: 4px;
+}
+#form-validate.custom-form-edit-account-address #country {
+	width: 50% !important;
+	border-radius: 4px;
+}
+
+#form-validate.custom-form-edit-account-address .dob-datepicker {
+    display: flex;
+}
+#form-validate.custom-form-edit-account-address .dob-datepicker #dob {
+    width: 45%;
+}
+#form-validate.custom-form-edit-account-address .dob-datepicker .ui-datepicker-trigger {
+    padding: 0 !important;
+}
+#form-validate.custom-form-edit-account-address .error-dob-datepicker {
+    color: #e02b27;
+    font-size: 1.2rem;
+    margin-top: 7px;
+}
+#form-validate.custom-form-edit-account-address .field.choice #change-password {
+	vertical-align: middle;
+	margin-bottom: 5px;
+}
+
+.customer-level-info{
+	margin: 0px 0px 10px 0px;
+    float: left;
+    width: 100%;
+
+	.level-icon{
+		height: 30px;
+	}
+	.icon-loyal {
+	    background-color: #fff;
+	    border: 1px solid @color_theme_line;
+	    height: 60px;
+	    border-radius: 50%;
+	    -moz-border-radius: 50%;
+	    -webkit-border-radius: 50%;
+	    width: 60px;
+	    float: left;
+	    margin-right: 10px;
+	}
+	.level-icon {
+	    display: table;
+	    margin: 12px auto;
+	}
+	.userinfo {
+	    float: right;
+	    width: 70%;
+	    padding-top: 10px;
+	}
+	.user-name {
+	    font-weight: 600;
+	    width: 100%;
+	    float: left;
+	    white-space: nowrap;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+      font-size: 16px;
+	}
+	.level-name {
+	    font-size: 13px;
+	    float: left;
+	    margin-right: 5px;
+	}
+	.star-ratings-css {
+        unicode-bidi: bidi-override;
+        color: @color_theme_text_muted;
+        font-size: 11px;
+        margin: 1px 0px;
+        position: relative;
+        padding: 0;
+        float: left;
+    }
+	.star-ratings-css-top {
+        color: @color_theme_secondary;
+        padding: 0;
+        position: absolute;
+        z-index: 1;
+        display: inline-flex;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+	.star-ratings-css-bottom {
+	    padding: 0;
+	    display: block;
+	    z-index: 0;
+	}
+
+  a {
+    color: @color_theme_text;
+
+    &:hover {
+      color: @color_theme_link_hover;
+    }
+  }
+}
+
+.block.account-nav{
+	float: left;
+    width: 100%;
+
+    .account-nav-content{
+    	background: @white !important;
+
+    }
+
+    .item.current{
+    	background: @lightgrey;
+    	font-size: 14px;
+    }
+
+    .item.current a, .item.current strong{
+    	border-left: 0px !important;
+    	padding: 5px 10px 5px 10px;
+    }
+
+    .item i {
+    	padding-right: 12px;
+      color: @color_theme_text_light;
+      margin-right: 4px;
+    }
+
+    .item a {
+    	border-left: 0px solid transparent;
+	    padding: 5px 10px 5px 10px;
+	    width: 100%;
+      color: @color_theme_text;
+
+      &:hover {
+        color: @color_theme_link_hover;
+        background: @color_theme_bg_hover;
+      }
+    }
+}
+
+.sidebar-bg{
+	float: left;
+	width: 100%;
+}
+
+@media (max-width: 768px) {
+	.customer-address-index{
+		.sidebar-left {
+			display: block !important;
+		}
+		.sidebar-bg {
+			border-right: 0px;
+		}
+	}
+
+	.customer-level-info{
+		.userinfo {
+			width: 80%;
+		}
+	}
+}
+
+.box-information, .box-newsletter, .box-billing-address, .box-shipping-address {
+	.box-actions{
+		margin-top: 15px;
+		a {
+			color: @color_theme_secondary;
+			padding-right: 10px;
+		}
+
+		a:hover {
+			color: @color_theme_primary;
+		}
+	}
+}
+
+.customer-account-index{
+	.block{
+		margin-bottom: 0px;
+	}
+	.box {
+		min-height: 130px;
+	}
+	.block.block-reviews-dashboard{
+		display: none;
+	}
+	.block-dashboard-info{
+		.box-newsletter{
+			.box-actions a{
+				display: none;
+			}
+		}
+	}
+}
+
+.custom-form-edit-account-address {
+	font-size: 14px;
+
+	.gender {
+		margin-bottom: 0px !important;
+
+		.control{
+			.field.choice{
+				float: left;
+				margin-right: 15px;
+
+				input{
+					vertical-align: inherit;
+				}
+			}
+		}
+	}
+	label[for="gender"] span {
+	    display: block;
+	}
+	.field-name-lastname {
+	    /*float: left;
+	    width: 50%;
+	    padding-right: 15px;*/
+	}
+
+	.field-name-firstname {
+	    /*float: left;
+	    width: 50%;
+	    padding-left: 15px;*/
+	}
+
+	.field-email {
+	    float: left;
+	    width: 50%;
+	    padding-right: 15px;
+
+	    .label{
+	    	margin-bottom: 10px;
+	    }
+	}
+
+	.field-phone-number {
+	    float: left;
+	    width: 50%;
+	    padding-left: 15px;
+
+	    .label{
+	    	margin-bottom: 10px;
+	    }
+	}
+
+	.field input {
+		border: 1px solid #ccc;
+		font-size: 13px;
+		border-radius: 4px;
+	}
+
+	.fieldset{
+		margin-bottom: 0px;
+
+		.field-email.required > .label:after, .field-phone-number.required > .label:after {
+		    content: '*';
+		    color: #e02b27;
+		    font-size: 1.2rem;
+		    margin: 0 0 0 5px;
+	    }
+
+	    .field-name-prefix{
+	    	input{
+	    		float: left;
+    			margin-top: 4px;
+	    	}
+
+	    	.label-prefix{
+	    		width: auto !important;
+			    float: left;
+			    margin-right: 15px;
+	    	}
+	    }
+	}
+
+	.password.required .label:after {
+	    content: '*';
+	    color: #e02b27;
+	    font-size: 1.2rem;
+	    margin: 0 0 0 5px;
+    }
+
+	.password.current{
+		margin-bottom: 30px;
+		.label{
+			margin-bottom: 10px;
+		}
+	}
+
+	.actions-toolbar > .secondary {
+	    margin-top: 0px !important;
+	}
+
+}
+
+.sales-order-history {
+	.product-item-details{
+		a{
+			color: unset;
+		}
+		a:hover{
+			color: @color_theme_link_hover;
+		}
+	}
+	.message.info {
+		background: unset;
+		color: unset;
+		padding: 10px;
+	}
+	.message.info > *:first-child:before {
+		display: none;
+	}
+	#button-back {
+		margin: 0 0 0 10px;
+	}
+	.title-infor-cus{
+		font-weight:600;
+	}
+
+}
+
+.wishlist-index-index {
+	.message.info {
+		background: unset;
+		padding: 10px 20px;
+    	color: unset;
+	}
+	.message.info > *:first-child:before {
+		display: none;
+	}
+	#button-back {
+		margin: 0 0 0 10px;
+	}
+	.toolbar.wishlist-toolbar {
+		display: flex;
+	}
+}
+
+.review-customer-index {
+	.message.info {
+		background: unset;
+		padding: 10px;
+    	color: unset;
+	}
+	.message.info > *:first-child:before {
+		display: none;
+	}
+	#button-back {
+		margin: 0 0 0 10px;
+	}
+	#my-reviews-table tr {
+		display: flex;
+	}
+}
+
+#button-handle {
+	background: #2E75B5;
+	text-transform: none;
+	height: 35px;
+	padding: 5px 20px;
+	display: flex;
+    align-items: center;
+}
+
+#button-handle a {
+	color: @white;
+	margin: 0;
+}
+
+#button-back {
+    height: 35px;
+    padding: 5px 20px;
+    border: 1px solid;
+}
+#button-back a {
+	margin: 0;
+}
+
+.customer-address-index {
+	#button-back {
+		margin: 0 0 0 10px;
+	}
+	#additional-addresses-table tr {
+		display: flex;
+	}
+	#additional-addresses-table tbody tr .col.streetaddress {
+		display: grid;
+	}
+}
+
+.newsletter-manage-index {
+	#button-back {
+		margin: 0 0 0 10px;
+	}
+	.fieldset {
+		margin: 0;
+	}
+	.css-checkbox {
+		vertical-align: middle;
+		margin-bottom: 5px;
+	}
+}
+
+.customer-address-form {
+	.css-checkbox {
+		vertical-align: middle;
+		margin-bottom: 5px;
+	}
+}

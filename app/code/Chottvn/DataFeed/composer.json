@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-datafeed",
+    "description": "ChottVN DataFeed",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tuan Nguyen",
+            "email": "tuan.nguyen@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\DataFeed\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

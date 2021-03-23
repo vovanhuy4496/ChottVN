@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Chottvn\PriceQuote\Api\RequestRepositoryInterface" type="Chottvn\PriceQuote\Model\RequestRepository"/>
+	<preference for="Chottvn\PriceQuote\Api\Data\RequestInterface" type="Chottvn\PriceQuote\Model\Data\Request"/>
+	<preference for="Chottvn\PriceQuote\Api\Data\RequestSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Chottvn\PriceQuote\Model\ResourceModel\Request\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">chottvn_pricequote_request</argument>
+			<argument name="resourceModel" xsi:type="string">Chottvn\PriceQuote\Model\ResourceModel\Request\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="chottvn_pricequote_request_listing_data_source" xsi:type="string">Chottvn\PriceQuote\Model\ResourceModel\Request\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+</config>

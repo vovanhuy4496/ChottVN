@@ -1,0 +1,38 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+//product
+$product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');//get current product
+$product_price = $product->getPrice();
+// customer
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');  
+$isLoggedIn = $customerSession->isLoggedIn();
+?>
+<?php if($product_price > 0){?>
+    <?php
+        echo $this->getLayout()
+        ->createBlock('Chottvn\StockAlert\Block\Stockalert')
+        ->setTemplate('Chottvn_StockAlert::stockalert.phtml')
+        ->setData([
+            'title' => __('Out of stock'),
+            'messager_success' => __('We will contact you when in stock'),
+            'title_fieldset' => __('Please leave your information, we will contact you when goods are available'),
+            'flag' => 'contactwhenstock'
+        ])
+        ->toHtml();
+    ?>
+<?php }?>
+<!-- check customer login -->
+<?php if($isLoggedIn == true) :?>
+    <?php if($isLoggedIn == true) :?>
+        <script type="text/javascript">
+            require([
+                'jquery'
+            ], function ($) {
+                $('input[name ="contact_name"]').prop("readonly",true);
+                $('input[name ="contact_phone_number"]').prop("readonly",true);
+                $('input[name ="contact_name"]').css("opacity","0.5");
+                $('input[name ="contact_phone_number"]').css("opacity","0.5");
+            });
+        </script>
+    <?php endif; ?>
+<?php endif; ?>

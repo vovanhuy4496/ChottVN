@@ -1,0 +1,106 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Blog
+ * @copyright   Copyright (c) 2018 Mageplaza (http://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Blog\Block\Frontend $block */
+?>
+
+<?php
+    $id_cate_km = $block->getData("category_id_km");
+    $id_cate_video = $block->getData("category_id_video");
+    $postsRecent = $block->getRecentPost($id_cate_km, $id_cate_video);
+?>
+<?php if ($postsRecent->getSize() > 2): ?>
+    <div class="post-list-news" id="mpblog-list-container">
+        <div class="content-header-wrapper clearfix">
+            <div class="title-wrapper float-left">
+                <span class="title">Tin mới nhất</span>
+            </div>
+
+            <!-- <div class="link-wrapper float-right">
+                <a href="javascript:;">Xem tất cả</a>
+            </div> -->
+        </div>
+        <div class="content-main-wrapper">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="card card-news card-news-wrapper">
+                        <?php foreach ($postsRecent as $key => $post): ?>
+                            <div class="post-thumb post-thumb-title border-big-image">
+                                <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                    <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top border-big-image" src="<?php echo $block->resizeImage($post->getImage()); ?>">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title card-title-news hidden-overflow overflow-2">
+                                    <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom c-title-no-bg-big" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?>
+                                    </a>
+                                </h5>
+                                <h6 class="card-subtitle text-muted">
+                                    <?php echo $post->getPublishDate() ? $block->getDateFormat($post->getPublishDate()) : ''; ?>
+                                </h6>
+                                <p class="card-text hidden-overflow overflow-3" title="<?php echo $post->getShortDescription(); ?>">
+                                    <?php 
+                                        // echo substr($post->getShortDescription(), 0, 150) .((strlen($post->getShortDescription()) > 150) ? '...' : ''); 
+                                        echo $post->getShortDescription();
+                                    ?> 
+                                </p>
+                                <a href="<?php echo $post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a>
+                            </div>
+                            <?php $id = $post->getId(); ?>
+                            <?php break; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <!-- BEGIN: News item -->
+                        <?php foreach ($postsRecent as $key => $post): ?>
+                            <?php if ($post->getId() != $id): ?>
+                                <div class="row">
+                                    <div class="card-horizontal">
+                                        <div class="c-display-flex">
+                                            <div class="col-sm-5 col-xs-5 w-35-pr flex-left">
+                                                <div class="post-thumb border-small-image">
+                                                    <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                                        <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top card-img-top-resize border-small-image" src="<?php echo $block->resizeImage($post->getImage()); ?>">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-7 col-xs-7 w-65-per flex-right">
+                                                <div class="card-body">
+                                                    <h5 class="card-title hidden-overflow overflow-2">
+                                                        <a class="c-post-title-resize" href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?></a></h5>
+                                                    <h6 class="card-subtitle  text-muted">
+                                                        <?php echo $post->getPublishDate() ? $block->getDateFormat($post->getPublishDate()) : ''; ?>
+                                                    </h6>
+                                                    <a href="<?php echo $post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <!-- END: News item -->
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

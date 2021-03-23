@@ -1,0 +1,568 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/** @var $block \Magento\Sales\Block\Order\Email\Items */
+?>
+<?php
+$actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$getFormatPrice = $objectManager->get('Chottvn\Sales\Rewrite\Magento\Sales\Model\Order\Email\Sender\OrderSender');
+
+$_order = $block->getOrder();
+$status = $_order->getStatus();
+$timefc = $objectManager->create('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+try {
+    if($_order->getCreatedAt()){
+        $createdDate = '';
+        $estimatedDeliveryDate = '';
+        $createdDate = $timefc->date($_order->getCreatedAt())->format('Y-m-d');
+        // $quoteId = $_order->getQuoteId();
+        // $quote = $objectManager->create('Magento\Quote\Model\Quote')->load($quoteId);
+        $maxDeliveryDates = $_order->getMaxDeliveryDates();
+        $estimatedDeliveryDate = date('d/m/Y', strtotime($createdDate . " + ".$maxDeliveryDates." day"));
+    }
+} catch(\Exception $e) {
+    $estimatedDeliveryDate = 0;
+}
+$salesHelper = $this->helper('Chottvn\Sales\Helper\Data');
+$updatedDate = $salesHelper->getCompleteDeliveryLog($_order);
+
+$entityAttribute = $objectManager->get('Magento\Catalog\Model\ResourceModel\Eav\Attribute');
+$dateCurrent = $objectManager->get('Magento\Framework\Stdlib\DateTime\DateTime');
+$dateCurrent = $timefc->date($dateCurrent->date())->format('d/m/Y');
+
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+$amPromoHelper = $this->helper('Amasty\Promo\Helper\Item');
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+?>
+<?php if ($_order) : ?>
+    <?php
+        $_items = $_order->getAllItems(); 
+        $arrayMain = array();
+        $arrayMain = $salesHelper->getListOrder($_items);
+    ?>
+    <div class="list-product desktop">
+        <table>
+            <tr>
+                <th>
+                    <?php if($status == 'complete' || $status == 'finished' || $status == 'returned' || $status == 'returned_and_finished'): ?>
+                        <?= __("Delivered at"); ?>: <?= $dateCurrent; ?>
+                    <?php elseif($status == 'canceled'): ?>
+                        <?= __("Canceled Order"); ?>: <?= $updatedDate; ?>
+                    <?php else: ?>
+                        <?= __("Estimated delivery date"); ?>: <?= $maxDeliveryDates ? $estimatedDeliveryDate : __("Max Delivery Dates Contact"); ?>
+                    <?php endif; ?>
+                </th>
+                <th class="th-quantity"><?= $block->escapeHtml(__('Quantity x Price')) ?></th>
+                <th class="th-amount" ><?= $block->escapeHtml(__('Amount')) ?></th>
+            </tr>
+            <?php foreach($arrayMain as $orderItem) { ?>
+                <?php 
+                    $parentItemId = $orderItem->getParentItemId();
+                    $quoteItem = $objectManager->create('Magento\Quote\Model\Quote\Item')->load($orderItem->getQuoteItemId());
+                    $cartPromoOption = $quoteItem->getCartPromoOption();
+                ?>
+                <?php if (empty($parentItemId) && (empty($cartPromoOption) || $cartPromoOption == 'ampromo_cart' || $cartPromoOption == 'ampromo_spent')): ?>
+                    <?php
+                        $ruleIdsApplied = $orderItem->getAppliedRuleIds();
+                        $orderId = $orderItem->getOrderId();
+                        $quoteItemId = $orderItem->getQuoteItemId();
+                        $rulesApplied = $salesHelper->getRulesNameByOrderCTT($quoteItemId,$orderId,$ruleIdsApplied);
+                        $productImage = null;
+                        $_attributes = array();
+                        $product = $orderItem->getProduct();
+                        $productId = $orderItem->getProductId();
+                        $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+                        if ($productResource) {
+                            if ($childProd = current($orderItem->getChildrenItems())) {
+                                $productImage = $imageHelper->init($childProd->getProduct(), 'category_page_list')->getUrl();
+                            } else {
+                                $productImage = $imageHelper->init($productResource, 'category_page_list')->getUrl();
+                            }
+                        }
+                        if (!isset($productImage)) {
+                            $imageHelper = $objectManager->get(\Magento\Catalog\Helper\Image::class);
+                            $productImage = $imageHelper->getDefaultPlaceholderUrl('image');
+                        }
+                        // Get the Product Repository
+                        $productRepository = $objectManager->get('\Magento\Catalog\Model\ProductRepository')->getById($product->getId());
+                        $guaranteeInfo = $orderItem->getData('guarantee') ? $orderItem->getData('guarantee') :$productRepository->getData('guarantee');
+                        $productunit = $orderItem->getData('product_unit') ?$orderItem->getData('product_unit'):$productResource->getData('product_unit');
+                        // $checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+                        
+                        // $quoteItem = $objectManager->create('Magento\Quote\Model\Quote\Item')->load($orderItem->getQuoteItemId());
+                        // $isPromoItem = $amPromoHelper->isPromoItem($quoteItem);
+                        $productOptions = $orderItem->getProductOptions();
+                        $isPromoItem = $salesHelper->isPromoItemCTT($cartPromoOption);
+                        $ruleId = $salesHelper->getRulesIdByProductOptions($productOptions);
+                        $nameRule = $salesHelper->getRulesNameByIdRule($ruleId);
+                        // var_dump($cartPromoOption);
+                        // var_dump($isPromoItem);
+                        $messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+                        $longName =  $orderItem->getProductNameLong();
+                        $shortName = $productResource->getData('product_name_distributor');
+                        $shortName = $shortName ? $shortName : $longName;
+                        $shortNameStrong = "<strong>".$shortName."</strong>";
+                        $nameproduct = str_replace($shortName, $shortNameStrong, $longName);
+                        $attributesOption = array();
+                        if (isset($orderItem->getProductOptions()["info_buyRequest"]["super_attribute"])) {
+                            $attributesOption = $orderItem->getProductOptions()["info_buyRequest"]["super_attribute"];
+                        }
+                        if ($attributesOption) {
+                            foreach ($attributesOption as $key => $attr) {
+                                $_attr = $entityAttribute->load($key);
+                                $attributeCode = $_attr->getAttributeCode();
+                                $_attributes[$attributeCode] = $attr;
+                            }
+                        }
+                        $getProductUrl = $product->getProductUrl();
+                        if ($_attributes) {
+                            $params = '';
+                            foreach ($_attributes as $key => $value) {
+                                $params = $params . $key . '=' . $value . '&';
+                            }
+                            if ($params) {
+                                $params = substr($params, 0, -1);
+                                $getProductUrl = $getProductUrl . '#' . $params;
+                            }
+                        }
+                    ?>
+                    <tr>
+                        <td> 
+                            <div class="product-item-photo product-item-photo-desktop">
+                                <?php if ($salesHelper->hasProductUrl($productResource)) :?>
+                                    <a href="<?= $block->escapeUrl($getProductUrl) ?>" class="a-title" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" />
+                                        </div>
+                                    </a>
+                                <?php else :?>
+                                    <a class="a-title" title="<?= $block->escapeHtml($orderItem->getName()) ?>" target="_blank" tabindex="-1" class="product-item-photo">
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" />
+                                        </div>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-item-info for-desktop">
+                                <div class="product-item-details">
+                                    <span class="product-item-name">
+                                    <?php if ($product) :?>
+                                            <?php if ($salesHelper->hasProductUrl($productResource)) :?>
+                                                <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                    <?php if($isPromoItem){ ?>
+                                                        <!-- Rule Name -->
+                                                        <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                        <br><span><?= $orderItem->getData('product_name_short'); ?></span>
+                                                    <?php }else{ ?>
+                                                        <?= $orderItem->getProductNameLongHtml(); ?>
+                                                    <?php } ?>
+                                                </a>
+                                            <?php else :?>
+                                                    <?php if($isPromoItem){ ?>
+                                                        <!-- Rule Name -->
+                                                        <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                                        <br><span><?= $orderItem->getData('product_name_short'); ?></span>
+                                                    <?php }else{ ?>
+                                                        <?= $orderItem->getProductNameLongHtml(); ?>
+                                                    <?php } ?>
+                                            <?php endif; ?>
+                                        <?php else :?>
+                                            <?= $orderItem->getProductNameLongHtml(); ?>
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                              
+                                <?php if (!$isPromoItem){ ?>
+                                    <div class="order-detail-mobile">
+                                        <?php $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                            if ($productBrand) { ?>
+                                                <span class="product-item-detail"><?php echo __('Brands: '); ?><?php echo $productBrand->getName(); ?></span>
+                                        <?php } ?>
+                                        <?php $productModel = $productResource->getData('model') ? $productResource->getData('model'): $orderItem->getData('model');
+                                            if ($productModel) { ?>
+                                                <span class="product-item-detail"><?php echo __('Model: '); ?><?php echo $productModel; ?></span>
+                                        <?php } ?>
+                                    </div>
+                                    <?php if ($guaranteeInfo) { ?>
+                                        <span class="guaranteeInfo product-item-detail"><?php echo __('Guarantee: '); ?><?php echo $guaranteeInfo; ?></span>
+                                    <?php } ?>
+                                    <?php if ($attributesOption) { ?>
+                                        <div class="attributesOption">
+                                            <?php foreach($attributesOption as $key => $value): ?>
+                                                <?php 
+                                                    $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                    $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                    $labelOptions = '';
+                                                    $valueOptions = '';
+                                                    foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                        $tmp_option = $value_o['values'];
+                                                        if (count($tmp_option) > 0) {
+                                                            foreach ($tmp_option as $tmp) {
+                                                                if (($key_o == $key) && ($tmp['value_index'] == $value)) {
+                                                                    $labelOptions = $value_o['store_label'];
+                                                                    $valueOptions = $tmp['label'];
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ?>
+                                                <?php if($labelOptions && $valueOptions): ?>
+                                                    <span class="white-space-option">
+                                                        <?= $labelOptions.': '.$valueOptions ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php } ?>
+                                    <div class="promotion-info promotion-info-desktop">
+                                        <ul class="rules-list-desktop">
+                                            <?php foreach ($rulesApplied as $key => $rules) { ?>
+                                                <?php if(!empty($rules['sku']) && count($rules['sku']) > 0){ ?>
+                                                        <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                            <?php 
+                                                                $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                                if (!empty($productData)){
+                                                                    $productId = $productData->getId();
+                                                                    $nameproduct = $productData->getName();
+                                                                    $visibility = $salesHelper->hasProductUrl($productRepository->load($productId));
+                                                                    $urlProduct = $productData->getProductUrl();
+                                                                    $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                    $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int)$orderItem->getQtyOrdered(): '';
+                                                                    $resultString = '('.$qtyGift.$unitProduct.')';
+                                                            ?>
+                                                            <li>
+                                                                <img class="img-gift" src="<?= $actual_link.'/pub/media/amasty/amoptimizer_dump/icon/icon_gift.png' ?>"/>
+                                                                    <strong><?= __('Gift: ') ?></strong>
+                                                                    <span class="span-product">
+                                                                        <?php echo $nameproduct; ?> <?php echo $resultString; ?>
+                                                                        <?php if($visibility){?>
+                                                                            <a class="see-more-rules" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                                <span class="span-load-more"> <?= __('Load more details'); ?> &raquo;</span>
+                                                                            </a>
+                                                                        <?php }?>
+                                                                    </span>
+                                                            </li>
+                                                <?php }}}} ?>
+                                        </ul>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </td>
+                        <td class="td-quantity">
+                            <?php if (!$isPromoItem){ ?>
+                                <div class="product-price">
+                                    <div>
+                                        <span>
+                                            <?= (int)$orderItem->getQtyOrdered(); ?><?= $productunit ? ' '.$productunit : ''; ?>
+                                        </span>
+                                    </div>
+                                    <?php 
+                                        $getPrice = $getFormatPrice->emailFormatPrice($orderItem->getPrice());
+                                    ?>
+                                    <span class="price"><?= $getPrice; ?></span>
+                                    <?php
+                                        $priceOriginal = $orderItem->getOriginalPrice();
+                                        $priceFinal = $orderItem->getPrice();
+                                        if ($priceFinal < $priceOriginal) {
+                                            $savePercent = 100 - round(@($priceFinal / $priceOriginal) * 100);
+                                        } else {
+                                            $savePercent = 0;
+                                        }
+                                        if ($savePercent != 0) {
+                                    ?>
+                                        <div class="order-save-price">
+                                            <?php 
+                                                $priceOriginal = $getFormatPrice->emailFormatPrice($priceOriginal);
+                                            ?>
+                                            <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                            <span class="price-original"><?= $priceOriginal; ?></span>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if (!$isPromoItem){ ?>
+                                <div class="sales-price">
+                                    <?php 
+                                        $getRowTotal = $getFormatPrice->emailFormatPrice($orderItem->getRowTotal());
+                                    ?>
+                                    <?= $getRowTotal; ?>
+                                </div>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            <?php } ?>
+        </table>
+    </div>
+    <div class="list-product mobile">
+        <table>
+            <tr>
+                <th>
+                    <?php if($status == 'complete' || $status == 'finished' || $status == 'returned' || $status == 'returned_and_finished'): ?>
+                        <?= __("Delivered at"); ?>: <?= $dateCurrent; ?>
+                    <?php elseif($status == 'canceled'): ?>
+                        <?= __("Canceled Order"); ?>: <?= $updatedDate; ?>
+                    <?php else: ?>
+                        <?= __("Estimated delivery date"); ?>: <?= $maxDeliveryDates ? $estimatedDeliveryDate : __("Max Delivery Dates Contact"); ?>
+                    <?php endif; ?>
+                </th>
+            </tr>
+            <?php foreach($arrayMain as $orderItem) { ?>
+                <?php 
+                    $parentItemId = $orderItem->getParentItemId();
+                    $quoteItem = $objectManager->create('Magento\Quote\Model\Quote\Item')->load($orderItem->getQuoteItemId());
+                    $cartPromoOption = $quoteItem->getCartPromoOption();
+                ?>
+                <?php if (empty($parentItemId) && (empty($cartPromoOption) || $cartPromoOption == 'ampromo_cart' || $cartPromoOption == 'ampromo_spent')): ?>
+                    <?php
+                        $ruleIdsApplied = $orderItem->getAppliedRuleIds();
+                        $orderId = $orderItem->getOrderId();
+                        $quoteItemId = $orderItem->getQuoteItemId();
+                        $rulesApplied = $salesHelper->getRulesNameByOrderCTT($quoteItemId,$orderId,$ruleIdsApplied);
+                        $productImage = null;
+                        $_attributes = array();
+                        $product = $orderItem->getProduct();
+                        $productId = $orderItem->getProductId();
+                        $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+                        if ($productResource) {
+                            if ($childProd = current($orderItem->getChildrenItems())) {
+                                $productImage = $imageHelper->init($childProd->getProduct(), 'category_page_list')->getUrl();
+                            } else {
+                                $productImage = $imageHelper->init($productResource, 'category_page_list')->getUrl();
+                            }
+                        }
+                        if (!isset($productImage)) {
+                            $imageHelper = $objectManager->get(\Magento\Catalog\Helper\Image::class);
+                            $productImage = $imageHelper->getDefaultPlaceholderUrl('image');
+                        }
+
+                        // Get the Product Repository
+                        $productRepository = $objectManager->get('\Magento\Catalog\Model\ProductRepository')->getById($product->getId());
+                        $guaranteeInfo = $orderItem->getData('guarantee') ? $orderItem->getData('guarantee') :$productRepository->getData('guarantee');
+                        $productunit = $orderItem->getData('product_unit') ?$orderItem->getData('product_unit'):$productResource->getData('product_unit');
+                        // $quoteItem = $objectManager->create('Magento\Quote\Model\Quote\Item')->load($orderItem->getQuoteItemId());
+                        // $isPromoItem = $amPromoHelper->isPromoItem($quoteItem);
+                        // cart promo option
+                        $isPromoItem = $salesHelper->isPromoItemCTT($cartPromoOption);
+
+                        $messages_prefix = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('ampromo/messages/prefix');
+                        $longName =  $orderItem->getProductNameLong();
+                        $shortName = $productResource->getData('product_name_distributor');
+                        $shortName = $shortName ? $shortName : $longName;
+                        $shortNameStrong = "<strong>".$shortName."</strong>";
+                        $nameproduct = str_replace($shortName, $shortNameStrong, $longName);
+                        $attributesOption = array();
+                        if (isset($orderItem->getProductOptions()["info_buyRequest"]["super_attribute"])) {
+                            $attributesOption = $orderItem->getProductOptions()["info_buyRequest"]["super_attribute"];
+                        }
+                        if ($attributesOption) {
+                            foreach ($attributesOption as $key => $attr) {
+                                $_attr = $entityAttribute->load($key);
+                                $attributeCode = $_attr->getAttributeCode();
+                                $_attributes[$attributeCode] = $attr;
+                            }
+                        }
+                        $getProductUrl = $product->getProductUrl();
+                        if ($_attributes) {
+                            $params = '';
+                            foreach ($_attributes as $key => $value) {
+                                $params = $params . $key . '=' . $value . '&';
+                            }
+                            if ($params) {
+                                $params = substr($params, 0, -1);
+                                $getProductUrl = $getProductUrl . '#' . $params;
+                            }
+                        }
+                    ?>
+                    <tr>
+                        <td>
+                            <!-- Mobile View -->
+                            <!-- name product -->
+                            <?php if(!$isPromoItem){ ?>
+                                <div class="product-item-details-mobile clearfix">
+                                    <?php if ($productResource) :?>
+                                        <?php if ($salesHelper->hasProductUrl($productResource)) :?>
+                                            <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                <?= $orderItem->getProductNameLongHtml(); ?>
+                                            </a>
+                                        <?php else :?>
+                                            <?= $orderItem->getProductNameLongHtml(); ?>
+                                        <?php endif; ?>
+                                    <?php else :?>
+                                        <?= $orderItem->getProductNameLongHtml(); ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php } ?>
+                            <!-- Brand, Model -->
+                            <div class="brand-model-mobile clearfix">
+                                <?php if (!$isPromoItem){ ?>
+                                    <div class="product-item-merge-span">
+                                        <?php $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                            if ($productBrand) { ?>
+                                                <span class="span-mobile"><?php echo __('Brands: '); ?><?php echo $productBrand->getName(); ?></span>
+                                        <?php } ?>
+                                        <?php $productModel = $productResource->getData('model') ? $productResource->getData('model') :$orderItem->getData('model');
+                                            if ($productModel) { ?>
+                                                <span class="span-mobile"><?php echo __('Model: '); ?><?php echo $productModel; ?></span>
+                                        <?php } ?>
+                                    </div>
+                                    <!-- Guarantee -->
+                                    <?php if ($guaranteeInfo) { ?>
+                                        <span class="guaranteeInfo product-item-detail"><?php echo __('Guarantee: '); ?><?php echo $guaranteeInfo; ?></span>
+                                    <?php } ?>
+                                    <?php if ($attributesOption) { ?>
+                                        <div class="attributesOption">
+                                            <?php foreach($attributesOption as $key => $value): ?>
+                                                <?php 
+                                                    $productTypeInstance = $objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+                                                    $productAttributeOptions = $productTypeInstance->getConfigurableAttributesAsArray($productResource);
+                                                    $labelOptions = '';
+                                                    $valueOptions = '';
+                                                    foreach ($productAttributeOptions as $key_o => $value_o) {
+                                                        $tmp_option = $value_o['values'];
+                                                        if (count($tmp_option) > 0) {
+                                                            foreach ($tmp_option as $tmp) {
+                                                                if (($key_o == $key) && ($tmp['value_index'] == $value)) {
+                                                                    $labelOptions = $value_o['store_label'];
+                                                                    $valueOptions = $tmp['label'];
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                ?>
+                                                <?php if($labelOptions && $valueOptions): ?>
+                                                    <span class="white-space-option">
+                                                        <?= $labelOptions.': '.$valueOptions ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php } ?>
+                                <?php } ?>
+                            </div>
+                            <div class="product-item-photo mobile-view">
+                                <?php if ($salesHelper->hasProductUrl($productResource)) :?>
+                                    <a href="<?= $block->escapeUrl($getProductUrl) ?>" class="a-title" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" />
+                                        </div>
+                                    </a>
+                                <?php else :?>
+                                    <a class="a-title" title="<?= $block->escapeHtml($orderItem->getName()) ?>" target="_blank" tabindex="-1" class="product-item-photo">
+                                        <div class="img-box">
+                                            <img src="<?=$productImage?>" />
+                                        </div>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                            <?php if (!$isPromoItem){ ?>
+                                <div class="product-item-info for-mobile">
+                                    <!-- Product Price -->
+                                    <div class="product-price product-price-mobile">
+                                        <div>
+                                            <span>
+                                                <?= $block->escapeHtml(__('Qty')) ?>:
+                                                <?= (int)$orderItem->getQtyOrdered(); ?><?= $productunit ? ' '.$productunit : ''; ?>
+                                            </span>
+                                        </div>
+                                        <?php 
+                                            $getPrice = $getFormatPrice->emailFormatPrice($orderItem->getPrice());
+                                        ?>
+                                        <span class="price"><?= $getPrice; ?></span>
+                                        <?php
+                                            $priceOriginal = $orderItem->getOriginalPrice();
+                                            $priceFinal= $orderItem->getPrice();
+                                            if ($priceFinal < $priceOriginal) {
+                                                $savePercent = 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                                            } else {
+                                                $savePercent = 0;
+                                            }
+                                            if ($savePercent != 0) {
+                                        ?>
+                                            <div class="order-save-price">
+                                                <?php 
+                                                    $priceOriginal = $getFormatPrice->emailFormatPrice($priceOriginal);
+                                                ?>
+                                                <span class="save-percent">-<?= $savePercent; ?>%</span>
+                                                <span class="price-original"><?= $priceOriginal; ?></span>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                    <!-- Sales Price -->
+                                    <div class="sales-price price-mobile">
+                                        <span class="d-inline-block d-sm-none">
+                                            <?= $block->escapeHtml(__('Subtotal')) ?>:
+                                        </span>
+                                        <?php
+                                            $getRowTotal = $getFormatPrice->emailFormatPrice($orderItem->getRowTotal());
+                                        ?>
+                                        <?= $getRowTotal; ?>
+                                    </div>
+                                </div>
+                            <?php }else{ ?>
+                                <div class="product-item-info for-mobile">
+                                    <div class="rules-name-mobile">
+                                        <?= $nameRule ? '<strong>'.$nameRule.'</strong>': ''; ?>
+                                        <br>
+                                        <?php if ($salesHelper->hasProductUrl($productResource)) :?>
+                                            <a href="<?= $block->escapeUrl($getProductUrl) ?>" target="_blank" title="<?= $block->escapeHtml($orderItem->getName()) ?>">
+                                                <span><?= $orderItem->getData('product_name_short'); ?></span>
+                                            </a>
+                                        <?php else :?>
+                                            <span><?= $orderItem->getData('product_name_short'); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <!-- Cart Rules -->
+                            <?php if (!$isPromoItem){ ?>
+                                <div class="promotion-info promotion-info-mobile">
+                                    <ul class="rules-list">
+                                        <?php foreach ($rulesApplied as $key => $rules) { ?>
+                                            <?php if(!empty($rules['sku']) && count($rules['sku']) > 0){ ?>
+                                                    <?php foreach($rules['sku'] as $index => $sku){ ?>
+                                                        <?php 
+                                                            $productData = $productRepository->loadByAttribute('sku',$sku);
+                                                            if (!empty($productData)){
+                                                                $productId = $productData->getId();
+                                                                $nameproduct = $productData->getName();
+                                                                $visibility = $salesHelper->hasProductUrl($productRepository->load($productId));
+                                                                $urlProduct = $productData->getProductUrl();
+                                                                $unitProduct = $rules['unit_product'][$index] ? ' '.$rules['unit_product'][$index]: '';
+                                                                $qtyGift = $rules['qty'][$index] ? (int) $rules['qty'][$index] * (int)$orderItem->getQtyOrdered(): '';
+                                                                $resultString = '('.$qtyGift.$unitProduct.')';
+                                                        ?>
+                                                        <li>
+                                                            <img class="img-gift" src="<?= $actual_link.'/pub/media/amasty/amoptimizer_dump/icon/icon_gift.png' ?>"/>
+                                                            <strong><?= __('Gift: ') ?></strong>
+                                                            <span class="span-product">
+                                                                <?php echo $nameproduct; ?> <?php echo $resultString; ?>
+                                                                <?php if($visibility){?>
+                                                                    <a class="see-more-rules" href= '<?php echo $urlProduct; ?>' title="<?= $nameproduct ?>">
+                                                                        <span class="span-load-more"> <?= __('Load more details'); ?> &raquo;</span>
+                                                                    </a>
+                                                                <?php }?>
+                                                            </span>
+                                                        </li>
+                                            <?php }}}} ?>
+                                    </ul>
+                                </div>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            <?php } ?>
+        </table>
+    </div>
+<?php endif; ?>

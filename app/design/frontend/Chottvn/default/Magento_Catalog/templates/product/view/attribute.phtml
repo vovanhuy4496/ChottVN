@@ -1,0 +1,103 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Description
+ */
+?>
+<?php
+$_helper = $this->helper(Magento\Catalog\Helper\Output::class);
+$_product = $block->getProduct();
+
+if (!$_product instanceof \Magento\Catalog\Model\Product) {
+    return;
+}
+
+$_call = $block->getAtCall();
+$_code = $block->getAtCode();
+$_className = $block->getCssClass();
+$_attributeLabel = $block->getAtLabel();
+$_attributeType = $block->getAtType();
+$_attributeAddAttribute = $block->getAddAttribute();
+
+$renderLabel = true;
+// if defined as 'none' in layout, do not render
+if ($_attributeLabel == 'none') {
+    $renderLabel = false;
+}
+
+if ($_attributeLabel && $_attributeLabel == 'default') {
+    $_attributeLabel = $_product->getResource()->getAttribute($_code)->getStoreLabel();
+}
+if ($_attributeType && $_attributeType == 'text') {
+    $_attributeValue = ($_helper->productAttribute($_product, $_product->$_call(), $_code))
+        ? $_product->getAttributeText($_code)
+        : '';
+} else {
+    $_attributeValue = $_helper->productAttribute($_product, $_product->$_call(), $_code);
+}
+?>
+<?php if ($_attributeValue) :?>
+    <div class="product attribute <?= $block->escapeHtmlAttr($_className) ?>">
+        <?php if ($renderLabel) :?>
+            <strong class="type"><?= $block->escapeHtml($_attributeLabel) ?></strong>
+        <?php endif; ?>
+        <div class="value" <?= /* @noEscape */ $_attributeAddAttribute ?>>
+            <?php if ($_attributeAddAttribute): ?>
+                <p>
+                    <strong class="strong-short-description"><?= __('Salient Features') ?></strong>
+                </p>
+            <?php endif; ?>
+            <?= /* @noEscape */ $_attributeValue ?>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if ($_attributeAddAttribute == 'itemprop="description"'): ?>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+//product
+$product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');//get current product
+$product_price = $product->getPrice();
+// customer
+$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+$isLoggedIn = $customerSession->isLoggedIn();
+?>
+<?php 
+// check product type is simple, not is configurable
+if($product_price <= 0 && $_product->getTypeId() == 'simple'){
+?>
+    <!-- form contact khi gia lien he -->
+    <?php
+        echo $this->getLayout()
+        ->createBlock('Chottvn\StockAlert\Block\Stockalert')
+        ->setTemplate('Chottvn_StockAlert::stockalert.phtml')
+        ->setData([
+            'title' => __('Form Contact Price'),
+            'messager_success' =>  __('We will contact you for a quote soon'),
+            'title_fieldset' => __('Please leave your information, we will contact you for a quote'),
+            'flag' => 'contactquotes'
+        ])
+        ->toHtml();
+    ?>
+<?php }?>
+<!-- check customer login -->
+<?php if($isLoggedIn == true) :?>
+    <script type="text/javascript">
+        require([
+            'jquery'
+        ], function ($) {
+            $('input[name ="contact_name"]').prop("readonly",true);
+            $('input[name ="contact_phone_number"]').prop("readonly",true);
+            $('input[name ="contact_name"]').css("opacity","0.5");
+            $('input[name ="contact_phone_number"]').css("opacity","0.5");
+        });
+    </script>
+<?php endif; ?>
+<?php endif; ?>

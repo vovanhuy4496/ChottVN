@@ -1,0 +1,146 @@
+<div class="chottvn-ui-v2">
+    <div class="block block-send-otp block-form">
+        <div class="block-title">
+            <h1><span id="block-customer-login-heading" role="heading" aria-level="2"><i class="fas fa-user"></i> <?= __('Your account') ?></span></h1>
+        </div>
+        <div class="block-content" aria-labelledby="block-customer-login-heading">
+            <form class="form form-login" action="<?= $block->escapeUrl($block->getPostVerifyPhoneNumber()) ?>" method="post" id="login-form" data-mage-init='{"validation":{}}'>
+                <fieldset class="fieldset login" data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>">
+                    <input name="phone_number" type="hidden" id="phone_number" title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>" data-validate="{required:true}" value="<?= $block->getSignInPhone() ?>">
+                    <div class="field note">
+                        <label class="label send-announcement" for="auth_code" style="display: none;"><span><?= $block->escapeHtml(__('Please enter the verification code we just sent to your phone number %1', $block->getSignInPhone())) ?></span></label>
+                        <label class="label resend-announcement" for="auth_code" style="display: none;"><span><?= $block->escapeHtml(__('Please input OTP code we have just sent to your phone number', $block->getSignInPhone())) ?></span></label>
+                    </div>
+                    <div class="field required">
+                        <div class="control">
+                            <input name="auth_code" type="text" class="input-text" id="auth_code" placeholder="<?= $block->escapeHtmlAttr(__('Input Authenticate Code')) ?>" title="<?= $block->escapeHtmlAttr(__('Authenticate Code')) ?>" data-validate="{required:true}">
+                        </div>
+                    </div>
+                    <div class="resend-section">
+                        <a class="resend" href="javascript:;" id="send_otp" style="display: none;">
+                            <div class="resend-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <span class="resend-text"><?= $block->escapeHtml(__('Send Authenticate Code')) ?></span>
+                        </a>
+                        <a class="resend" href="javascript:;" id="resend_otp" style="display: none;">
+                            <div class="resend-icon">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <span class="resend-text"><?= $block->escapeHtml(__('Send Authenticate Code')) ?></span>
+                        </a>
+                        <div class="resend" id="count_down" style="display: none;">
+                            <div class="resend-icon">
+                            </div>
+                            <span class="resend-text"><?= $block->escapeHtml(__('Send Authenticate Code')) ?></span>
+                        </div>
+                    </div>
+                    <?= $block->getChildHtml('form_additional_info') ?>
+                    <div class="actions-toolbar">
+                        <div class="primary">
+                            <button type="submit" class="action login primary" name="send" id="send">
+                                <span><?= $block->escapeHtml(__('Complete Register')) ?></span>
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    require([
+        'Magento_Ui/js/modal/alert',
+        'jquery'
+    ], function(alert, $) {
+        var sendOTPUrl = window.location.origin + "<?= $block->getAPISendOTPByPhone(); ?>";
+        var timeToResendOTP = <?= $block->getTimeToResendOTP(); ?>;
+        var effectiveTime = <?= $block->getEffectiveTime(); ?>;
+
+        function intervalManager(flag, func, time) {
+            if (flag) {
+                var x = setInterval(func, time);
+            } else {
+                clearInterval(x);
+            }
+        }
+
+        function countDown() {
+            timeToResendOTP -= 1;
+            displayCountDown(timeToResendOTP);
+            if (timeToResendOTP <= 0) {
+                intervalManager(false);
+                hideCountDown();
+                $("#resend_otp").show();
+            }
+        }
+
+        function hideCountDown() {
+            $(".resend-announcement").hide();
+            $(".send-announcement").show();
+            $("#count_down").hide();
+        }
+
+        function showCountDown() {
+            $(".resend-announcement").show();
+            $(".send-announcement").hide();
+            $("#resend_otp").hide();
+            $("#send_otp").hide();
+            $("#count_down").show();
+        }
+
+        function displayCountDown(secs) {
+            let min = Math.floor(secs / 60);
+            let sec = secs % 60;
+            let display_sec = (sec < 10) ? "0" + sec : sec;
+            let time = min + ":" + display_sec;
+            $("#count_down .resend-icon").html(time);
+        }
+
+        function sendOTP() {
+            timeToResendOTP = effectiveTime;
+            showCountDown();
+            intervalManager(true, countDown, 1000);
+
+            $.ajax({
+                url: sendOTPUrl,
+                type: "post",
+                contentType: "application/json",
+                dataType: "json",
+                showLoader: true,
+                data: JSON.stringify({
+                    phoneNumber: $('#phone_number').val()
+                }),
+                success: function(result) {
+                    let rs = JSON.parse(result);
+                    alert({
+                        title: "<?= $block->escapeHtml(__('Send Authenticate Code')) ?>",
+                        content: rs.message,
+                        actions: {
+                            always: function() {}
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            if (timeToResendOTP > 0) {
+                intervalManager(true, countDown, 1000);
+                showCountDown();
+            } else {
+                hideCountDown();
+                $("#send_otp").show();
+            }
+        });
+
+        $('#resend_otp').click(function() {
+            sendOTP();
+        });
+
+        $('#send_otp').click(function() {
+            sendOTP();
+        });
+    });
+</script>

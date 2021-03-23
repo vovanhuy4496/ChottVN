@@ -1,0 +1,22 @@
+<div id="customer-info" class="checkout-shipping-address amcheckout-shipping-address" data-bind="fadeVisible: visible()">
+    <div class="step-title">
+        <i class="fas fa-user"></i>
+        <span class="amcheckout-title" data-amcheckout-js="step-title" data-bind="i18n: getNameInfoCustomer()" data-role="title"></span>
+    </div>
+    <div id="customer-checkout-step-info" class="step-content amcheckout-content" data-amcheckout-js="step-content" data-role="content" data-bind="mageInit: {'checkoutCollapsibleSteps': {}}">
+        <div class="amcheckout-wrapper">
+            <div class="fieldset address">
+                <!-- ko foreach: getRegion('customer-info') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="delivery-to-other-customer fieldset address">
+                <!-- ko foreach: getRegion('delivery-to-other-customer') -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+</div>

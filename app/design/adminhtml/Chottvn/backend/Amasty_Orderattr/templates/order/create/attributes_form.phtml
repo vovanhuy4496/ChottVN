@@ -1,0 +1,43 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Orderattr
+ */
+?>
+<?php
+/** @var \Amasty\Orderattr\Block\Adminhtml\Order\Create\Form\Attributes $block */
+?>
+</section><section id="amasty-order-attributes" class="admin__page-section amasty-order-attributes">
+<div class="admin__page-section-title">
+    <span class="title"><?= $block->escapeHtml(__('Order Attributes')); ?></span>
+    <div class="actions"></div>
+</div>
+<div id="order-attributes-fields"
+     class="admin__page-section-content">
+        <?= /** @escapeNotVerified */ $block->getFormHtml();?>
+</div>
+
+<script>
+    require([
+        "jquery",
+        "mage/calendar",
+        "mage/adminhtml/wysiwyg/tiny_mce/setup"
+    ], function($){
+        $('.date-calendar').each(function(key, item) {
+            var calendar = $(item).data('mage-init');
+            if(calendar) {
+                $(item).calendar(calendar.calendar);
+            }
+        });
+        var wysiwygGuarantee = new wysiwygSetup('guarantee_info', {
+            'width':'100%',  // defined width of editor
+            'height':'200px', // height of editor
+            'plugins':[{'name':'image'}], // for image
+            'tinymce4':{'toolbar':'formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link table charmap','plugins':'advlist autolink lists link charmap media table contextmenu paste code table'
+            }
+        });
+        wysiwygGuarantee.setup('exact');
+        
+    });
+</script>

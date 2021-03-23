@@ -1,0 +1,195 @@
+.cms-home{
+	.page-title{
+		display: none;
+	}
+	.top-banner{
+		@media (max-width: 425px){
+			padding: 0;
+		}
+	}
+}
+.cms-index-index {
+	.messages {
+		display: none;
+	}
+	.mfp-content{
+		.message {
+			display: block;
+		}
+	}
+}
+
+// Page Bottom
+// Service Block
+.service-block {
+  padding-bottom: 15px;
+
+  .service-block-wrap {
+    width: 100%;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    border: solid 1px @color_theme_line;
+
+    .service-item {
+      -ms-flex: 0 0 25%;
+      flex: 0 0 25%;
+      max-width: 25%;
+      text-align: center;
+      padding: 10px 0px;
+
+      .service-icon {
+        float: none;
+        display: inline-block;
+      }
+
+      .service-text {
+        float: none;
+        display: inline-block;
+        position: relative;
+
+        .title {
+          font-size: 14px;
+          padding: 0px 10px 0px 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .service-block {
+    //padding-bottom: 0px;
+
+    .service-block-wrap {
+      .service-item {
+        .service-icon {
+          display: block;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 767px) {
+  .service-block {
+    //padding-bottom: 0px;
+
+    .service-block-wrap {
+      .service-item {
+        .service-icon {
+          display: block;
+        }
+        .service-text {
+          display: block;
+          .title {
+            font-size: 14px;
+            padding: 0px 10px 0px 10px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 375px) {
+  .service-block {
+    //padding-bottom: 0px;
+
+    .service-block-wrap {
+      .service-item {
+        .service-icon {
+          display: block;
+        }
+        .service-text {
+          display: block;
+          .title {
+            font-size: 12px;
+            padding: 0px 10px 0px 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.page-bottom {
+  padding: 15px 0px 0px 0px;
+  margin: 0px;
+
+  .content {
+    .block, .block-static-block.widget {
+      margin-bottom: 0px;
+    }
+    .block-static-block {
+      .service-block {
+        background: @white;
+        padding: 0px 0px 30px 0px;
+        margin: 0px;
+        color: @color_theme_secondary;
+
+        .service-item {
+       	  padding: 0px;
+       	  margin: 30px 0px 0px 0px;
+          text-align: center;
+
+          .service-icon {
+      	    height: 60px;
+          }
+        }
+
+        .service-text {
+          padding: 15px 0px 0px 0px;
+
+          h3 {
+      	    font-size: 12px;
+      	    font-weight: 600;
+      	    text-transform: uppercase;
+      	    margin: 0px;
+      	    padding: 0px 0px 10px 0px;
+      	  }
+
+      	  p {
+      	    font-size: 12px;
+      	    line-height: 18px;
+   	        margin: 0px;
+            padding: 0px;
+
+            span {
+      	      color: @red;
+      	    }
+      	  }
+
+          @media only screen and (min-width: 768px) {
+      		  h3 {
+      	      font-size: 14px;
+            }
+   	        p {
+   	          font-size: 13px;
+   	        }
+   			  }
+        }
+      }
+    }
+  }
+}
+
+// Messages
+div[role='alert'].messages div {
+  margin: 0px auto;
+  @media (min-width: 1200px) {
+		width: 1200;
+    max-width: 1200;
+	}
+	@media (max-width: 1199px) and (min-width: 992px){
+	  max-width: 970px;
+	}
+	@media (max-width: 991px) and (min-width: 768px){
+    max-width: 750px;
+	}
+}
+
+.chottvn-ui-v2 {
+  div[role='alert'].messages div {
+    padding-left: 14px;
+  }
+}

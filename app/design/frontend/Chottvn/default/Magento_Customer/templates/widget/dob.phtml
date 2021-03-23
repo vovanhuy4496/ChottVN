@@ -1,0 +1,86 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Widget\Dob $block */
+
+/*
+<?= $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob')
+   ->setDate($block->getCustomer()->getDob())
+   ->toHtml() ?>
+
+For checkout/onepage/billing.phtml:
+
+<?= $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Dob')
+   ->setDate($block->getCustomer()->getDob())
+   ->setFieldIdFormat('billing:%s')
+   ->setFieldNameFormat('billing[%s]')
+   ->toHtml() ?>
+
+NOTE: Regarding styles - if we leave it this way, we'll move it to boxes.css. Alternatively we could calculate widths
+automatically using block input parameters.
+*/
+
+$fieldCssClass = 'field date field-' . $block->getHtmlId();
+// $fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+
+<div class="<?= $block->escapeHtmlAttr($fieldCssClass) ?>">
+    <label class="label custom-width-label" for="<?= $block->escapeHtmlAttr($block->getHtmlId()) ?>"><span><?= $block->escapeHtml($block->getStoreLabel('dob')) ?></span></label>
+    <div class="control custom-width-control customer-dob dob-datepicker">
+        <?= $block->getFieldHtml() ?>
+        <?php if ($_message = $block->getAdditionalDescription()) : ?>
+            <div class="note"><?= $block->escapeHtml($_message) ?></div>
+        <?php endif; ?>
+    </div>
+</div>
+<style>
+    #dob-error{
+        display: none !important;
+    }
+</style>
+<script>
+    require([
+        "jquery",
+        'mage/translate',
+        "mage/calendar"
+    ], function($,$t){
+        $("#dob").attr("placeholder", "Chọn ngày sinh");
+        $("#dob").on("change", function() {
+            dateString = $(this).val();
+            age = getAge(dateString);
+            
+            if (age < 18) {
+                $(".error-dob-datepicker").remove();
+                $.toaster({ title: $t('Notice'), priority: 'danger', message: '<?php echo __('Your age must be 18 years or older.') ?>' });
+                // $(".dob-datepicker").after('<div class="error-dob-datepicker">Độ tuổi của bạn phải lớn hơn hoặc bằng 18 tuổi.</div>');
+                $(".actions-toolbar .primary button.save").attr("disabled", true);
+            } else {
+                $(".error-dob-datepicker").remove();
+                $(".actions-toolbar .primary button.save").attr("disabled", false);
+            }
+        });
+
+        function toDate(dateStr) {
+            var parts = dateStr.split("/");
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        function getAge(dateString) {
+            var birthDate = toDate(dateString);
+            var today = new Date();
+            var age = today.getFullYear() - birthDate.getFullYear();
+
+            var m = today.getMonth() - birthDate.getMonth();
+
+            var d = today.getDate() - birthDate.getDate();
+
+            if (age === 18 && m === 0 && d < 0) {
+                age--;
+            }
+            return age;
+        }
+    });
+</script>

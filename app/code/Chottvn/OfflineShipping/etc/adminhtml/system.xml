@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="carriers">
+            <group id="tablerate">
+                <field id="handling_over_weight_fee" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Handling Over Weight Fee</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <comment>unit kilogram (kg)</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

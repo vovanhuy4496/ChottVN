@@ -1,0 +1,14 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $order = $block->getOrder();
+    $infoBlock = $objectManager->get('Chottvn\Sales\Rewrite\Magento\Sales\Model\Order\Email\Sender\OrderSender');
+?>
+<td class="block-details">
+    <?= $infoBlock->totalSummary($order); ?>
+</td>
+<td class="block-details">
+    <?= $infoBlock->billingInvoiceInfo($order); ?>
+</td>
+<td class="block-details">
+    <?= $infoBlock->formatAddress($order); ?>
+</td>

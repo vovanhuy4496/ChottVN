@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-sales-rule",
+    "description": "ChottVN Sales Rule",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tuan Nguyen",
+            "email": "tuan.nguyen@ecepvn.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Chottvn\\SalesRule\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

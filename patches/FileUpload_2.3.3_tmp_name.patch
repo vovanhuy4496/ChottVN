@@ -1,0 +1,12 @@
+diff --git a/vendor/magento/framework/File/Uploader.php b/vendor/magento/framework/File/Uploader.php
+index c0126acf70..785262c7d3 100644
+--- a/vendor/magento/framework/File/Uploader.php
++++ b/vendor/magento/framework/File/Uploader.php
+@@ -565,7 +565,8 @@ class Uploader
+     private function _setUploadFileId($fileId)
+     {
+         if (is_array($fileId)) {
+-            $this->validateFileId($fileId);
++            //Hotfix: diable validation https://github.com/magento/magento2/issues/25835
++            //$this->validateFileId($fileId);
+             $this->_uploadType = self::MULTIPLE_STYLE;

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<page layout="admin-1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <link src="Chottvn_Inventory::css/styles.css"/>
+    </head>
+	<body>
+		<referenceContainer name="content">
+			<block class="Chottvn\Affiliate\Block\Adminhtml\Calculate\AffiliateReward" name="calculate_affiliate_reward" template="Chottvn_Affiliate::calculate_affiliate_reward/index.phtml"/>
+		</referenceContainer>
+	</body>
+</page>

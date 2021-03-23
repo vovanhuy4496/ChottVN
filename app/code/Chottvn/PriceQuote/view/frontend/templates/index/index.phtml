@@ -1,0 +1,443 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * PriceQuote Index template
+ *
+ * @var $block \Magento\PriceQuote\Block\Index\Index
+ */
+
+$items = $block->getItems();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+$reviewFactory = $objectManager->create('Magento\Review\Model\Review');
+$storeId = $storeManager->getStore()->getId();
+$saleRuleFactory = $objectManager->create('Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory');
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+$productBrandHelper = $this->helper('Ves\Brand\Helper\ProductBrand');
+$amPromoHelper = $this->helper('Amasty\Promo\Helper\Item');
+$detectMobile = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+$blockRules = $block->getLayout()->createBlock('Chottvn\Frontend\Block\Rules');
+?>
+
+<?php
+// Cart - items
+if ($block->getItemsCount() > 0) {
+?>
+<div class="page-title-wrapper cart">
+  <h1 class="page-title"><?= __("Cart"); ?> <span class="page-title-sub">(<?= $block->getItemsCount() ?> <?= $block->getItemsCount() > 1 ? __("products") : __("product") ?>)</span></h1>
+</div><!-- ./cart-title -->
+
+<div class="row pt-2">
+
+	<div class="col-sm-8 cart-items">
+		<form action="<?= $block->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>"
+          method="post"
+          id="form-validate"
+          data-mage-init='{"Magento_Checkout/js/action/update-shopping-cart":
+              {"validationURL" : "<?= $block->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>",
+              "updateCartActionContainer": "#update_cart_action_container"}
+          }'
+          class="form form-cart">
+    	<?= $block->getBlockHtml('formkey') ?>
+    	<div class="row cart-item-head">
+            <div class="col-sm-8 item-head">
+
+            </div>
+            <div class="col-sm-2 hidden-xs item-head p-l-r" >
+                <?= $block->escapeHtml(__('Qty')) ?>
+            </div>
+            <div class="col-sm-2 hidden-xs text-right item-head">
+                <?= $block->escapeHtml(__('Subtotal')) ?>
+            </div><!-- /.cart-item-head -->
+    	</div>
+
+    	<?php foreach ($block->getItems() as $item) :?>
+    		<?php
+                $product = $item->getProduct();
+                $productResource = $objectManager->create('Magento\Catalog\Model\Product')->load($product->getId());
+                $guaranteeInfo = $productResource->getData('guarantee');;
+
+                $reviewFactory->getEntitySummary($productResource, $storeId);
+                $ratingSummary = $productResource->getRatingSummary()->getRatingSummary();
+                $ratingCount = $productResource->getRatingSummary()->getReviewsCount();
+
+                // $ruleIdsApplied = $item->getAppliedRuleIds();
+                // $rulesApplied = $saleRuleFactory->create()->addFieldToFilter('rule_id', array('in' => $ruleIdsApplied) )->addFieldToSelect('name');
+                $cartRuleNames = $blockRules->getCartRuleByProduct($product);
+				        $catalogRuleNames = $blockRules->getCatalogRuleByProduct($product);
+				        $ruleNames = array_merge($cartRuleNames, $catalogRuleNames);
+
+                $productImage = $imageHelper->init($item->getProduct(), 'cart_page_product_thumbnail')->getUrl();
+
+                $isPromoItem = $amPromoHelper->isPromoItem($item);
+            ?>
+            <div class="row cart-item-body">
+            	<div class="col-sm-8 item-body clearfix">
+                <?php if ($detectMobile->isMobile() == true && $detectMobile->isTablet() == false) { ?>
+                    <!-- Mobile View -->
+                    <div class="product-item-details-mobile clearfix">
+                        <span class="product-item-name">
+                          <?= $isPromoItem ? __("Gift")." - " : "" ?>
+                          <?= $item->getName(); ?>
+                        </span>
+                    </div>
+                    <!-- Brand, Model -->
+                    <div class="brand-model-mobile clearfix">
+                        <div class="brand-name">
+                    <?php
+                        $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                            if ($productBrand ){
+                        ?>
+                            <span><?php echo __('Brands: '); ?></span>
+                            <span class="name"><?php echo $productBrand->getName(); ?></span>
+                    <?php } ?>
+                        </div>
+                        <div class="model-name">
+                            <span class="label"><?php echo __('Model: '); ?></span>
+                            <span class="name"><?php echo $productResource->getData('model'); ?></span>
+                        </div>
+                    </div>
+                    <div class="product-item-photo mobile-view">
+                        <div class="img-box">
+                            <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($item->getName()) ?>" />
+                        </div>
+                    </div>
+                    <div class="product-item-info">
+                        <!-- Reviews -->
+                        <?php //if ($ratingSummary) :?>
+                        <div class="rating-summary">
+                             <div class="rating-result" title="<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                 <span style="width:<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                     <span>
+                                         <span itemprop="ratingValue"><?= $block->escapeHtml($ratingSummary); ?></span>% of <span itemprop="bestRating">100</span>
+                                     </span>
+                                 </span>
+                             </div>
+                             <?= $block->escapeHtml($ratingCount) ?>&nbsp;<span><?php if ($ratingCount == 0){
+                                    echo __("No review on product");
+                                }else if ($ratingCount == 1){
+                                    echo $block->escapeHtml(__('review turn'));
+                                }else{
+                                    echo $block->escapeHtml(__('review turns'));
+                                }
+                                ?></span>
+                         </div>
+                        <?php //endif;?>
+                        <!-- Cart Rules -->
+                        <div class="promotion-info">
+                            <ul class="rules-list">
+                                <?php foreach ($ruleNames as $rule) {
+                                    echo '<li><i class="fas fa-gift"></i> <span>'.$rule.'</span></li>';
+                                } ?>
+                            </ul>
+                        </div>
+                        <!-- Product Price -->
+                        <div class="product-price">
+                            <span class="d-inline-block d-sm-none" >
+                                <?= $block->escapeHtml(__('Qty')) ?>:&nbsp;
+                            </span>
+                            <span class="quantity"><?= (int) $item->getQty();  ?></span>
+                            <br/>
+                            <?= $block->formatPrice($item->getPrice());  ?>
+                            <?php
+                                $priceOriginal = $item->getOriginalPrice();
+                                $priceFinal= $item->getPrice();
+                                $savePercent = ($priceOriginal == 0) ? 0 : 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                                if ($savePercent != 0) {
+                            ?>
+                            <div class="order-save-price">
+                                <span class="price-original"><?= $block->formatPrice($priceOriginal); ?></span>
+                                <span class="save-percent">-<?= $savePercent; ?>%</span>
+                            </div>
+                          <?php } ?>
+                        </div>
+                        <?php if($isPromoItem){ ?>
+                          <div class="message-gift">
+                            <i class="fas fa-gift"></i> <?= $item->getMessage(); ?>
+                          </div>
+                        <?php } ?>
+                        <!-- Sales Price -->
+                        <div class="sales-price">
+                            <span class="d-inline-block d-sm-none">
+                                <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                            </span>
+                            <?= $block->formatPrice($item->getRowTotal());  ?>
+                        </div>
+                        <!-- Guarantee -->
+                        <div class="guarantee-info">
+                            <span class="label"><?php echo __('Guarantee: '); ?></span>
+                            <span class="name"><?php echo $guaranteeInfo; ?></span>
+                        </div>
+                    </div>
+                <?php } else { ?>
+                    <!-- Desktop View -->
+                    <div class="product-item-photo">
+                        <div class="img-box">
+                            <img src="<?=$productImage?>" alt="<?= $block->escapeHtml($item->getName()) ?>" />
+                        </div>
+                    </div>
+                    <div class="product-item-info">
+                        <div class="product-item-details">
+                            <span class="product-item-name">
+                              <?= $isPromoItem ? __("Gift")." - " : "" ?>
+                              <?= $item->getName(); ?>
+                            </span>
+                        </div>
+                        <!-- Brand, Model -->
+                        <div class="brand-model clearfix">
+                            <div class="brand-name">
+                        <?php
+                            $productBrand = $productBrandHelper->getFirstBrandByProduct($product);
+                                if ($productBrand ){
+                            ?>
+                                <span><?php echo __('Brands: '); ?></span>
+                                <span class="name"><?php echo $productBrand->getName(); ?></span>
+                        <?php } ?>
+                            </div>
+                            <div class="model-name">
+                                <span class="label"><?php echo __('Model: '); ?></span>
+                                <span class="name"><?php echo $productResource->getData('model'); ?></span>
+                            </div>
+                        </div>
+                        <!-- Reviews -->
+                        <?php // if ($ratingSummary) :?>
+                        <div class="rating-summary">
+                             <div class="rating-result" title="<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                 <span style="width:<?= $block->escapeHtmlAttr($ratingSummary); ?>%">
+                                     <span>
+                                         <span itemprop="ratingValue"><?= $block->escapeHtml($ratingSummary); ?></span>% of <span itemprop="bestRating">100</span>
+                                     </span>
+                                 </span>
+                             </div>
+                             <span class="rating-label">
+                             <?php if ($ratingCount == 0) {
+                               echo __('No review on product');
+                             } else {
+                               echo __('Have %1 reviews', $ratingCount);
+                             }
+                             ?>
+                             </span>
+                             <!-- <?php echo __('Have %1 reviews', $block->getReviewsCount()); ?>
+                             &nbsp;<?= $block->escapeHtml($ratingCount) . ' ' ?><span class="rating-label"><?php if ($ratingCount == 0){
+                                    echo __("No review on product");
+                                }else if ($ratingCount == 1){
+                                    echo $block->escapeHtml(__('review turn'));
+                                }else{
+                                    echo $block->escapeHtml(__('review turns'));
+                                }
+                                ?></span> -->
+                         </div>
+                        <?php //endif;?>
+                        <!-- Cart Rules -->
+                        <div class="promotion-info">
+                            <ul class="rules-list">
+                                <?php foreach ($ruleNames as $rule) {
+                                    echo '<li><i class="fas fa-gift"></i> <span>'.$rule.'</span></li>';
+                                } ?>
+                            </ul>
+                        </div>
+                        <!-- Guarantee -->
+                        <div class="guarantee-info">
+                            <span class="label"><?php echo __('Guarantee: '); ?></span>
+                            <span class="name"><?php echo $guaranteeInfo; ?></span>
+                        </div>
+                    </div>
+                <?php } ?>
+                </div>
+            	<div class="col-sm-2 hidden-xs item-body p-l-r">
+                    <div class="product-price">
+                          <span class="d-inline-block d-sm-none" >
+                              <?= $block->escapeHtml(__('Qty')) ?>:&nbsp;
+                          </span>
+                          <span class="quantity"><?= (int) $item->getQty();  ?></span>
+                          <br/>
+                          <?= $block->formatPrice($item->getPrice());  ?>
+                          <?php
+                              	$priceOriginal = $productResource->getPrice();
+                              	$priceFinal= $item->getPriceInclTax();
+
+                              	$savePercent = ($priceOriginal == 0) ? 0 : 100 - round(@($priceFinal / $priceOriginal ) * 100);
+                              	if ($savePercent != 0) {
+                          ?>
+                          <div class="order-save-price">
+                              <span class="price-original"><?= $block->formatPrice($priceOriginal); ?></span>
+                              <span class="save-percent">-<?= $savePercent; ?>%</span>
+                          </div>
+                        <?php } ?>
+                    </div>
+                    <?php if($isPromoItem){ ?>
+                      <div class="message-gift">
+                        <i class="fas fa-gift"></i> <?= $item->getMessage(); ?>
+                      </div>
+                    <?php } ?>
+                </div>
+                <div class="col-sm-2 hidden-xs text-right item-body">
+                    <div class="sales-price">
+                        <span class="d-inline-block d-sm-none">
+                            <?= $block->escapeHtml(__('Subtotal')) ?>:&nbsp;
+                        </span>
+                        <?= $block->formatPrice($item->getRowTotal());  ?>
+                    </div>
+                </div>
+        	</div><!-- /.cart-item-body -->
+        <?php endforeach ?>
+
+
+    	<!-- <div class="cart main actions clearfix mt-3">
+	        <?php if ($block->getContinueShoppingUrl()) :?>
+	            <a class="action continue"
+	               href="<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>"
+	               title="<?= $block->escapeHtml(__('Continue Shopping')) ?>">
+	                <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
+	            </a>
+	        <?php endif; ?>
+	        <button type="submit"
+	                name="update_cart_action"
+	                data-cart-item-update=""
+	                value="update_qty"
+	                title="<?= $block->escapeHtml(__('Update Shopping Cart')) ?>"
+	                class="action update float-right">
+	            <span><?= $block->escapeHtml(__('Update Shopping Cart')) ?></span>
+	        </button>
+	        <input type="hidden" value="" id="update_cart_action_container" data-cart-item-update=""/>
+	    </div> -->
+        <div class="cart main actions-secondary mt-3">
+	      <p>
+	          <?= $block->escapeHtml(
+	          __(
+	              "Please select <a href='%1'>shipping address</a> to get estimated delivery time and shipping fee.",
+	              $block->escapeUrl($block->getCheckoutUrl())
+	              ),
+	              ['a']
+	          )?>
+	      </p>
+	    </div>
+    	</form>
+	</div><!-- ./cart-items -->
+	<div class="col-sm-4 cart-totals">
+		<p class="cart-totals-title"><?= $block->escapeHtml(__('Your cart')) ?></p>
+		<div class="card">
+        <!-- <div class="card-header"></div> -->
+        <div class="card-body">
+            <p class="totals sub"><?= $block->escapeHtml(__('Subtotal')) ?>: <span class="amount float-right"><?= $block->formatPrice(
+            	$block->getSubtotal()
+            	);  ?></span></p>
+            <p class="totals"><?= $block->escapeHtml(__('Saving amount')) ?>: <span class="amount float-right"><?= $block->formatPrice(
+            	$block->getDiscountAmount()
+            	); ?></span></p>
+            <p class="total shipping"><?= $block->escapeHtml(__('Shipping & Handling')) ?>: <span class="amount float-right"><?= $block->formatPrice(
+            	$block->getShippingAmount()
+            	); ?></span></p>
+        </div><!-- ./card-body -->
+        <div class="card-footer bg-transparent">
+            <p class="totals grand clearfix"><?= $block->escapeHtml(__('Grand Total')) ?>: <span class="amount float-right"><?= $block->formatPrice($block->getGrandTotal());  ?><span class="vat-info">
+               <?php echo __('Include VAT') ?>
+           </span></span></p>
+        </div><!-- ./card-footer -->
+    </div>
+    <div class="cart-methods pt-3">
+		    <button type="button" data-toggle="modal" data-target="#modal-price-quote-request" data-backdrop="static" data-keyboard="false" title="<?= __("View price quote") ?>" class="action primary view-cart w-100">
+		        <span><?= __("View price quote") ?></span>
+		    </button>
+    </div>
+    <div class="cart-totals-sencondary pt-3">
+      	<?= $this->getLayout()
+	        ->createBlock('Magento\Cms\Block\Block')
+	        ->setBlockId('support-phone-number')
+	        ->toHtml(); ?>
+    </div>
+	</div><!-- ./cart-totals -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-price-quote-request" tabindex="-1" role="dialog" aria-labelledby="modal-price-quote-request" aria-hidden="true"
+	style="z-index: 20000;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    	<form action="<?= $block->escapeUrl($block->getUrl('price_quote/request/create')) ?>"
+          method="post"
+          id="form-validate"
+          class="form form-price-quote"
+          target="_blank">
+      <?= $block->getBlockHtml('formkey') ?>
+	      <!-- <div class="modal-header">
+	        <h5 class="modal-title"></h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div> -->
+	      <div class="modal-body">
+	        <p class="greeting">
+	        	<?= __("Hello, please input company info to receive price quote") ?>
+	        </p>
+	        <div class="form-group field required">
+			    <label for=""><?= __("Company") ?></label>
+			    <input type="text" class="form-control" aria-describedby="company-help" placeholder="<?= __("Input company name") ?>" name="company_name" required>
+			    <!-- <small id="company-help" class="form-text text-muted"></small> -->
+			</div>
+			<div class="form-group field required">
+			    <label for=""><?= __("Address") ?></label>
+			    <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Input address") ?>" name="company_address" required>
+			</div>
+			<div class="form-group field required">
+			    <label for=""><?= __("VAT number") ?></label>
+			    <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Input VAT number") ?>" name="company_vat_number" required>
+			</div>
+			<div class="form-group field">
+			    <label for=""><?= __("Contact/Price quote receiver info") ?></label>
+			    <input type="text" class="form-control" aria-describedby="" placeholder="<?= __("Full name") ?>" name="contact_name">
+			    <input type="tel" class="form-control mt-2" aria-describedby="" placeholder="<?= __("Phone number") ?>" name="contact_phone_number">
+			    <input type="email" class="form-control mt-2" aria-describedby="" placeholder="<?= __("Email") ?>" name="contact_email">
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	      	 <button type="button" class="action cancel" data-dismiss="modal"><?= __("Cancel") ?></button>
+	        <button type="submit" class="action topricequote continue-shopping"><?= __("View price quote") ?></button>
+	      </div>
+	    </form>
+    </div>
+  </div>
+</div>
+
+<?php
+// Cart - empty
+} else{
+?>
+
+<div class="cart-empty">
+    <div class="page-title-wrapper cart">
+        <h1 class="page-title"><?= __("Cart"); ?> <span class="page-title-sub">(0 <?= __("product") ?>)</span></h1>
+    </div><!-- ./cart-title -->
+    <?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+    <div class="cart-empty-notes">
+        <p>
+            <i class="fas fa-cart-plus cart-icon"></i>
+        </p>
+        <p>
+            <?= $block->escapeHtml(__('Shopping cart is empty')) ?>
+        </p>
+        <p class="continue-shopping">
+            <a href="<?= $block->escapeUrl($block->getContinueShoppingUrl()); ?>"
+                title="<?= $block->escapeHtml(__('Continue shopping')); ?>"
+                class="action tocart continue-shopping primary btn-action btn-continue-shopping">
+                <?= $block->escapeHtml(__('Continue shopping')); ?>
+            </a>
+        </p>
+    </div>
+    <?= $block->getChildHtml('shopping.cart.table.after') ?>
+</div>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Magento_Checkout/js/empty-cart": {}
+    }
+}
+</script>
+<?php
+}
+?>

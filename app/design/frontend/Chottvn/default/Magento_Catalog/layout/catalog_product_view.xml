@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>    
+        <css src="js/readmore.js" />
+    </head>
+    <body>
+        <referenceBlock name="breadcrumbs" remove="true" />
+        <referenceContainer name="page.top">
+            <block class="Chottvn\Sales\Block\Evercrumbs" name="evercrumbs" as="evercrumbs" template="Chottvn_Sales::evercrumbs.phtml" />
+        </referenceContainer>
+        <referenceContainer name="content">
+            <container name="div.center.prod.detail"
+                htmlTag="div"
+                htmlClass="row col-center-prod-detail"
+                before="-">
+            </container>
+        </referenceContainer>
+
+        <referenceContainer name="product.info.type">
+            <block class="Magento\Catalog\Block\Product\View\Type\Simple" name="product.info.simple" as="product_type_data" template="Magento_Catalog::product/view/type/default.phtml"/>
+        </referenceContainer>
+
+        <referenceContainer name="product.info.main" htmlId="product-info-main" htmlClass="col-12 col-md-6 order-md-2 product-info-main">
+            <!-- ten sp/thuong hieu/model/ -->
+            <container name="category.view.container" htmlTag="div" htmlClass="brand-info" before="-">
+                <block class="Ves\Brand\Block\Product\View" name="product.info.brand"
+                    before="-" template="Magento_Catalog::product/view/brand.phtml"
+                    ifconfig="vesbrand/product_view_page/enable_brand_info" />
+                <block class="Magento\Catalog\Block\Product\View\Description" name="product.info.brand.sku" template="Magento_Catalog::product/view/sku.phtml" after="product.info.brand" />
+            </container>
+
+            <!-- div product info overview -->
+            <container name="div.short.description.product.info.overview" htmlTag="div" htmlClass="div-short-description-product-info-overview"></container>
+            <!-- div qua tang kem -->
+            <container name="div.promotion.price.rules.display.name" htmlTag="div" htmlClass="div-promotion-price-rules-display-name"></container>
+
+            <!-- <container name="product.info.price" label="Product info auxiliary container" htmlTag="div" htmlClass="product-info-price" after="category.view.container">
+                <block class="Magento\Catalog\Pricing\Render" name="product.price.final">
+                    <arguments>
+                        <argument name="price_render" xsi:type="string">product.price.render.default</argument>
+                        <argument name="price_type_code" xsi:type="string">final_price</argument>
+                        <argument name="zone" xsi:type="string">item_view</argument>
+                        <argument name="render_template" xsi:type="string">Magento_Catalog::product/price/final_price.phtml</argument>
+                        <argument name="use_link_for_as_low_as" xsi:type="boolean">false</argument>
+                    </arguments>
+                </block>
+            </container> -->
+            <!-- qua tang kem -->
+            <block class="Magento\Cms\Block\Block" name="promotion-price-rules-display-name">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">promotion-price-rules-display-name</argument>
+                    </arguments>
+            </block>
+            <!-- ưu đãi tại chottvn -->
+
+            <!-- simple_product_configurable_items -->
+            <block class="Magento\Catalog\Block\Product\View\Description" name="product.info.simple.product.configurable.items" template="Magento_Catalog::product/view/simple_product_configurable_items.phtml" />
+            <!-- simple_product_configurable_items -->
+
+            <!-- <container name="product.info.advanced" as="advanced" label="Product Info Advanced" htmlTag="div" htmlClass="product-info-advanced" htmlId="product-info-advanced" after="product.info.cart.rules">
+                <block class="Magento\Catalog\Block\Product\View" name="product.info.advanced.compareprices" template="Magento_Catalog::product/view/compareprices.phtml"/>
+        	</container> -->
+            <!-- phone -->
+            <container name="product.info.accessories" htmlTag="div" htmlClass="product-info-accessories" htmlId="product-info-accessories" after="product.info.social">
+                <!-- <block class="Magento\Cms\Block\Block" name="product-info-accessories">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">product-info-accessories</argument>
+                    </arguments>
+                </block> -->
+                <block template="Magento_Catalog::product/list/accessories.phtml" name="product-info-accessories" />
+            </container>
+            <container name="product.info.phone.contact" htmlTag="div" htmlClass="product-info-phone-contact" htmlId="product-info-phone-contact" after="product.info.social">
+                <block class="Magento\Cms\Block\Block" name="support-phone-number">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">support-phone-number</argument>
+                    </arguments>
+                </block>
+        	</container>
+            <container name="product.site.note.privileges" htmlTag="div" htmlClass="product-info-site-note-privileges" htmlId="product-site-note-privileges" after="product.info.social">
+                <block class="Magento\Cms\Block\Block" name="site-note-privileges">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">site-note-privileges</argument>
+                    </arguments>
+                </block>
+        	</container>
+        </referenceContainer>
+        <referenceContainer name="content">
+             <!-- sản phẩm cùng cate -->
+            <container name="product.info.after_details" htmlTag="div" htmlClass="product-info-before-details-wrapper" after="product.info.details">
+                <block template="Magento_Catalog::product/list/same_cate.phtml" before ="viewed-product-cates"/>
+            </container>
+            <container name="additional.bottom" as="additional_bottom" label="Page Additional Bottom" htmlTag="div"
+                     htmlClass="additional-bottom" after="div.row"/>
+        </referenceContainer>
+        <referenceContainer name="product.info.media" htmlClass="col-12 col-md-6 order-md-1 product media" htmlTag="div"/>
+
+        <move element="product.info.review" destination="category.view.container" after="-"/>
+
+        <move element="product.info.main" destination="div.center.prod.detail" before="-"/>
+
+        <move element="product.info.media" destination="div.center.prod.detail" after="product.info.main"/>
+        <!-- short desc -->
+        <move element="div.short.description.product.info.overview" destination="product.info.price" before="product.info.cart.rules"/>
+        <move element="product.info.overview" destination="div.short.description.product.info.overview" before="-"/>
+        <!-- rules -->
+        <move element="div.promotion.price.rules.display.name" destination="product.info.price" after="div.short.description.product.info.overview"/>
+        <move element="promotion-price-rules-display-name" destination="div.promotion.price.rules.display.name" before="-"/>
+
+        <move element="product.info.simple.product.configurable.items" destination="product.info.price" after="promotion-price-rules-display-name"/>
+        <!-- phone support sau short desc -->
+        <move element="support-phone-number" destination="product.info.main" before="site-note-privileges"/>
+        <!-- site-note-privileges sau phone support -->
+        <move element="site-note-privileges" destination="product.info.main" after="-"/>
+    </body>
+</page>

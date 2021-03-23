@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * @var $block \Magento\Sales\Block\Order\Totals
+ * @see \Magento\Sales\Block\Order\Totals
+ */
+
+
+$fee_shipping_contact = $block->getOrder()->getFeeShippingContact();
+$max_delivery_dates = $block->getOrder()->getMaxDeliveryDates();
+?>
+<?php foreach ($block->getTotals() as $_code => $_total): ?>
+    <?php //echo '<pre>'.print_r($_total).'</pre>';?>
+    <?php if ($_total->getBlockName()): ?>
+        <?= $block->getChildHtml($_total->getBlockName(), false) ?>
+    <?php else:?>
+    <tr class="<?= /* @escapeNotVerified */ $_code ?>">
+        <!--         
+            <th <?= /* @escapeNotVerified */ $block->getLabelProperties() ?> colspan="2" scope="row">
+                <?php if ($_total->getStrong()):?>
+                <strong><?= $block->escapeHtml($_total->getLabel()) ?></strong>
+                <?php else:?>
+                <?= $block->escapeHtml($_total->getLabel()) ?>
+                <?php endif?>
+            </th> 
+        -->
+        <th <?php echo $block->getLabelProperties(); ?> scope="row" class="<?= /* @escapeNotVerified */ $_code ?>">
+            <?php if ($_total->getStrong()):?>
+                <strong><?= __($_total->getLabel()) ?></strong>
+            <?php else:?>
+                <?= __($_total->getLabel()) ?>
+            <?php endif?>
+        </th>
+        <td <?= /* @escapeNotVerified */ $block->getValueProperties() ?> data-th="<?= $block->escapeHtml($_total->getLabel()) ?>">
+            <?php 
+                if(is_numeric($_total->getValue())){
+                    $_totalValue = $block->formatValue($_total);
+                }else{
+                    $_totalValue = __($_total->getValue());
+                }
+            ?>
+            <?php if ($_total->getStrong()):?>
+            <strong><?= /* @escapeNotVerified */ $_totalValue; ?></strong>
+            <?php else:?>
+            <?= /* @escapeNotVerified */ $_totalValue; ?>
+            <?php endif?>
+        </td>
+    </tr>
+    <?php endif?>
+<?php endforeach?>

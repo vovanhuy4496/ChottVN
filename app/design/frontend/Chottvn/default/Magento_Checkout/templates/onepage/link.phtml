@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Checkout\Block\Onepage\Link */
+?>
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $defaultStockQty = $objectManager->create('Chottvn\Sales\Rewrite\Magento\Checkout\Block\Cart\Item\Renderer');
+    $checkStatusQtyProduct = $defaultStockQty->checkStatusQtyProduct();
+?>
+<?php if ($block->isPossibleOnepageCheckout() && count($checkStatusQtyProduct) == 0) :?>
+    <button type="button"
+            data-role="proceed-to-checkout"
+            title="<?= $block->escapeHtmlAttr(__('Proceed to Checkout')) ?>"
+            data-mage-init='{
+                "Magento_Checkout/js/proceed-to-checkout":{
+                    "checkoutUrl":"<?= $block->escapeJs($block->escapeUrl($block->getCheckoutUrl())) ?>"
+                }
+            }'
+            class="action primary checkout<?= ($block->isDisabled()) ? ' disabled' : '' ?>"
+            <?php if ($block->isDisabled()) :?>
+                disabled="disabled"
+            <?php endif; ?>>
+        <span><?= $block->escapeHtml(__('Proceed to Checkout')) ?></span>
+    </button>
+<?php endif?>
+<?php if (count($checkStatusQtyProduct) > 0): ?>
+    <button title="<?= $block->escapeHtmlAttr(__('Proceed to Checkout')) ?>" class="action primary checkout proceed-to-checkout-ctt">
+        <span><?= $block->escapeHtml(__('Proceed to Checkout')) ?></span>
+    </button>
+<?php endif?>
+<script>
+    require([
+        'jquery',
+        'mage/translate'
+    ], function($, $t) {
+            $('.proceed-to-checkout-ctt').click(function() {
+                var checkStatusQtyProduct = <?php echo json_encode($checkStatusQtyProduct); ?>;
+                $.each(checkStatusQtyProduct, function (i, elem) {
+                    $.toaster({ title: $t('Notice'), priority: 'danger', message: elem.message });
+                    return false;
+                });
+                return true;
+            });
+        });
+</script>

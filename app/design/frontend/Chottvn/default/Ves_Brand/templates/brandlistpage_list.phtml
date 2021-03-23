@@ -1,0 +1,121 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$item_per_page = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('vesbrand/brand_list_page/item_per_page');
+
+$_brandCollection = $block->getCollection();
+$_brandCollection->getSelect()->order('name ASC');
+$_brandCollection->getSelect()->limit($item_per_page, 0);
+
+$show_brand_name = $this->getConfig('brand_list_page/show_brand_name');
+?>
+<?php
+if ( $_brandCollection->count() ){
+	$total = $_brandCollection->getSize();
+	$max_page = ceil($total/$item_per_page);
+?>
+<div class="brandlist">
+	<div class="block-content">
+		<!-- LIST -->
+		<div class="block-content-wrapper" id="brandlist-content">
+			<?php foreach ($_brandCollection as $_brand) { ?>
+				<div class="brand-item brand-mark">
+					<div class="brand-image">
+						<a href="<?php echo $_brand->getUrl(); ?>" title="<?php echo $_brand->getName(); ?>">
+							<img src="<?php echo $_brand->getImageUrl(); ?>" alt="<?php echo $_brand->getName(); ?>"/>
+						</a>
+					</div>
+					<?php if($show_brand_name){ ?>
+						<div class="brand-description">
+							<a class="brand-name" href="<?php echo $_brand->getUrl(); ?>" title="<?php echo $_brand->getName(); ?>"><?php echo __('Brand').' '.$_brand->getName() ?></a>
+							<?php if($_brand->getDescription()){ ?>
+								<div class="brand-short-description"><?php echo $_brand->getDescription(); ?></div>
+							<?php } ?>
+						</div>
+					<?php } ?>
+          <div class="clearfix"></div>
+				</div>
+			<?php } ?>
+		</div>
+		<!-- LIST -->
+
+		<!-- LOAD MORE -->
+		<?php if($_brandCollection->count() >= $item_per_page):?>
+      <div class="load-more-action">
+        <button id="load-more-brands" class="button-load-more" data-nextpage="1">
+        	<i class="loading fa fa-spinner fa-spin fa-fw" aria-hidden="true" style="display:none;"></i>
+        	<?php echo __('Load more brands') ?>
+        	<i class="fa fa-caret-down" aria-hidden="true"></i>
+        </button>
+      </div>
+    <?php endif; ?>
+
+    <script type="text/javascript">
+    require(['jquery',
+    ], function ($) {
+        $(document).ready(function () {
+            // init load item
+            var _current_item = $('.brandlist .brand-item.brand-mark');
+            _current_item.stop(true, true).each(function (i) {
+              var newCurrentDelay = i * 200,
+              currentDuration = 400;
+              $(this).attr("style", "-webkit-animation-delay:" + newCurrentDelay + "ms; " + "-moz-animation-delay:" + newCurrentDelay + "ms; " + "-o-animation-delay:" + newCurrentDelay + "ms; " + "animation-delay:" + newCurrentDelay + "ms; " + "-webkit-animation-duration:" + currentDuration + "ms;" + "-moz-animation-duration:" + currentDuration + "ms;" + "-o-animation-duration:" + currentDuration + "ms;" + "animation-duration:" + currentDuration + "ms;");
+              if (i == _current_item.size() - 1) {
+                $('.brandlist #brandlist-content').fadeIn(newCurrentDelay).addClass("play");
+                $('.brandlist .brand-item').removeClass('brand-mark');
+              }
+            });
+
+            // event click
+            $(document).on('click', '#load-more-brands', function (e) {
+              e.preventDefault();
+          		var nextpage = $("#load-more-brands").attr("data-nextpage");
+          		var maxpage = "<?php echo $max_page ?>";
+
+              $.ajax({
+                url: "<?php echo $this->getUrl('cttbrands/brand/ajax'); ?>",
+                method: "POST",
+                data: {
+                    page: nextpage
+                },
+                dataType: "json",
+                beforeSend: function() {
+                	$("#load-more-brands .loading").show();
+                },
+                success: function (data)
+                {
+                  // set data page
+                  $("#load-more-brands").attr("data-nextpage",(parseInt(nextpage)+1));
+                  $("#load-more-brands .loading").hide();
+
+                  // append data html to load
+                  if(data){
+                  	$("#brandlist-content").append(data);
+
+                    // add deplay css
+                    var _item = $('.brandlist .brand-item.brand-mark');
+                    _item.stop(true, true).each(function (i) {
+                      var newDelay = i * 200,
+                      duration = 400;
+                      $(this).attr("style", "-webkit-animation-delay:" + newDelay + "ms; " + "-moz-animation-delay:" + newDelay + "ms; " + "-o-animation-delay:" + newDelay + "ms; " + "animation-delay:" + newDelay + "ms; " + "-webkit-animation-duration:" + duration + "ms;" + "-moz-animation-duration:" + duration + "ms;" + "-o-animation-duration:" + duration + "ms;" + "animation-duration:" + duration + "ms;");
+                      if (i == _item.size() - 1) {
+                        $('.brandlist #brandlist-content').fadeIn(newDelay).addClass("play");
+                        $('.brandlist .brand-item').removeClass('brand-mark');
+                      }
+                    });
+                  }
+                  
+                  if((parseInt(nextpage)+1) >= parseInt(maxpage)){
+                  	$("#load-more-brands").hide();
+                  }
+                },
+              });
+            });
+        });
+    });
+    </script>
+    <!-- LOAD MORE -->
+	</div>
+</div>
+<?php }else{ ?>
+<div class="message info empty"><div><?php echo __('We can\'t find brand matching the selection.'); ?></div></div>
+<?php } ?>

@@ -1,0 +1,40 @@
+<div class="shipping-address-item" css="'selected-item' : isSelected() , 'not-selected-item':!isSelected()">
+    <input type="radio" class="radio-shipping-address-item radio" name="radio-shipping-address-item" data-bind="
+    click: selectCheckboxAddress(address().customerAddressId),
+    attr: {
+        'id': 'radioCustomerAddressId_' + address().customerAddressId,
+        'checked': isSelected()
+    }, value: isSelected()">
+    <text args="_.values(address().street).join(', ')" />,
+    <text args="address().township " />, <text args="address().city " />, <span text="address().region"></span>
+
+    <!-- <each args="data: address().customAttributes, as: 'element'">
+        <each args="data: Object.keys(element), as: 'attribute'">
+            <if args="typeof element[attribute] === 'object'">
+                <if args="element[attribute].label">
+                    <text args="element[attribute].label"/>
+                </if>
+                <ifnot args="element[attribute].label">
+                    <if args="element[attribute].value">
+                        <text args="element[attribute].value"/>
+                    </if>
+                </ifnot>
+            </if>
+            <if args="typeof element[attribute] === 'string'">
+                <text args="element[attribute]"/>
+            </if><br/>
+        </each>
+    </each> -->
+
+    <button css="'can-edit-address-link' : address().isEditable() , 'not-edit-address-link' : !address().isEditable()" visible="address().isEditable()" type="button" class="action edit-address-link-ctt" click="editAddress">
+        <span translate="'Edit'"></span>
+    </button>
+    <!-- ko if: (!isSelected()) -->
+    <button style="display: none;" type="button" click="selectAddress" class="action action-select-shipping-item" data-bind="
+        attr: {
+            'id': 'buttonCustomerAddressId_' + address().customerAddressId,
+        }">
+        <span translate="'Ship Here'"></span>
+    </button>
+    <!-- /ko -->
+</div>

@@ -1,0 +1,59 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Checkout
+ */
+?>
+<?php /** @var $block \Magento\Checkout\Block\Onepage\Success */ ?>
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $checkoutSession = $objectManager->get('Magento\Checkout\Model\Session');
+    $checkoutHelper = $objectManager->get('Chottvn\PriceDecimal\Helper\Data');
+
+    $getOrder = $checkoutSession->getLastRealOrder();
+?>
+<div class="checkout-success orders-history">
+    <div class="row order">
+        <?php if ($block->getOrderId()) :?>
+            <div class="col-sm-12 ctt-tks">
+                <span><?= __('Thank you for ordering now') ?> <a href="<?= $block->getUrl() ?>"><?= __('chotructuyen.co') ?></a></span>
+            </div>
+            <div class="col-sm-12 order-summary">
+                <div class="row">
+                    <div class="col-7 order-summary-left">
+                        <span class="order-label"><?= $block->escapeHtml(__('Order')) ?>:<span class="order-value">#<?= $block->getOrderId(); ?></span></span>
+                        <br>
+                        <span class="date-label"><?= __('Order date:') ?>
+                            <span class="date-value">
+                                <?= $block->escapeHtml(
+                                    $block->formatDate(
+                                        $getOrder->getCreatedAt(),
+                                        \IntlDateFormatter::SHORT
+                                    )
+                                ) ?>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="col-5 order-summary-right">
+                        <span class="amount-value">
+                            <span class="price"><?= $checkoutHelper->formatPrice($getOrder->getGrandTotal()); ?></span>
+                        </span>
+                        <br>
+                        <span class="items-value"><?= (string)(int)$getOrder->getTotalQtyOrdered() ?> <?= ((int)$getOrder->getTotalQtyOrdered() > 1) ? __('products') : __('product') ; ?></span>
+                    </div>
+                </div>
+            </div>
+            <?= $block->getChildHtml('details') ?>
+        <?php endif;?>
+
+        <?= $block->getAdditionalInfoHtml() ?>
+        <?= $block->getChildHtml('cms') ?>
+        <?php
+            echo  $block->getLayout()
+                        ->createBlock(\Magento\Cms\Block\Block::class)
+                        ->setBlockId('google-enhanced-ecommerce')
+                        ->toHtml();
+        ?>
+    </div>
+</div>

@@ -1,0 +1,196 @@
+<?php
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	$compareProducts = $objectManager->get('\Magento\Catalog\CustomerData\CompareProducts');
+	$helperImport = $objectManager->get('\Magento\Catalog\Helper\Image');
+    $priceHelper = $objectManager->create('\Magento\Framework\Pricing\Helper\Data');
+    $productRepository = $objectManager->create('\Magento\Catalog\Model\ProductRepository');
+    $storeManagerInterface = $objectManager->create('\Magento\Store\Model\StoreManagerInterface');
+    $compare = $objectManager->get('Magento\Catalog\Helper\Product\Compare');
+
+    // store id
+    $storeId = $storeManagerInterface->getStore()->getId();
+
+
+    $compareProducts = $compareProducts->getSectionData();
+    // number count products in compare page
+    $num_compare_products = $compareProducts['count'];
+
+    // set show hide
+    $show_compare = 'style="display:none;"';
+    if($compareProducts['count'] > 0){
+    	$show_compare = 'style="display:block;"';
+    }
+
+    // url so sanh
+    $compare_url = $compareProducts['listUrl'];
+
+    // get limit page
+    // Get limit desktop = 3, tablet = 3, mobile = 2
+    // Get compare products configuration
+    $compareConfig = $objectManager->get('\Chottvn\Frontend\Helper\Compare')->getCompareProductsConfiguration();
+    $limitProducts = $objectManager->get('\Chottvn\Frontend\Helper\DetectMobile');
+    if($limitProducts->isMobile() == true && $limitProducts->isTablet() == false){
+        $num_limit_products = $compareConfig->mobile;
+    }elseif($limitProducts->isTablet() == true){
+        $num_limit_products = $compareConfig->tablet;
+    }else{
+        $num_limit_products = $compareConfig->desktop;
+    }
+
+    // disable link
+    $disable_button = false;
+    $disable_class = '';
+    if($compareProducts['count'] == 1){
+    	$disable_button = true;
+    	$disable_class = 'disable';
+    }
+
+    // products in compare
+    $products = $compareProducts['items'];
+
+    // Check same category
+    // default value
+    $permission_add = true;
+    if($products){
+		// get first product
+	    $compare_product = $productRepository->getById($products[0]['id'], false, $storeId);
+
+	    if($products && $compare_product){
+	        // get last category
+	        $list_categories = $compare_product->getCategoryIds();
+	        $category = $list_categories[count($list_categories)-1];
+	        $cate = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+
+	        // check foreach in compare products
+	        foreach ($products as $p) {
+	            // get first product in case
+	            $current_product_id = $p['id'];
+	            $current_product = $productRepository->getById($current_product_id, false, $storeId);
+
+	            // Get last current category
+	            $list_current_categories = $current_product->getCategoryIds();
+	            $current_category = $list_current_categories[count($list_current_categories)-1];
+
+	            // get permission category
+	            $current_cate = $objectManager->create('Magento\Catalog\Model\Category')->load($current_category);
+	            if (null !== $current_cate->getCustomAttribute('chottvn_compare_with_product_attribute')) {
+	                $permission_cate = explode(',', $current_cate->getCustomAttribute('chottvn_compare_with_product_attribute')->getValue());
+	            }else{
+	                $permission_cate = explode(',', $current_cate->getId());
+	            }
+
+	            // check in_array category
+	            if(!in_array($cate->getId(), $permission_cate)){
+	                $permission_add = false;
+	                break;
+	            }
+	        }
+	    }else{
+	        $permission_add = true;
+	    }
+
+	    if($permission_add == false){
+	    	$disable_button = true;
+	    	$disable_class = 'disable';
+	    }
+    }
+
+    // echo '<pre>';
+    // print_r($objectManager->get('\Chottvn\Frontend\Helper\Compare')->getCompareProductsConfiguration());
+    // echo '</pre>';
+?>
+<div class="compare-main" <?php echo $show_compare; ?>>
+	<div class="toggleButton show-me"><i class="fas fa-chevron-up" aria-hidden="true"></i> <?php echo __('Compare'); ?> <span class="num-compare-products"><?php echo $num_compare_products; ?></span></div>
+
+	<div class="compare-footer">
+		<div class="show-me show-me-off toggleButton off"><i class="fas fa-chevron-down" aria-hidden="true"></i> <?php echo __('Hide'); ?></div>
+		<div class="index-changelog bottom">
+			<div class="compare-products">
+				<div class="container">
+					<div class="row">
+						<?php
+						for ($i = 0; $i <= ($num_limit_products-1); $i++) {
+							//$product = $products[$i];
+							if(!empty($products[$i])){
+								$product = $productRepository->getById($products[$i]['id'], false, $storeId);
+					            // image url
+					            $imageUrl = $helperImport->init($product, 'product_page_image_small')
+					                ->setImageFile($product->getImage())
+					                ->resize(200)
+					                ->getUrl();
+
+					            // get format price
+					            if($product->getFinalPrice() > 0){
+					                $formattedPrice = $priceHelper->currency($product->getFinalPrice(), true, false);
+					            }else{
+					                $formattedPrice = __('Price Contact');
+					            }
+
+					            $product_name = $product->getName();
+					            $product_url = $product->getProductUrl();
+					            $product_image = $imageUrl;
+					            $product_final_price = $formattedPrice;
+					            $product_remove_compare = $compare->getPostDataRemove($product);
+						?>
+							<div class="col-lg-3 col-md-3 col-xs-6 col-6">
+								<div class="product-item">
+                  <a class="product-item-link" href="<?php echo $product_url ?>" title="<?php echo $product_name; ?>">
+                    <img class="product-image-photo" src="<?php echo $product_image ?>" width="" height="" alt="<?php echo $product_name; ?>">
+                  </a>
+									<div class="product-content">
+										<h3 class="product name product-item-name product-name">
+											<a class="product-item-link" href="<?php echo $product_url ?>" title="<?php echo $product_name; ?>"><?php echo $product_name; ?></a>
+										</h3>
+										<div class="price-box"><?php echo $product_final_price ?></div>
+										<div class="box-remove-product">
+	                                       <a href="#" data-post='<?php echo $product_remove_compare; ?>' class="action delete tag-remove" title="<?php echo $product_name; ?>"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
+	                                    </div>
+									</div>
+								</div>
+							</div>
+						<?php
+							}else{
+						?>
+							<div class="col-lg-3 col-md-3 col-xs-6 col-6 product-no-item">
+								<div class="container-empty"></div>
+							</div>
+						<?php
+							}
+						}
+						?>
+
+
+						<div class="col-lg-3 col-md-3 col-xs-12 col-12 compare-button <?php echo $disable_class ?>">
+							<a class="btn" href="<?= $disable_button ? 'javascript:void(0)' : $compare_url; ?>" title="<?php echo __('Compare'); ?>"><?php echo __('Compare'); ?></a>
+							<?php
+								if($permission_add == false){
+									echo '<div class="message_same_category">'.__('Please choose to compare products in the same category').'</div>';
+								}
+							?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	require([
+	    'jquery',
+	    'mage/mage'
+	], function($){
+		<?php if($compareProducts['count'] > 0){ ?>
+			$('.footer-bottom').css( "padding-bottom", "40px" );
+		<?php } ?>
+		$('.toggleButton').click(function(){
+			$('.toggleButton').toggleClass('off');
+			$('.index-changelog').toggleClass('bottom');
+			if($(".toggleButton.show-me-off").hasClass("off") == true){
+                $('.footer-bottom').css( "padding-bottom", "40px" );
+            }else{
+            	$('.footer-bottom').css( "padding-bottom", "190px" );
+            }
+		});
+	});
+</script>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <catalog_sorter_configuration>
+            <general>
+                <json_catalog_sorter_config>[{"sort_by":"best-seller","order_by":"ordered_qty DESC","label":"Sản phẩm bán chạy","addfilter":""},{"sort_by":"new-products","order_by":"created_at DESC","label":"Sản phẩm mới","addfilter":""},{"sort_by":"price","order_by":"final_price DESC","label":"Giá bán giảm dần","addfilter":""},{"sort_by":"popular","order_by":"num_view_counts DESC","label":"Sản phẩm được xem nhiều nhất","addfilter":""}]</json_catalog_sorter_config>
+            </general>
+        </catalog_sorter_configuration>
+        <catalog_compare_configuration>
+            <general>
+                <json_compare_catalog_detect_device_config>{"desktop":"3","tablet":"3","mobile":"2"}</json_compare_catalog_detect_device_config>
+            </general>
+        </catalog_compare_configuration>
+    </default>
+</config>

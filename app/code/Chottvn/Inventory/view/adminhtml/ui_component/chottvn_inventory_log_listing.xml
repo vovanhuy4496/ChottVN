@@ -1,0 +1,217 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">chottvn_inventory_log_listing.chottvn_inventory_log_listing_data_source</item>
+		</item>
+	</argument>
+	<settings>
+		<spinner>chottvn_inventory_log_columns</spinner>
+		<deps>
+			<dep>chottvn_inventory_log_listing.chottvn_inventory_log_listing_data_source</dep>
+		</deps>
+		<buttons>
+			<button name="add">
+				<url path="*/*/new"/>
+				<class>primary</class>
+				<label translate="true">Add new Log</label>
+			</button>
+		</buttons>
+	</settings>
+	<dataSource component="Magento_Ui/js/grid/provider" name="chottvn_inventory_log_listing_data_source">
+		<settings>
+			<updateUrl path="mui/index/render"/>
+		</settings>
+		<aclResource>Chottvn_Inventory::log</aclResource>
+		<dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="chottvn_inventory_log_listing_data_source">
+			<settings>
+				<requestFieldName>log_id</requestFieldName>
+				<primaryFieldName>log_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+	<listingToolbar name="listing_top">
+		<settings>
+			<sticky>true</sticky>
+		</settings>
+		<bookmark name="bookmarks"/>
+		<columnsControls name="columns_controls"/>
+		<filters name="listing_filters"/>
+		<paging name="listing_paging"/>
+	</listingToolbar>
+	<columns name="chottvn_inventory_log_columns">
+		<settings>
+			<editorConfig>
+				<param name="selectProvider" xsi:type="string">chottvn_inventory_log_listing.chottvn_inventory_log_listing.chottvn_inventory_log_columns.ids</param>
+				<param name="enabled" xsi:type="boolean">false</param>
+				<param name="indexField" xsi:type="string">log_id</param>
+				<param name="clientConfig" xsi:type="array">
+					<item name="saveUrl" path="chottvn_notification/Message/inlineEdit" xsi:type="url"/>
+					<item name="validateBeforeSave" xsi:type="boolean">false</item>
+				</param>
+			</editorConfig>
+			<!-- <childDefaults>
+				<param name="fieldAction" xsi:type="array">
+					<item name="provider" xsi:type="string">chottvn_inventory_log_listing.chottvn_inventory_log_listing.chottvn_inventory_log_columns_editor</item>
+					<item name="target" xsi:type="string">startEdit</item>
+					<item name="params" xsi:type="array">
+						<item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
+						<item name="1" xsi:type="boolean">true</item>
+					</item>
+				</param>
+			</childDefaults> -->
+		</settings>
+		<selectionsColumn name="log_ids">
+			<settings>
+				<indexField>log_id</indexField>
+			</settings>
+		</selectionsColumn>
+		<column name="log_id">
+			<settings>
+				<filter>text</filter>
+				<sorting>desc</sorting>
+				<label translate="true">ID</label>
+			</settings>
+		</column>
+		<column name="user_id" class="Chottvn\Inventory\Ui\Component\Listing\Column\LogProcessedBy">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="filter" xsi:type="string">text</item>
+					<item name="label" xsi:type="string" translate="true">User Name</item>
+				</item>
+			</argument>
+			<settings>
+				<filter>text</filter>
+				<label translate="true">User Name</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="log_type">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Log Type</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="file_name" class="Chottvn\Inventory\Ui\Component\Listing\Column\LogDownload">
+			<argument name="data" xsi:type="array">
+        <item name="config" xsi:type="array">
+        	<item name="label" xsi:type="string" translate="true">File Name</item>
+        	<item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>
+        	<item name="filter" xsi:type="string">text</item>
+        </item>
+      </argument>
+			<!-- <settings>
+				<filter>text</filter>
+				<label translate="true">File Name</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings> -->
+		</column>
+		<column name="file_row_count">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">File Row Count</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="feature_type">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Feature Type</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="status">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Status</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="affected_row_count">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Affected Row Count</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="details">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Details</label>
+				<editor>
+					<editorType>text</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="created_at">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Created At</label>
+				<editor>
+					<editorType>date</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<column name="updated_at">
+			<settings>
+				<filter>text</filter>
+				<label translate="true">Updated At</label>
+				<editor>
+					<editorType>date</editorType>
+					<validation>
+						<rule name="required-entry" xsi:type="boolean">false</rule>
+					</validation>
+				</editor>
+			</settings>
+		</column>
+		<actionsColumn class="Chottvn\Inventory\Ui\Component\Listing\Column\LogActions" name="actions">
+			<settings>
+				<indexField>id</indexField>
+				<resizeEnabled>false</resizeEnabled>
+				<resizeDefaultWidth>107</resizeDefaultWidth>
+			</settings>
+		</actionsColumn>
+	</columns>
+</listing>

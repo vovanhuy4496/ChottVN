@@ -1,0 +1,37 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+    $messages = $block->getMessageCollection();
+    $timezone = $objectManager->get('\Magento\Framework\Stdlib\DateTime\TimezoneInterface');
+?>
+<?php if (count($messages) > 0): ?>
+    <tbody>
+        <?php foreach($messages as $message): ?>
+            <?php $getReadAtMessage = $block->getReadAtMessage($message['id']); ?>
+            <?php $getMessageType = $block->getMessageType($message['messagetype_id']); ?>
+            <tr class="<?= !isset($getReadAtMessage[0]['read_at']) ? 'notify-unread' : 'notify-read' ?>" message-id="<?= $message['id']; ?>">
+                <!-- <td class="message-type"><?= $getMessageType[0]['name']; ?></td> -->
+                <td class="message-title"><?= $message['title']; ?></td>
+                <td class="message-date">
+                    <?= $timezone->date($message['created_at'])->format('d-m-Y'); ?>
+                </td>
+                <td class="ajax-loader hide-ajax-loader" id="ajax-loader-<?= $message['id']; ?>">
+                    <i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+                </td>
+                <td class="message-detail message-hide-detail" id="message-detail-<?= $message['id']; ?>">
+                    <div class="message-description"></div>
+                </td>
+            </tr>
+            <?php $lastId = $message['id']; ?>
+        <?php endforeach ?>
+    </tbody>
+<?php endif ?>
+<script type="text/javascript">
+    require(['jquery',
+    ], function ($) {
+        $(document).ready(function () {
+            $('#remove_row button').attr('lastId', <?= $lastId ?>)
+        });
+    });
+</script>

@@ -1,0 +1,35 @@
+{
+    "chottvn_inventory_log": {
+        "column": {
+            "log_id": true,
+            "user_id": true,
+            "log_type": true,
+            "file_name": true,
+            "file_row_count": true,
+            "feature_type": true,
+            "status": true,
+            "affected_row_count": true,
+            "details": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "chottvn_inventory_temp_import": {
+        "column": {
+            "id": true,
+            "qty_saleable": true,
+            "product_price": true,
+            "product_code": true,
+            "product_name": true,
+            "product_weight": true,
+            "product_model": true,
+            "product_brand": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

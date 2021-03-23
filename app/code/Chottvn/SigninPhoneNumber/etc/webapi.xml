@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+	<route method="POST" url="/V1/chottvn/phone-verification/send-otp">
+		<service class="Chottvn\SigninPhoneNumber\Api\PhoneVerificationRepositoryInterface" method="sendOTP"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn/phone-verification/verify-phone">
+		<service class="Chottvn\SigninPhoneNumber\Api\PhoneVerificationRepositoryInterface" method="verifyPhone"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn/phone-verification/send-otp-phone">
+		<service class="Chottvn\SigninPhoneNumber\Api\PhoneVerificationRepositoryInterface" method="sendOTPPhone"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn/phone-verification/send-otp-forgotpassword">
+		<service class="Chottvn\SigninPhoneNumber\Api\PhoneVerificationRepositoryInterface" method="sendForgotPWOtp"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+	<route method="POST" url="/V1/chottvn/send-otp-logging/index">
+		<service class="Chottvn\Sms\Api\SendOtpRepositoryInterface" method="index"/>
+		<resources>
+			<resource ref="anonymous"/>
+		</resources>
+	</route>
+</routes>

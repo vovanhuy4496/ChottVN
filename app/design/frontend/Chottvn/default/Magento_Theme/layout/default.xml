@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="header.content">
+          <container name="toplinks-header-additional" label="Header Links Additional" as="toplinks-header-additional" htmlTag="div"
+                           htmlClass="toplinks-additional-wrapper" before="toplinks-header">
+          </container>          
+          <container name="middle-right-menu-additional" label="Header Middle Right Menu Additional" as="middle-right-menu-additional" htmlTag="div"
+                           htmlClass="middle-right-menu-additional" before="minicart-header">
+          </container>
+          <container name="account-menu-wrapper" label="Account Menu" as="account-menu-wrapper" htmlTag="div"
+                           htmlClass="account-menu-wrapper" after="middle-right-menu-additional">
+            <block class="Chottvn\Frontend\Block\AccountMenu" name="account-menu"
+              template="Chottvn_Frontend::account_menu.phtml"
+              before="-" />
+          </container>
+        </referenceBlock>
+
+        <referenceContainer name="before.body.end">
+          <block class="Chottvn\Frontend\Block\Compare" name="custom-compare-products-at-footer" template="Magento_Catalog::product/compare/custom_compare.phtml" cacheable="true" after="-" />
+        </referenceContainer>
+
+        <referenceBlock name="head.additional">
+            <block class="Magento\Cms\Block\Block" name="standard-events-facebook-pixel" before="product-google-remarketing">
+              <arguments>
+                <argument name="block_id" xsi:type="string">standard-events-facebook-pixel</argument>
+              </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="product-google-remarketing">
+              <arguments>
+                <argument name="block_id" xsi:type="string">product-google-remarketing</argument>
+              </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="custom-head-additional">
+              <arguments>
+                <argument name="block_id" xsi:type="string">custom-head-additional</argument>
+              </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceContainer name="after.body.start">
+          <block class="Magento\Cms\Block\Block" name="product-google-remarketing-body" before="-">
+            <arguments>
+              <argument name="block_id" xsi:type="string">google-remarketing-body</argument>
+            </arguments>
+          </block>
+        </referenceContainer>
+
+        <referenceBlock name="myaccount-link" remove="true"/>
+        <referenceBlock name="wish-list-link" remove="true"/>
+        <referenceBlock name="authorization-link" remove="true"/>
+        <referenceBlock name="register-link" remove="true"/>
+        <!-- remove form review -->
+        <referenceBlock name="product.review.form" remove="true"/>
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <!-- <referenceBlock name="page.messages" remove="true"/> -->
+        <!-- <move element="register-link" destination="top.links" after="-"/> -->
+    </body>
+</page>

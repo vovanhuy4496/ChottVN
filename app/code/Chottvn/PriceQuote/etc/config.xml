@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <sales_email>            
+            <price_quote>
+                <enabled>1</enabled>
+                <template>sales_email_price_quote_template</template>
+                <identity>sales</identity>
+                <copy_method>bcc</copy_method>
+            </price_quote>
+        </sales_email>       
+    </default>
+</config>

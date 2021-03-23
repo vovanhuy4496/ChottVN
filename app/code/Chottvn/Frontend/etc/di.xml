@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Magento\Catalog\Model\Product">
+		<plugin name="chottvn_frontend_catalog_pricing_price" type="Chottvn\Frontend\Plugin\Product" sortOrder="1" disabled="false"/>
+	</type>
+	<type name="Magento\Catalog\Pricing\Price\FinalPrice">
+        <plugin name="chottvn_frontend_catalog_pricing_price_finalprice" type="Chottvn\Frontend\Plugin\FinalPrice" sortOrder="2" disabled="false" />
+    </type>
+    <type name="Magento\SalesRule\Model\Rule\Action\Discount\Data">
+        <plugin name="chottvn_frontend_salesrule_discount_amount" type="Chottvn\Frontend\Plugin\DiscountDataAmount" sortOrder="3" disabled="false" />
+    </type>
+
+    <type name="Magento\Sales\Model\Order">
+        <plugin name="chottvn_frontend_sales_order_status_translate" type="Chottvn\Frontend\Plugin\SalesModelOrder" sortOrder="4" disabled="false" />
+    </type>
+
+    <type name="Magento\Sales\Controller\Guest\Form">
+        <plugin name="chottvn_frontend_sales_guest_form" type="Chottvn\Frontend\Plugin\Sales\Guest\Form" sortOrder="5" disabled="false" />
+    </type>
+	
+</config>

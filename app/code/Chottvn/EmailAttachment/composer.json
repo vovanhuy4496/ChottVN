@@ -1,0 +1,21 @@
+{
+  "name": "chottvn/module-attachment",
+  "description": "The Chottvn EmailAttachment extension for Magento 2.3.x",
+  "require": {
+    "php": "~7.1.3||~7.2.0",
+    "magento/framework": "102.0.*"
+  },
+  "type": "magento2-module",
+  "version": "1.0.1",
+  "license": [
+    "Commercial"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Chottvn\\EmailAttachment\\": ""
+    }
+  }
+}

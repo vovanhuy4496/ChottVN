@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Chottvn_Affiliate::affiliate" title="Affiliate" translate="title" module="Chottvn_Affiliate" parent="Magento_Customer::customer" sortOrder="50" dependsOnModule="Chottvn_Affiliate" resource="Chottvn_Affiliate::affiliate"/>
+        <add id="Chottvn_Affiliate::affiliate_manage" title="Affiliate Accounts" translate="title" module="Chottvn_Affiliate" parent="Chottvn_Affiliate::affiliate" sortOrder="10" dependsOnModule="Chottvn_Affiliate" action="affiliate/index/" resource="Chottvn_Affiliate::affiliate"/>
+        <add id="Chottvn_Affiliate::affiliate_marketing" title="Affiliate" translate="title" module="Chottvn_Affiliate" parent="Magento_Backend::marketing" sortOrder="50" dependsOnModule="Chottvn_Affiliate" resource="Chottvn_Affiliate::affiliate"/>
+		<add action="affiliate/rewardrule/index" id="Chottvn_Affiliate::affiliate_rewardrule" module="Chottvn_Affiliate" parent="Chottvn_Affiliate::affiliate_marketing" resource="Chottvn_Affiliate::rewardrule" sortOrder="9999" title="Reward Rules"/>
+		<add action="affiliate/levelrule/index" id="Chottvn_Affiliate::affiliate_levelrule" module="Chottvn_Affiliate" parent="Chottvn_Affiliate::affiliate_marketing" resource="Chottvn_Affiliate::levelrule" sortOrder="9999" title="Level Rules"/>
+
+        <add id="Chottvn_Affiliate::calculate" 
+			title="Affiliates" 
+			module="Chottvn_Affiliate"
+			sortOrder="9999" 
+			resource="Magento_Backend::admin" 
+			parent="Magento_Sales::sales" 
+			dependsOnModule="Chottvn_Affiliate"/> 
+	
+		<add action="affiliate/calculate/affiliatereward" 
+			id="Chottvn_Affiliate::calculate_affiliate_reward" 
+			module="Chottvn_Affiliate" 
+			parent="Chottvn_Affiliate::calculate" 
+			resource="Chottvn_Affiliate::calculate_affiliate_reward" 
+			sortOrder="9999" 
+			title="Calculate Affiliate Reward"/>
+    </menu>
+</config>

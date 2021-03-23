@@ -1,0 +1,8 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $order = $block->getOrder();
+    $infoBlock = $objectManager->get('Chottvn\Sales\Rewrite\Magento\Sales\Model\Order\Email\Sender\OrderSender');
+?>
+<td>
+    <?= $infoBlock->headerSuccessfulDelivery($order); ?>
+</td>

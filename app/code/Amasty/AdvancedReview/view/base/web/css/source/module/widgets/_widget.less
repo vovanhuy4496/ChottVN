@@ -1,0 +1,76 @@
+//
+//  Advanced Review Widget Base Styles
+//  ____________________________________________
+
+//
+//  Common
+//  ----------------------------------------------
+
+& when (@media-common = true) {
+    .pagebuilder-content-type .amreview-widget-container .amreview-review-items {
+        list-style: none;
+    }
+
+    .pagebuilder-content-type .amreviews .amreviews-placeholder {
+        .am-flex(center, center);
+
+        min-height: 300px;
+        background-color: @amreview-placeholder__color;
+    }
+
+    .pagebuilder-content-type .amreview-widget-container .slick-dots {
+        & {
+            position: relative;
+        }
+
+        button {
+            width: 14px;
+            height: 14px;
+            border: 1px solid #b3b3b3;
+            border-radius: 10px;
+        }
+
+        button:before {
+            color: unset;
+        }
+
+        .slick-active button {
+            background: #1c1918;
+        }
+    }
+
+    .amreview-widget-title {
+        display: block;
+        box-sizing: border-box;
+        margin: 0;
+        padding: @amrev__indent;
+        max-width: 100%;
+        width: 100%;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .slick-arrow {
+        z-index: 1;
+    }
+}
+
+//
+//  Tablet
+//  --------------------------------------------
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .amreview-widget-title {
+        padding: @amrev__indent 35px;
+    }
+}
+
+//
+//  Desktop
+//  --------------------------------------------
+
+@media screen and (min-width: @screen__l), print {
+    .page-main .amreview-widget-title {
+        padding: @amrev__indent__xxl 0 @amrev__indent__xl;
+    }
+}

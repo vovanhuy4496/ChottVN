@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_RulesLoyalty
+ */
+-->
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Loyalty Program</title>
+    </head>
+    <body>
+        <referenceBlock name="customer_account_navigation">
+            <block after="customer-account-navigation-account-link" class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-amrules-loyalty-link">
+                <arguments>
+                    <argument name="path" xsi:type="string">amrules/index</argument>
+                    <argument name="label" xsi:type="string" translate="true">Loyalty Program</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

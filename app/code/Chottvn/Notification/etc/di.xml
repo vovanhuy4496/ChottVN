@@ -1,0 +1,41 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="chottvn_notification_message_listing_data_source" xsi:type="string">Chottvn\Notification\Model\ResourceModel\Message\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Chottvn\Notification\Model\ResourceModel\Message\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">chottvn_notification_message</argument>
+            <argument name="resourceModel" xsi:type="string">Chottvn\Notification\Model\ResourceModel\Message</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="chottvn_notification_messagetype_listing_data_source" xsi:type="string">Chottvn\Notification\Model\ResourceModel\MessageType\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Chottvn\Notification\Model\ResourceModel\MessageType\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">chottvn_notification_messagetype</argument>
+            <argument name="resourceModel" xsi:type="string">Chottvn\Notification\Model\ResourceModel\MessageType</argument>
+        </arguments>
+    </virtualType>
+    <type name="Chottvn\Notification\Model\ImageUploader">
+        <arguments>
+            <!-- Temporary file stored in pub/media/notification/tmp/icon -->
+            <argument name="baseTmpPath" xsi:type="string">notification/tmp/icon</argument>
+            <argument name="basePath" xsi:type="string">notification/icon</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

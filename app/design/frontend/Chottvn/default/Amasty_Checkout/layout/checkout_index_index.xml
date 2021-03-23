@@ -1,0 +1,33 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column-update" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="breadcrumbs">
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string">checkout</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string">Checkout</item>
+                    <item name="label" xsi:type="string" translate="true">Checkout</item>
+                    <item name="link" xsi:type="string">/</item>
+                </argument>
+            </action>
+            <action method="addCrumb">
+                <argument name="crumbName" xsi:type="string" translate="true">Place order</argument>
+                <argument name="crumbInfo" xsi:type="array">
+                    <item name="title" xsi:type="string" translate="true">Place order</item>
+                    <item name="label" xsi:type="string" translate="true">Place order</item>
+                </argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Amasty\Checkout\Block\Onepage\CustomBlock\Block" name="top.custom_block" before="-">
+                <action method="setPosition">
+                    <argument name="position" xsi:type="string">top</argument>
+                </action>
+            </block>
+            <block class="Amasty\Checkout\Block\Onepage\CustomBlock\Block" name="bottom.custom_block" after="-">
+                <action method="setPosition">
+                    <argument name="position" xsi:type="string">bottom</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,90 @@
+<?php
+    $postCollectionCTT = $this->getCollection();
+    $nameCategory = $this->getNameCategory();
+    $url_main =  $this->getUrlCate();
+    $lastVendorWebsiteId = 0;
+    $helper = $this->helper('Chottvn\Blog\Helper\Data');
+?>
+<?php if (count($postCollectionCTT) > 0) {?>
+<?php 
+    $arrayIds = array();
+?>
+<?php foreach ($postCollectionCTT as $key => $post): ?>
+    <?php 
+        $vendorId = $post->getId();
+        $publishDate = $post->getPublishDate();
+        $arrayIds[] = $publishDate;
+    ?>
+        <div class="row">
+            <div class="card-horizontal">
+                <div class="c-display-flex">
+                    <div class="col-6 flex-left">
+                        <div class="post-thumb">
+                            <a href="<?php echo $post->getUrl() ?>" class="thumb-zoom" title="<?php echo $post->getName() ?>">
+                                <?php
+                                    $url_image = $block->resizeImage($post->getImage()); 
+                                    // $url_resize = $url_main."timthumb.php?src=".$url_image."&w=150&h=109";
+                                ?>
+                                <img title="<?php echo $post->getName() ?>" alt="<?php echo $post->getName() ?>" class="card-img-top card-img-top-resize border-small-image" src="<?php echo $url_image; ?>">
+                                <?php if($post->getIsVideo()== 1): ?>
+                                        <img src="<?php echo $block->getViewFileUrl('images/play-icon.png'); ?>" class="img-overlay-small" style="width: 30.6px;">
+                                <?php endif;?>
+                            </a>
+                        </div>
+                    </div>
+                <?php 
+                        $datePublic = $post->getPublishDate();
+                        $now = (string) date("Y-m-d H:i:s");
+                        $now = new DateTime($now);
+                        $ref = new DateTime($datePublic);
+                        $intervalMessage = $helper->getIntervalMessage($now,$ref);
+                ?>
+                    <div class="col-6 flex-right">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a class="c-post-title-resize block-with-text-title" href="<?php echo $post->getUrl() ?>" title="<?php echo $post->getName() ?>"><?php echo $post->getName() ?></a></h5>
+                            <h6 class="card-subtitle  text-muted">
+                                <a href="<?php echo $url_main; ?>" ><span class="category-card-subtitle"><?php echo $nameCategory; ?></span></a> - <?php echo $intervalMessage; ?> 
+                            </h6>
+                            <p class="card-text block-with-text-desc" title="<?php echo $post->getShortDescription(); ?>">
+                                <?php 
+                                    echo $post->getShortDescription();
+                                ?> 
+                            </p>
+                            <!-- <a href="<?php echo $post->getUrl() ?>" class="card-link float-right"><?php echo __('Read More'); ?></a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<?php endforeach; ?>
+<!-- Set last id -->
+<?php 
+    $lastVendorWebsiteId = min($arrayIds); 
+?>
+<script type="text/javascript">
+        require(['jquery',
+        ], function ($) {
+            $(document).ready(function () {
+                $('#blog_show_more').data("pid", '<?php echo $lastVendorWebsiteId; ?>');
+            });
+        });
+</script>
+<?php } ?>
+<?php
+ $helper = $this->helper('Chottvn\Blog\Helper\Data');
+?>
+<?php
+    $postCollectionCTThide = $helper->checkPostCollectionTagCTT($lastVendorWebsiteId,'desktop'); 
+?>
+<?php if (count($postCollectionCTThide) < 4) {?>
+    <script type="text/javascript">
+            require(['jquery',
+            ], function ($) {
+                $(document).ready(function () {
+                    $('#load-more-blog-ctt').hide();
+                });
+            });
+    </script>
+<?php } ?>

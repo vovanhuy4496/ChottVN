@@ -1,0 +1,22 @@
+{
+    "name": "chottvn/module-inventory",
+    "description": "Chottvn Module Inventory",
+    "type": "magento2-module",
+    "license": "",
+    "authors": [        
+        {
+            "email": "dataman@ecepvn.com",
+            "name": "ECEPVN Dev"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Chottvn\\Inventory\\": ""
+        }
+    }
+}

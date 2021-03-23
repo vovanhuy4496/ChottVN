@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Config/etc/system_file.xsd">
+    <system>
+        <section id="chottvn_promo_configuration" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <tab>sales</tab>
+            <resource>Chottvn_SalesRule::config</resource>
+            <label>Chottvn Promo Configuration</label>
+            <group id="voucher" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Voucher Campaign Configuration</label>
+
+                <field id="enabled" translate="label" type="select" sortOrder="0" showInDefault="2" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="cttpromo_applied_condition_salesrule" translate="label" type="textarea" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Applied Condition SalesRule</label>
+                    <comment>Điều kiện rule như customer tạo lúc nào, order lần đầu tiên, đơn hàng trên 3tr ...</comment>
+                </field>
+
+                <field id="cttpromo_applied_order_status" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order Status</label>
+                    <comment>Trạng thái đơn hàng nào áp dùng vào</comment>
+                </field>
+
+                <field id="cttpromo_current_promo_cart_rule_id" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Current Promo Cart Rule Id</label>
+                    <comment>Simple action cart rule hiện tại show trên trang detail, example cart_rule_id: 33</comment>
+                </field>
+
+                <field id="cttpromo_discount_voucher_rule_id" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Discount Voucher Cart Rule Id</label>
+                    <comment>Cart rule tạo ra list coupon, example cart_rule_id: 34</comment>
+                </field>
+
+                <field id="cttpromo_applied_amount" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Applied Amount</label>
+                    <comment>Số tiền thoả điều kiện nhận quà voucher</comment>
+                </field>
+
+                <field id="cttpromo_html_item" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Promo Item Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Chọn template html hiển thị ra bên ngoài</comment>
+                </field>
+
+                <field id="cttpromo_affiliate_reward" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Affiliate Reward</label>
+                    <comment>Amount số tiền mà ctv sẽ nhận</comment>
+                </field>
+
+                <field id="cttpromo_affiliate_transaction_type_id" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Affiliate Transaction Type</label>
+                    <source_model>Chottvn\Finance\Model\Config\Source\TransactionType</source_model>
+                    <comment>Loại transaction CTV</comment>
+                </field>
+
+                <field id="send_sms_enabled" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Send SMS Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="cttpromo_message_template" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Message Template</label>
+                    <comment>Template of SMS Message Content (use $AUTHCODE$ to put otp code in to content). Ex: "Your OTP code is $AUTHCODE$" will be "Your OTP code is 123456"</comment>
+                </field>
+
+                
+                
+            </group>
+        </section>
+    </system>
+</config>

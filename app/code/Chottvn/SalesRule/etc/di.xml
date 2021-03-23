@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+  <type name="Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory">
+    <plugin name="Chottvn_SalesRule::CalculatorFactory" type="Chottvn\SalesRule\Plugin\CalculatorFactory"/>
+  </type>
+  <type name="Magento\SalesRule\Model\Rule\Metadata\ValueProvider">
+    <plugin name="ctt-salesrule-plugin" type="Chottvn\SalesRule\Plugin\Rule\Metadata\ValueProvider" sortOrder="1" />
+  </type>
+  <type name="Amasty\Rgrid\Model\RuleActions">
+    <plugin name="chottvn_adminhtml_amasty_rgrid_model_rule_actions" type="Chottvn\SalesRule\Plugin\Amasty\Rgrid\Model\RuleActions" sortOrder="2" disabled="false" />
+  </type>
+
+  <type name="Magento\Sales\Model\ResourceModel\Order">
+	    <plugin name="chottvn_salesrule_plugin_magento_sales_model_resourcemodel_order" type="Chottvn\SalesRule\Plugin\Magento\Sales\Model\ResourceModel\Order"
+	    	sortOrder="100" disabled="false"/>
+	</type>
+
+
+  <preference for="\Amasty\Conditions\Model\Rule\Condition\CustomerAttributes" type="Chottvn\SalesRule\Rewrite\Amasty\Conditions\Model\Rule\Condition\CustomerAttributes" />
+
+  <type name="Magento\SalesRule\Model\Rule\Condition\Product">
+    <plugin name="Amasty_Rules::Condition_Product" type="Chottvn\SalesRule\Plugin\Magento\SalesRule\Model\Rule\Condition\Product" />
+  </type>
+</config>

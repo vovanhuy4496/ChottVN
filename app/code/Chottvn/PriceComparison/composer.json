@@ -1,0 +1,32 @@
+{
+    "name": "chottvn/module-price-comparison",
+    "description": "Magento 2 Price Comparison",
+    "keywords": [
+        "magento2"
+    ],
+    "license": "Apache-2.0",
+    "type": "magento2-module",
+    "version": "1.0.6",
+    "authors": [
+        {
+            "name": "DevOps",
+            "email": "devops@ecepvn.org",
+            "role": "OPS"
+        }
+    ],
+    "support": {
+        "source": ""
+    },
+    "require": {
+        "php": "~5.6.0|7.0.2|7.0.4|~7.0.6|~7.1",
+        "magento/framework": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Chottvn\\PriceComparison\\": ""
+        }
+    }
+}

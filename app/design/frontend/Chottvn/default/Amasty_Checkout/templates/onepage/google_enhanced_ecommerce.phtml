@@ -1,0 +1,43 @@
+<?php
+// {{block class="Magento\Checkout\Block\Onepage\Success" template="Amasty_Checkout::onepage/google_enhanced_ecommerce.phtml"}}
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+// get order id success checkout
+$sessionCheckout = $objectManager->create('\Magento\Checkout\Model\Session');
+$lastorderId = $sessionCheckout->getLastOrderId();
+
+// get info
+$order = $objectManager->create('\Magento\Sales\Model\OrderRepository')->get($lastorderId);
+$manager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+
+// $order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
+$total = $order->getGrandTotal();
+$shipping = $order->getShippingAmount();
+$tax = $order->getTaxAmount();
+//$name = $manager->getStore(null)->getName();
+$name = $block->getData('store_name') ? $block->getData('store_name'):'chotructuyen.co';
+?>
+
+<script type="text/javascript">
+ga('require', 'ecommerce', 'ecommerce.js'); // Load GA ecommerce plug-in.
+ga('ecommerce:addTransaction', {
+'id': '<?php echo $this->getOrderId(); ?>', // Transaction ID. Required
+'affiliation': '<?php echo $name ?>', // Affiliation or store name
+'revenue': '<?php echo intval($total); ?>', // Grand Total
+'shipping': '<?php echo intval($shipping); ?>', // Shipping
+'tax': '<?php echo intval($tax); ?>', // Tax
+'currency': 'VND'  // local currency code.
+});
+<?php foreach ($order->getAllItems() as $item) { ?>
+ga('ecommerce:addItem', {
+ 'id': '<?php echo $this->getOrderId(); ?>', // Transaction ID. Required.
+ 'name': '<?php echo $item->getName() ?>', // Product name. Required.
+ 'sku': '<?php echo $item->getSku() ?>', // SKU/code.
+ 'price': '<?php echo intval($item->getPrice()) ?>', // Unit price.
+ 'quantity': '<?php echo intval($item->getQtyOrdered()) ?>', // Quantity.
+ 'currency': 'VND'  // local currency code.
+ });
+<?php } // foreach item ?>
+ga('ecommerce:send');
+</script>

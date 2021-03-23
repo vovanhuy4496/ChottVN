@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <chottvn_promo_configuration>
+            <cttpromo>
+                <cttpromo_applied_condition_salesrule></cttpromo_applied_condition_salesrule>
+                <cttpromo_applied_order_status></cttpromo_applied_order_status>
+                <cttpromo_current_promo_cart_rule_id></cttpromo_current_promo_cart_rule_id>
+                <cttpromo_discount_voucher_rule_id></cttpromo_discount_voucher_rule_id>
+                <cttpromo_affiliate_reward></cttpromo_affiliate_reward>
+                <cttpromo_affiliate_transaction_type_id></cttpromo_affiliate_transaction_type_id>
+            </cttpromo>
+        </chottvn_promo_configuration>
+    </default>
+</config>

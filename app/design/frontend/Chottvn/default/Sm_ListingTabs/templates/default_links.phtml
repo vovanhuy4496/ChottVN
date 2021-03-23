@@ -1,0 +1,30 @@
+<?php
+/**
+ *
+ * SM Listing Tabs - Version 2.5.0
+ * Copyright (c) 2017 YouTech Company. All Rights Reserved.
+ * @license - Copyrighted Commercial Software
+ * Author: YouTech Company
+ * Websites: http://www.magentech.com
+ */
+
+$list = $this->getData('list');
+if (sizeof($list) > 1) {
+?>
+<div class="llinks-tabs-wrap">
+  <ul class="llinks-tabs">
+  	<?php foreach ($list as $link) {
+  		$name = $link->name;
+  		$url = $link->link;
+  		$target_link = $link->target;
+  	?>
+          <li class="llinks-tab d-none d-sm-none d-md-block">
+          	<a href="<?php echo $url; ?>" target="<?php echo $target_link; ?>" name="<?php echo $name; ?>">
+  					<?php echo $name; ?>
+  			</a>
+  		</li>
+  		<?php
+  	} ?>
+  </ul>
+</div>
+<?php } ?>

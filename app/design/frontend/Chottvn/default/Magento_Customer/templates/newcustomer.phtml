@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Form\Login\Info $block */
+?>
+<?php if ($block->getRegistration()->isAllowed()) : ?>
+
+<div class="block-content-register-social">
+    <div class="block-title">
+        <strong id="block-new-customer-heading" role="heading" aria-level="2"><?= $block->escapeHtml(__('New Customers')) ?></strong>
+    </div>
+    <div class="block-content" aria-labelledby="block-new-customer-heading">
+        <p><?= $block->escapeHtml(__('Creating an account has many benefits: check out faster, keep more than one address, track orders and more.')) ?></p>
+        <div class="actions-toolbar account-menus">
+            <div class="primary account">
+                <a class="social-login-btn" href="#input-create" data-effect="mfp-move-from-top">
+                    <button type="button" class="button-submit-chott"><span><?php echo __('Create an Account') ?></span></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

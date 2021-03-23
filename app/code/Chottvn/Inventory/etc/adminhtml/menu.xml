@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+
+		<add id="Chottvn_Inventory::inventory" 
+			title="Chottvn Inventory" 
+			module="Chottvn_Inventory"
+			sortOrder="1000" 
+			resource="Magento_Backend::admin" 
+			parent="Magento_Backend::stores" 
+			dependsOnModule="Chottvn_Inventory"/> 
+	
+		<add action="inventory/export/new" 
+			id="Chottvn_Inventory::export_new" 
+			module="Chottvn_Inventory" 
+			parent="Chottvn_Inventory::inventory" 
+			resource="Chottvn_Inventory::export_new" 
+			sortOrder="9999" 
+			title="Export"/>
+		
+		<add action="inventory/import/new" 
+			id="Chottvn_Inventory::import_new" 
+			module="Chottvn_Inventory" 
+			parent="Chottvn_Inventory::inventory" 
+			resource="Chottvn_Inventory::import_new" 
+			sortOrder="9999" title="Import"/>
+
+		<add 
+			action="chottvn_inventory/log/index" 
+			id="Chottvn_Inventory::chottvn_inventory_log" 
+			module="Chottvn_Inventory" 
+			parent="Chottvn_Inventory::inventory" 
+			resource="Chottvn_Inventory::log_view" 
+			sortOrder="9999" 
+			title="Log"/>
+
+		<add 
+			action="inventory/categoryposition/script" 
+			id="Chottvn_Inventory::categoryposition_script" 
+			module="Chottvn_Inventory" 
+			parent="Chottvn_Inventory::inventory" 
+			resource="Chottvn_Inventory::categoryposition_script" 
+			sortOrder="9999" 
+			title="Category Position"/>
+
+		<add 
+			action="inventory/categoryorderby/script" 
+			id="Chottvn_Inventory::categoryorderby_script" 
+			module="Chottvn_Inventory" 
+			parent="Chottvn_Inventory::inventory" 
+			resource="Chottvn_Inventory::categoryorderby_script" 
+			sortOrder="9999" 
+			title="Category Order By"/>
+		
+	</menu>
+</config>
